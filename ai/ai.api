@@ -1,0 +1,254 @@
+syntax = "v1"
+
+info (
+    title: "AI辅助服务API"
+    desc: "提供AI生成、分析和辅助功能"
+    author: "Campus Team"
+    version: "1.0"
+)
+
+// 数据类型定义
+type (
+    // 分析商品图片请求
+    AnalyzeProductImageReq {
+        ImageUrl string `json:"imageUrl"` // 图片URL
+        Category string `json:"category,optional"` // 商品分类
+    }
+
+    // 分析商品图片响应
+    AnalyzeProductImageResp {
+        Title string `json:"title,optional"` // 生成的标题
+        Description string `json:"description,optional"` // 生成的描述
+        Category string `json:"category,optional"` // 识别的分类
+        Condition string `json:"condition,optional"` // 识别的成色
+        Tags []string `json:"tags,optional"` // 生成的标签
+        EstimatedPrice float64 `json:"estimatedPrice,optional"` // 估算价格
+    }
+
+    // 生成内容请求
+    GenerateContentReq {
+        Prompt string `json:"prompt"` // 提示词
+        Category string `json:"category,optional"` // 商品分类
+        Condition string `json:"condition,optional"` // 商品成色
+        Type string `json:"type,optional,default=description"` // 生成类型 (description/title/tags)
+    }
+
+    // 生成内容响应
+    GenerateContentResp {
+        Content string `json:"content"` // 生成的内容
+    }
+
+    // 生成标签请求
+    GenerateTagsReq {
+        Description string `json:"description"` // 商品描述
+        Category string `json:"category,optional"` // 商品分类
+        Title string `json:"title,optional"` // 商品标题
+    }
+
+    // 生成标签响应
+    GenerateTagsResp {
+        Tags []string `json:"tags"` // 生成的标签
+    }
+
+    // 估算价格请求
+    EstimatePriceReq {
+        Title string `json:"title"` // 商品标题
+        Description string `json:"description"` // 商品描述
+        Category string `json:"category"` // 商品分类
+        Condition string `json:"condition"` // 商品成色
+        ImageUrls []string `json:"imageUrls,optional"` // 图片URL数组
+    }
+
+    // 估算价格响应
+    EstimatePriceResp {
+        EstimatedPrice float64 `json:"estimatedPrice"` // 估算价格
+        PriceRange map[string]float64 `json:"priceRange,optional"` // 价格区间 {min: xx, max: xx}
+        Confidence float64 `json:"confidence,optional"` // 置信度 0-1
+        Explanation string `json:"explanation,optional"` // 价格解释
+    }
+
+    // 优化商品信息请求
+    OptimizeProductReq {
+        Title string `json:"title,optional"` // 商品标题
+        Description string `json:"description,optional"` // 商品描述
+        Category string `json:"category"` // 商品分类
+        Condition string `json:"condition,optional"` // 商品成色
+        Price float64 `json:"price,optional"` // 商品价格
+        ImageUrls []string `json:"imageUrls,optional"` // 图片URL数组
+    }
+
+    // 优化商品信息响应
+    OptimizeProductResp {
+        Title string `json:"title,optional"` // 优化后的标题
+        Description string `json:"description,optional"` // 优化后的描述
+        Tags []string `json:"tags,optional"` // 优化后的标签
+        PriceSuggestion float64 `json:"priceSuggestion,optional"` // 价格建议
+        Improvements map[string]string `json:"improvements,optional"` // 改进建议
+    }
+    
+    // 聊天完成请求
+    ChatCompletionReq {
+        Messages []map[string]string `json:"messages"` // 消息列表，包含role和content字段
+        Model string `json:"model,optional,default=gpt-3.5-turbo"` // 模型名称
+        Temperature float64 `json:"temperature,optional"` // 温度参数
+        MaxTokens int64 `json:"maxTokens,optional"` // 最大生成token数
+        SystemPrompt string `json:"systemPrompt,optional"` // 系统提示词
+    }
+    
+    // 聊天完成响应
+    ChatCompletionResp {
+        Content string `json:"content"` // 生成的内容
+        TokenUsage map[string]int64 `json:"tokenUsage,optional"` // token使用情况
+    }
+    
+    // 文本生成请求
+    TextGenerationReq {
+        Prompt string `json:"prompt"` // 提示词
+        Model string `json:"model,optional,default=gpt-3.5-turbo"` // 模型名称
+        MaxTokens int64 `json:"maxTokens,optional"` // 最大生成token数
+        Temperature float64 `json:"temperature,optional"` // 温度参数
+        Type string `json:"type,optional,default=general"` // 生成类型: general, article, description, etc.
+    }
+    
+    // 文本生成响应
+    TextGenerationResp {
+        Content string `json:"content"` // 生成的内容
+        TokenUsage map[string]int64 `json:"tokenUsage,optional"` // token使用情况
+    }
+    
+    // 图像生成请求
+    ImageGenerationReq {
+        Prompt string `json:"prompt"` // 提示词
+        Model string `json:"model,optional"` // 模型名称
+        Size string `json:"size,optional,default=1024x1024"` // 尺寸
+        Quality string `json:"quality,optional,default=standard"` // 质量: standard, hd
+        Style string `json:"style,optional"` // 风格
+        Count int64 `json:"count,optional,default=1"` // 生成数量
+    }
+    
+    // 图像生成响应
+    ImageGenerationResp {
+        Images []string `json:"images"` // 生成的图片URL数组
+    }
+    
+    // 图像识别请求
+    ImageRecognitionReq {
+        ImageUrl string `json:"imageUrl"` // 图片URL
+        Type string `json:"type,optional,default=general"` // 识别类型: general, product, scene, text
+    }
+    
+    // 图像识别响应
+    ImageRecognitionResp {
+        Description string `json:"description"` // 识别结果描述
+        Tags []string `json:"tags,optional"` // 识别标签
+        Objects []map[string]interface{} `json:"objects,optional"` // 识别到的对象
+        Text string `json:"text,optional"` // 识别到的文本
+    }
+    
+    // 文本翻译请求
+    TranslationReq {
+        Text string `json:"text"` // 待翻译文本
+        SourceLang string `json:"sourceLang,optional"` // 源语言，可选，auto为自动识别
+        TargetLang string `json:"targetLang"` // 目标语言
+    }
+    
+    // 文本翻译响应
+    TranslationResp {
+        TranslatedText string `json:"translatedText"` // 翻译后的文本
+        DetectedLang string `json:"detectedLang,optional"` // 检测到的源语言
+    }
+    
+    // 文本纠错请求
+    TextCorrectionReq {
+        Text string `json:"text"` // 待纠错文本
+        Lang string `json:"lang,optional,default=zh"` // 语言: zh, en
+    }
+    
+    // 文本纠错响应
+    TextCorrectionResp {
+        CorrectedText string `json:"correctedText"` // 纠错后的文本
+        Changes []map[string]string `json:"changes,optional"` // 修改列表
+    }
+    
+    // 文本摘要请求
+    TextSummarizationReq {
+        Text string `json:"text"` // 待摘要文本
+        MaxLength int64 `json:"maxLength,optional"` // 最大长度
+        Type string `json:"type,optional,default=general"` // 摘要类型: general, news, academic
+    }
+    
+    // 文本摘要响应
+    TextSummarizationResp {
+        Summary string `json:"summary"` // 摘要内容
+    }
+    
+    // 情感分析请求
+    SentimentAnalysisReq {
+        Text string `json:"text"` // 待分析文本
+    }
+    
+    // 情感分析响应
+    SentimentAnalysisResp {
+        Sentiment string `json:"sentiment"` // 情感: positive, negative, neutral
+        Score float64 `json:"score"` // 情感分数 -1到1
+        Analysis map[string]float64 `json:"analysis,optional"` // 详细分析结果
+    }
+)
+
+@server(
+    prefix: /api/ai
+    jwt: Auth
+)
+service AI {
+    // 分析商品图片
+    @handler AnalyzeProductImage
+    post /analyze-image (AnalyzeProductImageReq) returns (AnalyzeProductImageResp)
+
+    // 生成内容
+    @handler GenerateContent
+    post /generate-content (GenerateContentReq) returns (GenerateContentResp)
+
+    // 生成标签
+    @handler GenerateTags
+    post /generate-tags (GenerateTagsReq) returns (GenerateTagsResp)
+
+    // 估算价格
+    @handler EstimatePrice
+    post /estimate-price (EstimatePriceReq) returns (EstimatePriceResp)
+
+    // 优化商品信息
+    @handler OptimizeProduct
+    post /optimize-product (OptimizeProductReq) returns (OptimizeProductResp)
+    
+    // 聊天完成
+    @handler ChatCompletion
+    post /chat/completions (ChatCompletionReq) returns (ChatCompletionResp)
+    
+    // 文本生成
+    @handler TextGeneration
+    post /text/generations (TextGenerationReq) returns (TextGenerationResp)
+    
+    // 图像生成
+    @handler ImageGeneration
+    post /image/generations (ImageGenerationReq) returns (ImageGenerationResp)
+    
+    // 图像识别
+    @handler ImageRecognition
+    post /image/recognitions (ImageRecognitionReq) returns (ImageRecognitionResp)
+    
+    // 文本翻译
+    @handler Translation
+    post /translations (TranslationReq) returns (TranslationResp)
+    
+    // 文本纠错
+    @handler TextCorrection
+    post /text/corrections (TextCorrectionReq) returns (TextCorrectionResp)
+    
+    // 文本摘要
+    @handler TextSummarization
+    post /text/summarizations (TextSummarizationReq) returns (TextSummarizationResp)
+    
+    // 情感分析
+    @handler SentimentAnalysis
+    post /sentiment-analysis (SentimentAnalysisReq) returns (SentimentAnalysisResp)
+}

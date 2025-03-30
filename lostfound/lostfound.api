@@ -1,0 +1,265 @@
+syntax = "v1"
+
+info (
+    title: "失物招领服务API"
+    desc: "提供失物招领相关功能"
+    author: "Campus Team"
+    version: "1.0"
+)
+
+// 数据类型定义
+type (
+    // 失物招领信息
+    LostFoundItem {
+        Id int64 `json:"id"`
+        Title string `json:"title"`
+        Description string `json:"description"`
+        Type string `json:"type"` // lost 或 found
+        Category string `json:"category,optional"`
+        Location string `json:"location,optional"`
+        LocationDetail map[string]interface{} `json:"locationDetail,optional"` // 详细位置信息，如经纬度等
+        ContactInfo string `json:"contactInfo,optional"`
+        ContactWay string `json:"contactWay,optional"` // 联系方式，如电话、微信等
+        Images []string `json:"images,optional"`
+        Status string `json:"status"` // pending, found, claimed, closed
+        Tags []string `json:"tags,optional"`
+        RewardInfo string `json:"rewardInfo,optional"`
+        LostFoundTime string `json:"lostFoundTime,optional"` // 丢失或拾取时间
+        PublisherId int64 `json:"publisherId"`
+        PublisherName string `json:"publisherName"`
+        PublisherAvatar string `json:"publisherAvatar,optional"`
+        ViewCount int64 `json:"viewCount"`
+        LikeCount int64 `json:"likeCount"`
+        CommentCount int64 `json:"commentCount"`
+        IsLiked bool `json:"isLiked,optional"`
+        CreatedAt string `json:"createdAt"`
+        UpdatedAt string `json:"updatedAt"`
+    }
+
+    // 评论信息
+    Comment {
+        Id int64 `json:"id"`
+        Content string `json:"content"`
+        UserId int64 `json:"userId"`
+        UserName string `json:"userName"`
+        UserAvatar string `json:"userAvatar,optional"`
+        CreatedAt string `json:"createdAt"`
+    }
+
+    // 失物招领列表请求
+    LostFoundListReq {
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+        Type string `form:"type,optional,default=all"` // lost/found/all
+        Status string `form:"status,optional,default=all"` // pending/found/claimed/closed/all
+        Sort string `form:"sort,optional,default=latest"` // latest/hot
+        Keywords string `form:"keywords,optional"`
+        CategoryId int64 `form:"categoryId,optional"`
+        UserId int64 `form:"userId,optional"` // 查询特定用户的发布
+    }
+
+    // 失物招领列表响应
+    LostFoundListResp {
+        List []LostFoundItem `json:"list"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
+
+    // 失物招领详情请求
+    LostFoundDetailReq {
+        Id int64 `path:"id"`
+    }
+
+    // 失物招领详情响应
+    LostFoundDetailResp {
+        Item LostFoundItem `json:"item"`
+        Comments []Comment `json:"comments,optional"`
+    }
+
+    // 用户发布的失物招领请求
+    UserLostFoundReq {
+        UserId int64 `path:"userId"`
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+    }
+
+    // 用户发布的失物招领响应
+    UserLostFoundResp {
+        List []LostFoundItem `json:"list"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
+
+    // 发布失物招领请求
+    PublishLostFoundReq {
+        Title string `json:"title"`
+        Description string `json:"description"`
+        Type string `json:"type"` // lost 或 found
+        Category string `json:"category,optional"`
+        Location string `json:"location,optional"`
+        LocationDetail map[string]interface{} `json:"locationDetail,optional"` // 详细位置信息
+        ContactInfo string `json:"contactInfo,optional"`
+        ContactWay string `json:"contactWay,optional"`
+        Images []string `json:"images,optional"`
+        Tags []string `json:"tags,optional"`
+        RewardInfo string `json:"rewardInfo,optional"`
+        LostFoundTime string `json:"lostFoundTime,optional"` // 丢失或拾取时间
+    }
+
+    // 发布失物招领响应
+    PublishLostFoundResp {
+        Id int64 `json:"id"`
+        Message string `json:"message"`
+    }
+
+    // 更新失物招领请求
+    UpdateLostFoundReq {
+        Id int64 `path:"id"`
+        Title string `json:"title,optional"`
+        Description string `json:"description,optional"`
+        Category string `json:"category,optional"`
+        Location string `json:"location,optional"`
+        LocationDetail map[string]interface{} `json:"locationDetail,optional"`
+        ContactInfo string `json:"contactInfo,optional"`
+        ContactWay string `json:"contactWay,optional"`
+        Images []string `json:"images,optional"`
+        Tags []string `json:"tags,optional"`
+        RewardInfo string `json:"rewardInfo,optional"`
+        LostFoundTime string `json:"lostFoundTime,optional"`
+    }
+
+    // 更新失物招领响应
+    UpdateLostFoundResp {
+        Message string `json:"message"`
+    }
+
+    // 删除失物招领请求
+    DeleteLostFoundReq {
+        Id int64 `path:"id"`
+    }
+
+    // 删除失物招领响应
+    DeleteLostFoundResp {
+        Message string `json:"message"`
+    }
+
+    // 更新失物招领状态请求
+    UpdateLostFoundStatusReq {
+        Id int64 `path:"id"`
+        Status string `json:"status"` // pending, found, claimed, closed
+    }
+
+    // 更新失物招领状态响应
+    UpdateLostFoundStatusResp {
+        Message string `json:"message"`
+    }
+
+    // 评论失物招领请求
+    CommentLostFoundReq {
+        Id int64 `path:"id"`
+        Content string `json:"content"`
+    }
+
+    // 评论失物招领响应
+    CommentLostFoundResp {
+        CommentId int64 `json:"commentId"`
+        Message string `json:"message"`
+    }
+
+    // 获取失物招领评论请求
+    LostFoundCommentsReq {
+        Id int64 `path:"id"`
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+    }
+
+    // 获取失物招领评论响应
+    LostFoundCommentsResp {
+        Comments []Comment `json:"comments"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
+
+    // 点赞失物招领请求
+    LikeLostFoundReq {
+        Id int64 `path:"id"`
+    }
+
+    // 点赞失物招领响应
+    LikeLostFoundResp {
+        Message string `json:"message"`
+    }
+
+    // 取消点赞失物招领请求
+    UnlikeLostFoundReq {
+        Id int64 `path:"id"`
+    }
+
+    // 取消点赞失物招领响应
+    UnlikeLostFoundResp {
+        Message string `json:"message"`
+    }
+
+    // 通用响应
+    CommonResp {
+        Message string `json:"message"`
+    }
+)
+
+@server(
+    prefix: /api/lost-found
+)
+service LostFound {
+    // 获取失物招领列表
+    @handler GetLostFoundList
+    get /list (LostFoundListReq) returns (LostFoundListResp)
+
+    // 获取失物招领详情
+    @handler GetLostFoundDetail
+    get /detail/:id (LostFoundDetailReq) returns (LostFoundDetailResp)
+}
+
+@server(
+    prefix: /api/lost-found
+    jwt: Auth
+)
+service LostFound {
+    // 获取用户发布的失物招领
+    @handler GetUserLostFound
+    get /user/:userId (UserLostFoundReq) returns (UserLostFoundResp)
+
+    // 发布失物招领
+    @handler PublishLostFound
+    post / (PublishLostFoundReq) returns (PublishLostFoundResp)
+
+    // 更新失物招领
+    @handler UpdateLostFound
+    put /:id (UpdateLostFoundReq) returns (UpdateLostFoundResp)
+
+    // 删除失物招领
+    @handler DeleteLostFound
+    delete /:id (DeleteLostFoundReq) returns (DeleteLostFoundResp)
+
+    // 更新失物招领状态
+    @handler UpdateLostFoundStatus
+    put /:id/status (UpdateLostFoundStatusReq) returns (UpdateLostFoundStatusResp)
+
+    // 评论失物招领
+    @handler CommentLostFound
+    post /:id/comment (CommentLostFoundReq) returns (CommentLostFoundResp)
+
+    // 获取失物招领评论
+    @handler GetLostFoundComments
+    get /:id/comments (LostFoundCommentsReq) returns (LostFoundCommentsResp)
+
+    // 点赞失物招领
+    @handler LikeLostFound
+    post /:id/like (LikeLostFoundReq) returns (LikeLostFoundResp)
+
+    // 取消点赞失物招领
+    @handler UnlikeLostFound
+    post /:id/unlike (UnlikeLostFoundReq) returns (UnlikeLostFoundResp)
+}
