@@ -1,0 +1,572 @@
+syntax = "proto3";
+
+package im;
+
+option go_package = "./im";
+
+// 即时通讯服务
+service IMService {
+  // 获取联系人列表
+  rpc GetContactList(GetContactListRequest) returns (GetContactListResponse);
+  
+  // 获取好友申请列表
+  rpc GetFriendRequests(GetFriendRequestsRequest) returns (GetFriendRequestsResponse);
+  
+  // 发送好友申请
+  rpc SendFriendRequest(SendFriendRequestRequest) returns (BaseResponse);
+  
+  // 处理好友申请
+  rpc HandleFriendRequest(HandleFriendRequestRequest) returns (BaseResponse);
+  
+  // 获取用户信息
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  
+  // 设置好友备注
+  rpc SetFriendNote(SetFriendNoteRequest) returns (BaseResponse);
+  
+  // 删除好友
+  rpc DeleteFriend(DeleteFriendRequest) returns (BaseResponse);
+  
+  // 获取群聊列表
+  rpc GetGroupList(GetGroupListRequest) returns (GetGroupListResponse);
+  
+  // 创建群聊
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+  
+  // 获取群聊详情
+  rpc GetGroupInfo(GetGroupInfoRequest) returns (GetGroupInfoResponse);
+  
+  // 获取群成员列表
+  rpc GetGroupMembers(GetGroupMembersRequest) returns (GetGroupMembersResponse);
+  
+  // 邀请好友加入群聊
+  rpc InviteToGroup(InviteToGroupRequest) returns (BaseResponse);
+  
+  // 申请加入群聊
+  rpc ApplyToJoinGroup(ApplyToJoinGroupRequest) returns (BaseResponse);
+  
+  // 处理入群申请
+  rpc HandleGroupApplication(HandleGroupApplicationRequest) returns (BaseResponse);
+  
+  // 设置群成员角色
+  rpc SetGroupMemberRole(SetGroupMemberRoleRequest) returns (BaseResponse);
+  
+  // 移除群成员
+  rpc RemoveGroupMember(RemoveGroupMemberRequest) returns (BaseResponse);
+  
+  // 退出群聊
+  rpc LeaveGroup(LeaveGroupRequest) returns (BaseResponse);
+  
+  // 解散群聊
+  rpc DismissGroup(DismissGroupRequest) returns (BaseResponse);
+  
+  // 更新群聊信息
+  rpc UpdateGroupInfo(UpdateGroupInfoRequest) returns (BaseResponse);
+  
+  // 获取会话列表
+  rpc GetConversationList(GetConversationListRequest) returns (GetConversationListResponse);
+  
+  // 获取聊天记录
+  rpc GetChatMessages(GetChatMessagesRequest) returns (GetChatMessagesResponse);
+  
+  // 发送消息
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  
+  // 标记消息已读
+  rpc MarkMessageRead(MarkMessageReadRequest) returns (BaseResponse);
+  
+  // 获取未读消息数
+  rpc GetUnreadCount(GetUnreadCountRequest) returns (GetUnreadCountResponse);
+  
+  // 搜索联系人
+  rpc SearchContacts(SearchContactsRequest) returns (SearchResponse);
+  
+  // 搜索用户
+  rpc SearchUsers(SearchUsersRequest) returns (SearchResponse);
+  
+  // 获取好友列表
+  rpc GetFriendList(GetFriendListRequest) returns (GetContactListResponse);
+  
+  // 获取会话详情
+  rpc GetConversationDetail(GetConversationDetailRequest) returns (GetConversationDetailResponse);
+  
+  // 创建会话
+  rpc CreateConversation(CreateConversationRequest) returns (CreateConversationResponse);
+  
+  // 删除会话
+  rpc DeleteConversation(DeleteConversationRequest) returns (BaseResponse);
+  
+  // 清空会话消息
+  rpc ClearMessages(ClearMessagesRequest) returns (BaseResponse);
+  
+  // 获取用户在线状态
+  rpc GetUserOnlineStatus(GetUserOnlineStatusRequest) returns (GetUserOnlineStatusResponse);
+  
+  // 设置用户状态
+  rpc SetUserStatus(SetUserStatusRequest) returns (BaseResponse);
+  
+  // 获取群公告
+  rpc GetGroupAnnouncements(GetGroupAnnouncementsRequest) returns (GetGroupAnnouncementsResponse);
+  
+  // 发布群公告
+  rpc PublishGroupAnnouncement(PublishGroupAnnouncementRequest) returns (BaseResponse);
+}
+
+// 基础响应
+message BaseResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 联系人
+message Contact {
+  int64 id = 1;
+  string nickname = 2;
+  string username = 3;
+  string avatar = 4;
+  string remark = 5; // 备注名
+  string status = 6; // 在线状态
+  string last_message = 7; // 最后一条消息
+  string last_message_time = 8; // 最后一条消息时间
+  int32 unread_count = 9; // 未读消息数
+}
+
+// 获取联系人列表请求
+message GetContactListRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取联系人列表响应
+message GetContactListResponse {
+  int32 code = 1;
+  string message = 2;
+  GetContactListData data = 3;
+}
+
+message GetContactListData {
+  repeated Contact list = 1;
+  int32 total = 2;
+}
+
+// 好友申请
+message FriendRequest {
+  int64 id = 1;
+  int64 user_id = 2; // 发送申请的用户ID
+  string username = 3;
+  string nickname = 4;
+  string avatar = 5;
+  string message = 6; // 申请消息
+  string status = 7; // 状态：pending/accepted/rejected
+  string created_at = 8;
+}
+
+// 获取好友申请列表请求
+message GetFriendRequestsRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取好友申请列表响应
+message GetFriendRequestsResponse {
+  int32 code = 1;
+  string message = 2;
+  GetFriendRequestsData data = 3;
+}
+
+message GetFriendRequestsData {
+  repeated FriendRequest list = 1;
+  int32 total = 2;
+}
+
+// 发送好友申请请求
+message SendFriendRequestRequest {
+  int64 user_id = 1; // 接收申请的用户ID
+  string message = 2; // 申请消息
+}
+
+// 处理好友申请请求
+message HandleFriendRequestRequest {
+  int64 request_id = 1; // 申请ID
+  string action = 2; // 操作：accept/reject
+}
+
+// 获取用户信息请求
+message GetUserInfoRequest {
+  int64 id = 1; // 用户ID
+}
+
+// 获取用户信息响应
+message GetUserInfoResponse {
+  int32 code = 1;
+  string message = 2;
+  UserInfo data = 3;
+}
+
+// 用户信息
+message UserInfo {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+  string status = 5;
+}
+
+// 设置好友备注请求
+message SetFriendNoteRequest {
+  int64 friend_id = 1; // 好友ID
+  string remark = 2; // 备注名
+}
+
+// 删除好友请求
+message DeleteFriendRequest {
+  int64 id = 1; // 好友ID
+}
+
+// 群组
+message Group {
+  int64 id = 1;
+  string name = 2;
+  string avatar = 3;
+  int64 owner_id = 4; // 群主ID
+  string owner_name = 5; // 群主名称
+  int32 member_count = 6; // 成员数量
+  string description = 7; // 群描述
+  string created_at = 8;
+}
+
+// 获取群聊列表请求
+message GetGroupListRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取群聊列表响应
+message GetGroupListResponse {
+  int32 code = 1;
+  string message = 2;
+  GetGroupListData data = 3;
+}
+
+message GetGroupListData {
+  repeated Group list = 1;
+  int32 total = 2;
+}
+
+// 创建群聊请求
+message CreateGroupRequest {
+  string name = 1; // 群名称
+  repeated int64 member_ids = 2; // 成员ID列表
+  string avatar = 3; // 群头像
+  string description = 4; // 群描述
+}
+
+// 创建群聊响应
+message CreateGroupResponse {
+  int32 code = 1;
+  string message = 2;
+  Group data = 3;
+}
+
+// 获取群聊信息请求
+message GetGroupInfoRequest {
+  int64 id = 1; // 群聊ID
+}
+
+// 获取群聊信息响应
+message GetGroupInfoResponse {
+  int32 code = 1;
+  string message = 2;
+  Group data = 3;
+}
+
+// 群成员
+message GroupMember {
+  int64 id = 1;
+  int64 group_id = 2;
+  int64 user_id = 3;
+  string nickname = 4;
+  string username = 5;
+  string avatar = 6;
+  string role = 7; // 角色：owner/admin/member
+  string join_time = 8;
+}
+
+// 获取群成员列表请求
+message GetGroupMembersRequest {
+  int64 id = 1; // 群聊ID
+}
+
+// 获取群成员列表响应
+message GetGroupMembersResponse {
+  int32 code = 1;
+  string message = 2;
+  GetGroupMembersData data = 3;
+}
+
+message GetGroupMembersData {
+  repeated GroupMember list = 1;
+  int32 total = 2;
+}
+
+// 邀请好友加入群聊请求
+message InviteToGroupRequest {
+  int64 group_id = 1; // 群聊ID
+  repeated int64 user_ids = 2; // 被邀请的用户ID列表
+}
+
+// 申请加入群聊请求
+message ApplyToJoinGroupRequest {
+  int64 group_id = 1; // 群聊ID
+  string message = 2; // 申请消息
+}
+
+// 处理入群申请请求
+message HandleGroupApplicationRequest {
+  int64 application_id = 1; // 申请ID
+  string action = 2; // 操作：accept/reject
+}
+
+// 设置群成员角色请求
+message SetGroupMemberRoleRequest {
+  int64 group_id = 1; // 群聊ID
+  int64 user_id = 2; // 用户ID
+  string role = 3; // 角色：admin/member
+}
+
+// 移除群成员请求
+message RemoveGroupMemberRequest {
+  int64 group_id = 1; // 群聊ID
+  int64 user_id = 2; // 用户ID
+}
+
+// 退出群聊请求
+message LeaveGroupRequest {
+  int64 id = 1; // 群聊ID
+}
+
+// 解散群聊请求
+message DismissGroupRequest {
+  int64 id = 1; // 群聊ID
+}
+
+// 更新群聊信息请求
+message UpdateGroupInfoRequest {
+  int64 id = 1; // 群聊ID
+  string name = 2; // 群名称
+  string avatar = 3; // 群头像
+  string description = 4; // 群描述
+}
+
+// 会话
+message Conversation {
+  string id = 1; // 会话ID，格式：private_{userId} 或 group_{groupId}
+  string type = 2; // 会话类型：private/group
+  int64 target_id = 3; // 目标ID：用户ID或群聊ID
+  string target_name = 4; // 目标名称：用户昵称或群名称
+  string target_avatar = 5; // 目标头像
+  string last_message = 6; // 最后一条消息内容
+  string last_message_time = 7; // 最后一条消息时间
+  int32 unread_count = 8; // 未读消息数
+  bool updated = 9; // 是否有更新
+}
+
+// 获取会话列表请求
+message GetConversationListRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取会话列表响应
+message GetConversationListResponse {
+  int32 code = 1;
+  string message = 2;
+  GetConversationListData data = 3;
+}
+
+message GetConversationListData {
+  repeated Conversation list = 1;
+  int32 total = 2;
+}
+
+// 创建会话请求
+message CreateConversationRequest {
+  string type = 1; // 会话类型：private/group
+  int64 target_id = 2; // 目标ID：用户ID或群聊ID
+}
+
+// 创建会话响应
+message CreateConversationResponse {
+  int32 code = 1;
+  string message = 2;
+  Conversation data = 3;
+}
+
+// 获取会话详情请求
+message GetConversationDetailRequest {
+  string id = 1; // 会话ID
+}
+
+// 获取会话详情响应
+message GetConversationDetailResponse {
+  int32 code = 1;
+  string message = 2;
+  Conversation data = 3;
+}
+
+// 聊天消息
+message Message {
+  string id = 1;
+  string conversation_id = 2; // 会话ID
+  int64 sender_id = 3; // 发送者ID
+  string sender_name = 4; // 发送者名称
+  string sender_avatar = 5; // 发送者头像
+  string content = 6; // 消息内容
+  int32 type = 7; // 消息类型
+  string status = 8; // 消息状态：sending/sent/delivered/read/failed
+  map<string, string> extra = 9; // 额外信息，如图片尺寸、文件大小等
+  string created_at = 10;
+}
+
+// 发送消息请求
+message SendMessageRequest {
+  string conversation_id = 1; // 会话ID
+  string content = 2; // 消息内容
+  int32 type = 3; // 消息类型
+  map<string, string> extra = 4; // 额外信息
+}
+
+// 发送消息响应
+message SendMessageResponse {
+  int32 code = 1;
+  string message = 2;
+  Message data = 3;
+}
+
+// 获取聊天记录请求
+message GetChatMessagesRequest {
+  string conversation_id = 1; // 会话ID
+  int32 page = 2; // 页码
+  int32 limit = 3; // 每页数量
+}
+
+// 获取聊天记录响应
+message GetChatMessagesResponse {
+  int32 code = 1;
+  string message = 2;
+  GetChatMessagesData data = 3;
+}
+
+message GetChatMessagesData {
+  repeated Message list = 1;
+  int32 total = 2;
+}
+
+// 标记消息已读请求
+message MarkMessageReadRequest {
+  string conversation_id = 1; // 会话ID
+}
+
+// 获取未读消息数请求
+message GetUnreadCountRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取未读消息数响应
+message GetUnreadCountResponse {
+  int32 code = 1;
+  string message = 2;
+  GetUnreadCountData data = 3;
+}
+
+message GetUnreadCountData {
+  int32 total = 1; // 总未读数
+  map<string, int32> conversations = 2; // 各会话未读数
+}
+
+// 搜索联系人请求
+message SearchContactsRequest {
+  string keyword = 1; // 关键词
+}
+
+// 搜索用户请求
+message SearchUsersRequest {
+  string keyword = 1; // 关键词
+}
+
+// 搜索结果
+message SearchResult {
+  int64 id = 1;
+  string type = 2; // user/group
+  string name = 3;
+  string avatar = 4;
+  string description = 5;
+}
+
+// 搜索响应
+message SearchResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchData data = 3;
+}
+
+message SearchData {
+  repeated SearchResult list = 1;
+  int32 total = 2;
+}
+
+// 获取好友列表请求
+message GetFriendListRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 删除会话请求
+message DeleteConversationRequest {
+  string id = 1; // 会话ID
+}
+
+// 清空会话消息请求
+message ClearMessagesRequest {
+  string conversation_id = 1; // 会话ID
+}
+
+// 获取用户在线状态请求
+message GetUserOnlineStatusRequest {
+  repeated int64 user_ids = 1; // 用户ID列表
+}
+
+// 获取用户在线状态响应
+message GetUserOnlineStatusResponse {
+  int32 code = 1;
+  string message = 2;
+  map<string, string> data = 3; // userId -> 状态
+}
+
+// 设置用户状态请求
+message SetUserStatusRequest {
+  string status = 1; // 状态：online/away/busy/offline
+}
+
+// 群公告
+message GroupAnnouncement {
+  int64 id = 1;
+  int64 group_id = 2;
+  string content = 3;
+  string publisher = 4;
+  string publisher_avatar = 5;
+  string created_at = 6;
+}
+
+// 获取群公告请求
+message GetGroupAnnouncementsRequest {
+  int64 group_id = 1; // 群聊ID
+}
+
+// 获取群公告响应
+message GetGroupAnnouncementsResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated GroupAnnouncement data = 3;
+}
+
+// 发布群公告请求
+message PublishGroupAnnouncementRequest {
+  int64 group_id = 1; // 群聊ID
+  string content = 2; // 公告内容
+}

@@ -1,0 +1,270 @@
+syntax = "v1"
+
+info (
+	title: "用户服务"
+	desc: "校园二手交易平台用户服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	LoginReq {
+		Username string `json:"username,optional"` // 用户名/手机号/邮箱
+		Password string `json:"password,optional"` // 密码
+		Phone string `json:"phone,optional"` // 手机号
+		VerificationCode string `json:"verificationCode,optional"` // 验证码
+	}
+
+	LoginResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data LoginData `json:"data"`
+	}
+
+	LoginData {
+		Token string `json:"token"`
+		UserInfo UserInfo `json:"userInfo"`
+	}
+
+	UserInfo {
+		Id int64 `json:"id"`
+		Username string `json:"username"`
+		Nickname string `json:"nickname"`
+		Avatar string `json:"avatar"`
+		Phone string `json:"phone"`
+		Email string `json:"email,optional"`
+		Gender string `json:"gender,optional"`
+		Bio string `json:"bio,optional"`
+		Role string `json:"role"`
+		CreatedAt string `json:"createdAt"`
+		UpdatedAt string `json:"updatedAt"`
+	}
+
+	UserProfileResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UserProfile `json:"data"`
+	}
+
+	UserProfile {
+		Id int64 `json:"id"`
+		Username string `json:"username"`
+		Nickname string `json:"nickname"`
+		Avatar string `json:"avatar"`
+		Gender string `json:"gender,optional"`
+		Bio string `json:"bio,optional"`
+		ProductCount int `json:"productCount"` // 发布的商品数量
+		ArticleCount int `json:"articleCount"` // 发布的文章数量
+		FollowingCount int `json:"followingCount"` // 关注的用户数量
+		FollowerCount int `json:"followerCount"` // 粉丝数量
+		IsFollowing bool `json:"isFollowing"` // 当前用户是否已关注
+		CreatedAt string `json:"createdAt"`
+	}
+
+	RegisterReq {
+		Username string `json:"username"` // 用户名
+		Password string `json:"password"` // 密码
+		Phone string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+	}
+
+	RegisterResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data RegisterData `json:"data"`
+	}
+
+	RegisterData {
+		Id int64 `json:"id"`
+		Username string `json:"username"`
+	}
+
+	UpdateUserInfoReq {
+		Nickname string `json:"nickname,optional"` // 昵称
+		Avatar string `json:"avatar,optional"` // 头像
+		Gender string `json:"gender,optional"` // 性别
+		Bio string `json:"bio,optional"` // 简介
+	}
+
+	UpdateUserInfoResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UserInfo `json:"data"`
+	}
+
+	ChangePasswordReq {
+		OldPassword string `json:"oldPassword"` // 旧密码
+		NewPassword string `json:"newPassword"` // 新密码
+	}
+
+	ChangePasswordResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+
+	SendVerificationCodeReq {
+		Phone string `json:"phone"` // 手机号
+		Type string `json:"type,optional"` // 验证码类型：login/register/resetPassword
+	}
+
+	SendVerificationCodeResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+
+	VerifyCodeReq {
+		Phone string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+		Type string `json:"type"` // 验证类型
+	}
+
+	VerifyCodeResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data VerifyCodeData `json:"data"`
+	}
+
+	VerifyCodeData {
+		Valid bool `json:"valid"` // 是否有效
+	}
+
+	ResetPasswordReq {
+		Phone string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+		NewPassword string `json:"newPassword"` // 新密码
+	}
+
+	ResetPasswordResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+
+	FollowUserReq {
+		UserId int64 `path:"id"` // 要关注的用户ID
+	}
+
+	FollowUserResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+
+	NotificationResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data NotificationsData `json:"data"`
+	}
+
+	NotificationsData {
+		List []Notification `json:"list"`
+		Total int `json:"total"`
+	}
+
+	Notification {
+		Id int64 `json:"id"`
+		Type string `json:"type"` // 通知类型：system/follow/comment/like
+		Title string `json:"title"` // 通知标题
+		Content string `json:"content"` // 通知内容
+		SenderId int64 `json:"senderId,optional"` // 发送者ID
+		SenderName string `json:"senderName,optional"` // 发送者名称
+		SenderAvatar string `json:"senderAvatar,optional"` // 发送者头像
+		TargetId int64 `json:"targetId,optional"` // 目标ID
+		TargetType string `json:"targetType,optional"` // 目标类型：product/article/lostfound
+		IsRead bool `json:"isRead"` // 是否已读
+		CreatedAt string `json:"createdAt"`
+	}
+
+	MarkNotificationReq {
+		NotificationId int64 `path:"id"` // 通知ID
+	}
+
+	MarkNotificationResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+
+	UploadAvatarResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UploadAvatarData `json:"data"`
+	}
+
+	UploadAvatarData {
+		Url string `json:"url"` // 头像URL
+	}
+
+	CommonResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+)
+
+@server(
+	prefix: /api/user
+)
+service User {
+	@doc "用户登录"
+	@handler Login
+	post /login (LoginReq) returns (LoginResp)
+	
+	@doc "用户注册"
+	@handler Register
+	post /register (RegisterReq) returns (RegisterResp)
+	
+	@doc "发送验证码"
+	@handler SendVerificationCode
+	post /verification-code (SendVerificationCodeReq) returns (SendVerificationCodeResp)
+	
+	@doc "验证验证码"
+	@handler VerifyCode
+	post /verify-code (VerifyCodeReq) returns (VerifyCodeResp)
+	
+	@doc "重置密码"
+	@handler ResetPassword
+	post /reset-password (ResetPasswordReq) returns (ResetPasswordResp)
+}
+
+@server(
+	prefix: /api/user
+	jwt: Auth
+)
+service User {
+	@doc "获取当前用户信息"
+	@handler GetUserInfo
+	get /info returns (UserProfileResp)
+	
+	@doc "获取用户详细资料"
+	@handler GetUserProfile
+	get /profile/:id (int64) returns (UserProfileResp)
+	
+	@doc "更新用户信息"
+	@handler UpdateUserInfo
+	put /info (UpdateUserInfoReq) returns (UpdateUserInfoResp)
+	
+	@doc "修改密码"
+	@handler ChangePassword
+	put /password (ChangePasswordReq) returns (ChangePasswordResp)
+	
+	@doc "上传头像"
+	@handler UploadAvatar
+	post /avatar returns (UploadAvatarResp)
+	
+	@doc "退出登录"
+	@handler Logout
+	post /logout returns (CommonResp)
+	
+	@doc "关注用户"
+	@handler FollowUser
+	post /follow/:id (FollowUserReq) returns (FollowUserResp)
+	
+	@doc "取消关注用户"
+	@handler UnfollowUser
+	post /unfollow/:id (FollowUserReq) returns (FollowUserResp)
+	
+	@doc "获取用户通知"
+	@handler GetNotifications
+	get /notifications returns (NotificationResp)
+	
+	@doc "标记通知为已读"
+	@handler MarkNotificationAsRead
+	put /notifications/:id/read (MarkNotificationReq) returns (MarkNotificationResp)
+}

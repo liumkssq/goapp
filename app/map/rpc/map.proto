@@ -1,0 +1,264 @@
+syntax = "proto3";
+
+package map;
+
+option go_package = "./map";
+
+// 地图服务
+service MapService {
+  // 地址解析（地址转坐标）
+  rpc Geocode(GeocodeRequest) returns (GeocodeResponse);
+  
+  // 逆地址解析（坐标转地址）
+  rpc ReverseGeocode(ReverseGeocodeRequest) returns (ReverseGeocodeResponse);
+  
+  // 获取位置建议
+  rpc GetLocationSuggestions(LocationSuggestionsRequest) returns (LocationSuggestionsResponse);
+  
+  // 地点检索
+  rpc SearchPlaces(SearchPlacesRequest) returns (SearchPlacesResponse);
+  
+  // 周边检索
+  rpc SearchNearby(SearchNearbyRequest) returns (SearchNearbyResponse);
+  
+  // 获取周边POI信息
+  rpc GetNearbyPOI(GetNearbyPOIRequest) returns (SearchNearbyResponse);
+  
+  // 获取两点间距离
+  rpc GetDistance(GetDistanceRequest) returns (GetDistanceResponse);
+  
+  // 保存用户常用地址
+  rpc SaveUserAddress(SaveUserAddressRequest) returns (SaveUserAddressResponse);
+  
+  // 获取用户常用地址列表
+  rpc GetUserAddresses(GetUserAddressesRequest) returns (GetUserAddressesResponse);
+  
+  // 删除用户常用地址
+  rpc DeleteUserAddress(DeleteUserAddressRequest) returns (BaseResponse);
+}
+
+// 地址解析请求
+message GeocodeRequest {
+  string address = 1; // 地址
+  string city = 2; // 城市名
+}
+
+// 地址解析响应
+message GeocodeResponse {
+  int32 code = 1;
+  string message = 2;
+  GeocodeData data = 3;
+}
+
+// 地址解析数据
+message GeocodeData {
+  double lng = 1; // 经度
+  double lat = 2; // 纬度
+  int32 level = 3; // 精确度级别
+  string title = 4; // 地点名称
+  string address = 5; // 格式化地址
+}
+
+// 逆地址解析请求
+message ReverseGeocodeRequest {
+  double lng = 1; // 经度
+  double lat = 2; // 纬度
+}
+
+// 逆地址解析响应
+message ReverseGeocodeResponse {
+  int32 code = 1;
+  string message = 2;
+  ReverseGeocodeData data = 3;
+}
+
+// 逆地址解析数据
+message ReverseGeocodeData {
+  string address = 1; // 格式化地址
+  string province = 2; // 省
+  string city = 3; // 市
+  string district = 4; // 区县
+  string street = 5; // 街道
+  string street_number = 6; // 门牌号
+  string ad_code = 7; // 行政区划代码
+}
+
+// 位置建议请求
+message LocationSuggestionsRequest {
+  string keyword = 1; // 关键词
+  string region = 2; // 区域
+}
+
+// 位置建议响应
+message LocationSuggestionsResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated LocationSuggestion data = 3;
+}
+
+// 位置建议
+message LocationSuggestion {
+  string title = 1; // 地点名称
+  string address = 2; // 地址
+  string province = 3; // 省
+  string city = 4; // 市
+  string district = 5; // 区县
+  double lng = 6; // 经度
+  double lat = 7; // 纬度
+}
+
+// 地点检索请求
+message SearchPlacesRequest {
+  string keyword = 1; // 关键词
+  string region = 2; // 区域
+  int32 page = 3; // 页码
+  int32 page_size = 4; // 每页数量
+}
+
+// 地点检索响应
+message SearchPlacesResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchPlacesData data = 3;
+}
+
+// 地点检索数据
+message SearchPlacesData {
+  repeated Place list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// 地点
+message Place {
+  string id = 1; // 地点ID
+  string title = 2; // 地点名称
+  string address = 3; // 地址
+  string province = 4; // 省
+  string city = 5; // 市
+  string district = 6; // 区县
+  double lng = 7; // 经度
+  double lat = 8; // 纬度
+  string category = 9; // 地点类别
+  string phone_number = 10; // 电话
+  string postal_code = 11; // 邮编
+  int32 distance = 12; // 距离(m)
+}
+
+// 周边检索请求
+message SearchNearbyRequest {
+  double lng = 1; // 经度
+  double lat = 2; // 纬度
+  string keyword = 3; // 关键词
+  int32 radius = 4; // 半径(m)
+  int32 page = 5; // 页码
+  int32 page_size = 6; // 每页数量
+}
+
+// 周边检索响应
+message SearchNearbyResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchNearbyData data = 3;
+}
+
+// 周边检索数据
+message SearchNearbyData {
+  repeated Place list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// 获取周边POI信息请求
+message GetNearbyPOIRequest {
+  double lat = 1; // 纬度
+  double lng = 2; // 经度
+  int32 radius = 3; // 半径(m)
+  string keyword = 4; // 关键词
+  string type = 5; // POI类型
+}
+
+// 获取两点间距离请求
+message GetDistanceRequest {
+  double from_lat = 1; // 起点纬度
+  double from_lng = 2; // 起点经度
+  double to_lat = 3; // 终点纬度
+  double to_lng = 4; // 终点经度
+}
+
+// 获取两点间距离响应
+message GetDistanceResponse {
+  int32 code = 1;
+  string message = 2;
+  GetDistanceData data = 3;
+}
+
+// 获取两点间距离数据
+message GetDistanceData {
+  int32 distance = 1; // 距离(m)
+  int32 duration = 2; // 时间(s)
+}
+
+// 用户地址
+message UserAddress {
+  int64 id = 1;
+  int64 user_id = 2; // 用户ID
+  string title = 3; // 地址名称
+  string address = 4; // 地址
+  double lng = 5; // 经度
+  double lat = 6; // 纬度
+  string province = 7; // 省
+  string city = 8; // 市
+  string district = 9; // 区县
+  string street = 10; // 街道
+  string detail_address = 11; // 详细地址
+  bool is_default = 12; // 是否默认地址
+  string created_at = 13; // 创建时间
+  string updated_at = 14; // 更新时间
+}
+
+// 保存用户地址请求
+message SaveUserAddressRequest {
+  string title = 1; // 地址名称
+  string address = 2; // 地址
+  double lng = 3; // 经度
+  double lat = 4; // 纬度
+  string province = 5; // 省
+  string city = 6; // 市
+  string district = 7; // 区县
+  string street = 8; // 街道
+  string detail_address = 9; // 详细地址
+  bool is_default = 10; // 是否默认地址
+}
+
+// 保存用户地址响应
+message SaveUserAddressResponse {
+  int32 code = 1;
+  string message = 2;
+  UserAddress data = 3;
+}
+
+// 获取用户地址列表请求
+message GetUserAddressesRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取用户地址列表响应
+message GetUserAddressesResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated UserAddress data = 3;
+}
+
+// 删除用户地址请求
+message DeleteUserAddressRequest {
+  int64 address_id = 1; // 地址ID
+}
+
+// 基础响应
+message BaseResponse {
+  int32 code = 1;
+  string message = 2;
+}

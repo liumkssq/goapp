@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package upload;
+
+option go_package = "./upload";
+
+// 上传服务
+service UploadService {
+  // 上传单个图片
+  rpc UploadImage(UploadImageRequest) returns (UploadFileResponse);
+  
+  // 上传多个图片
+  rpc UploadImages(UploadImagesRequest) returns (UploadFilesResponse);
+  
+  // 上传文件
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+  
+  // 上传头像
+  rpc UploadAvatar(UploadAvatarRequest) returns (UploadFileResponse);
+  
+  // 通过URL上传图片
+  rpc UploadImageByUrl(UploadImageByUrlRequest) returns (UploadFileResponse);
+}
+
+// 上传单个图片请求
+message UploadImageRequest {
+  bytes file = 1; // 图片数据
+  string filename = 2; // 文件名
+}
+
+// 上传多个图片请求
+message UploadImagesRequest {
+  repeated UploadImageRequest files = 1; // 图片列表
+}
+
+// 上传文件请求
+message UploadFileRequest {
+  bytes file = 1; // 文件数据
+  string filename = 2; // 文件名
+}
+
+// 上传头像请求
+message UploadAvatarRequest {
+  bytes file = 1; // 头像数据
+  string filename = 2; // 文件名
+}
+
+// 通过URL上传图片请求
+message UploadImageByUrlRequest {
+  string url = 1; // 图片URL
+}
+
+// 上传文件响应
+message UploadFileResponse {
+  int32 code = 1;
+  string message = 2;
+  UploadFileData data = 3;
+}
+
+// 上传文件数据
+message UploadFileData {
+  string url = 1; // 文件URL
+  string name = 2; // 文件名
+  int64 size = 3; // 文件大小
+  string type = 4; // 文件类型
+}
+
+// 上传多文件响应
+message UploadFilesResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated UploadFileData data = 3;
+}

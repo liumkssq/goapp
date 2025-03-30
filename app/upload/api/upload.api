@@ -1,0 +1,70 @@
+syntax = "v1"
+
+info (
+	title: "上传服务"
+	desc: "校园二手交易平台上传服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 上传文件响应
+	UploadFileResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UploadFileData `json:"data"`
+	}
+
+	UploadFileData {
+		Url string `json:"url"` // 文件URL
+		Name string `json:"name"` // 文件名
+		Size int64 `json:"size"` // 文件大小
+		Type string `json:"type"` // 文件类型
+	}
+
+	// 上传多文件响应
+	UploadFilesResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data []UploadFileData `json:"data"`
+	}
+
+	// 通过URL上传图片请求
+	UploadImageByUrlReq {
+		Url string `json:"url"` // 图片URL
+	}
+
+	// 通过URL上传图片响应
+	UploadImageByUrlResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UploadFileData `json:"data"`
+	}
+)
+
+@server(
+	prefix: /api/upload
+	jwt: Auth
+	middleware: UploadLimit
+)
+service Upload {
+	@doc "上传单个图片"
+	@handler UploadImage
+	post /image returns (UploadFileResp)
+	
+	@doc "上传多个图片"
+	@handler UploadImages
+	post /images returns (UploadFilesResp)
+	
+	@doc "上传文件"
+	@handler UploadFile
+	post /file returns (UploadFileResp)
+	
+	@doc "上传头像"
+	@handler UploadAvatar
+	post /avatar returns (UploadFileResp)
+	
+	@doc "通过URL上传图片"
+	@handler UploadImageByUrl
+	post /url (UploadImageByUrlReq) returns (UploadImageByUrlResp)
+}

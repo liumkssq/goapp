@@ -1,0 +1,219 @@
+syntax = "v1"
+
+info (
+	title: "商品服务"
+	desc: "校园二手交易平台商品服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 商品列表请求
+	ProductListReq {
+		Page int `form:"page,optional,default=1"` // 页码
+		Limit int `form:"limit,optional,default=10"` // 每页数量
+		Category string `form:"category,optional"` // 商品分类
+		Keyword string `form:"keyword,optional"` // 搜索关键词
+		Sort string `form:"sort,optional,default=latest"` // 排序方式(latest/price-asc/price-desc/hot)
+		MinPrice float64 `form:"minPrice,optional"` // 最低价格
+		MaxPrice float64 `form:"maxPrice,optional"` // 最高价格
+		Status string `form:"status,optional"` // 商品状态(on_sale/sold/all)
+	}
+
+	// 商品列表响应
+	ProductListResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data ProductListData `json:"data"`
+	}
+
+	ProductListData {
+		List []Product `json:"list"`
+		Total int `json:"total"`
+		Page int `json:"page"`
+		Limit int `json:"limit"`
+	}
+
+	// 商品详情
+	Product {
+		Id int64 `json:"id"`
+		Title string `json:"title"` // 标题
+		Description string `json:"description"` // 描述
+		Category string `json:"category"` // 分类
+		Price float64 `json:"price"` // 价格
+		OriginPrice float64 `json:"originPrice,optional"` // 原价
+		Images []string `json:"images"` // 图片URL列表
+		Status string `json:"status"` // 状态(on_sale/sold/deleted)
+		Condition string `json:"condition,optional"` // 商品成色(全新/9成新/8成新/7成新/6成新/5成新及以下)
+		UserId int64 `json:"userId"` // 发布者ID
+		Username string `json:"username"` // 发布者用户名
+		Nickname string `json:"nickname"` // 发布者昵称
+		Avatar string `json:"avatar"` // 发布者头像
+		Tags []string `json:"tags,optional"` // 标签
+		Location string `json:"location,optional"` // 交易地点
+		ViewCount int `json:"viewCount"` // 查看次数
+		FavoriteCount int `json:"favoriteCount"` // 收藏次数
+		IsFavorite bool `json:"isFavorite"` // 当前用户是否收藏
+		CreatedAt string `json:"createdAt"` // 发布时间
+		UpdatedAt string `json:"updatedAt"` // 更新时间
+	}
+
+	// 商品详情请求
+	ProductDetailReq {
+		Id int64 `path:"id"` // 商品ID
+	}
+
+	// 商品详情响应
+	ProductDetailResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data Product `json:"data"`
+	}
+
+	// 商品分类
+	Category {
+		Id int64 `json:"id"`
+		Name string `json:"name"` // 分类名称
+		Icon string `json:"icon,optional"` // 分类图标
+		Sort int `json:"sort"` // 排序
+	}
+
+	// 商品分类响应
+	ProductCategoriesResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data []Category `json:"data"`
+	}
+
+	// 发布商品请求
+	PublishProductReq {
+		Title string `json:"title"` // 标题
+		Description string `json:"description"` // 描述
+		Category string `json:"category"` // 分类
+		Price float64 `json:"price"` // 价格
+		OriginPrice float64 `json:"originPrice,optional"` // 原价
+		Images []string `json:"images"` // 图片URL列表
+		Condition string `json:"condition,optional"` // 商品成色
+		Tags []string `json:"tags,optional"` // 标签
+		Location string `json:"location,optional"` // 交易地点
+	}
+
+	// 发布商品响应
+	PublishProductResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data Product `json:"data"`
+	}
+
+	// 更新商品请求
+	UpdateProductReq {
+		Id int64 `path:"id"` // 商品ID
+		Title string `json:"title,optional"` // 标题
+		Description string `json:"description,optional"` // 描述
+		Category string `json:"category,optional"` // 分类
+		Price float64 `json:"price,optional"` // 价格
+		OriginPrice float64 `json:"originPrice,optional"` // 原价
+		Images []string `json:"images,optional"` // 图片URL列表
+		Status string `json:"status,optional"` // 状态(on_sale/sold)
+		Condition string `json:"condition,optional"` // 商品成色
+		Tags []string `json:"tags,optional"` // 标签
+		Location string `json:"location,optional"` // 交易地点
+	}
+
+	// 更新商品响应
+	UpdateProductResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data Product `json:"data"`
+	}
+
+	// 删除商品请求
+	DeleteProductReq {
+		Id int64 `path:"id"` // 商品ID
+	}
+
+	// 获取用户发布的商品请求
+	UserProductsReq {
+		UserId int64 `path:"userId"` // 用户ID
+		Page int `form:"page,optional,default=1"` // 页码
+		Limit int `form:"limit,optional,default=10"` // 每页数量
+		Status string `form:"status,optional"` // 商品状态(on_sale/sold/all)
+	}
+
+	// 收藏/取消收藏商品请求
+	FavoriteProductReq {
+		Id int64 `path:"id"` // 商品ID
+		Favorite bool `json:"favorite"` // 是否收藏
+	}
+
+	// 获取收藏的商品请求
+	FavoriteProductsReq {
+		Page int `form:"page,optional,default=1"` // 页码
+		Limit int `form:"limit,optional,default=10"` // 每页数量
+	}
+
+	// 举报商品请求
+	ReportProductReq {
+		Id int64 `path:"id"` // 商品ID
+		Reason string `json:"reason"` // 举报原因
+		Description string `json:"description,optional"` // 详细描述
+		Images []string `json:"images,optional"` // 图片URL列表
+	}
+
+	// 基础响应
+	BaseResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+)
+
+@server(
+	prefix: /api/product
+)
+service Product {
+	@doc "获取商品列表"
+	@handler GetProductList
+	get /list (ProductListReq) returns (ProductListResp)
+	
+	@doc "获取商品详情"
+	@handler GetProductDetail
+	get /detail/:id (ProductDetailReq) returns (ProductDetailResp)
+	
+	@doc "获取商品分类"
+	@handler GetProductCategories
+	get /categories returns (ProductCategoriesResp)
+	
+	@doc "获取用户发布的商品列表"
+	@handler GetUserProducts
+	get /user/:userId (UserProductsReq) returns (ProductListResp)
+}
+
+@server(
+	prefix: /api/product
+	jwt: Auth
+)
+service Product {
+	@doc "发布商品"
+	@handler PublishProduct
+	post /publish (PublishProductReq) returns (PublishProductResp)
+	
+	@doc "更新商品"
+	@handler UpdateProduct
+	put /update/:id (UpdateProductReq) returns (UpdateProductResp)
+	
+	@doc "删除商品"
+	@handler DeleteProduct
+	delete /delete/:id (DeleteProductReq) returns (BaseResp)
+	
+	@doc "收藏/取消收藏商品"
+	@handler FavoriteProduct
+	post /favorite/:id (FavoriteProductReq) returns (BaseResp)
+	
+	@doc "获取收藏的商品列表"
+	@handler GetFavoriteProducts
+	get /favorites (FavoriteProductsReq) returns (ProductListResp)
+	
+	@doc "举报商品"
+	@handler ReportProduct
+	post /report/:id (ReportProductReq) returns (BaseResp)
+}

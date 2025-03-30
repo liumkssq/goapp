@@ -1,0 +1,276 @@
+syntax = "v1"
+
+info (
+	title: "地图服务"
+	desc: "校园二手交易平台地图服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 地址解析（地址转坐标）请求
+	GeocodeReq {
+		Address string `form:"address"` // 地址
+		City string `form:"city,optional"` // 城市名
+	}
+
+	// 地址解析响应
+	GeocodeResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data GeocodeData `json:"data"`
+	}
+
+	GeocodeData {
+		Lng float64 `json:"lng"` // 经度
+		Lat float64 `json:"lat"` // 纬度
+		Level int `json:"level"` // 精确度级别
+		Title string `json:"title"` // 地点名称
+		Address string `json:"address"` // 格式化地址
+	}
+
+	// 逆地址解析（坐标转地址）请求
+	ReverseGeocodeReq {
+		Lng float64 `form:"lng"` // 经度
+		Lat float64 `form:"lat"` // 纬度
+	}
+
+	// 逆地址解析响应
+	ReverseGeocodeResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data ReverseGeocodeData `json:"data"`
+	}
+
+	ReverseGeocodeData {
+		Address string `json:"address"` // 格式化地址
+		Province string `json:"province"` // 省
+		City string `json:"city"` // 市
+		District string `json:"district"` // 区县
+		Street string `json:"street"` // 街道
+		StreetNumber string `json:"streetNumber"` // 门牌号
+		AdCode string `json:"adCode"` // 行政区划代码
+	}
+
+	// 地点建议请求
+	LocationSuggestionsReq {
+		Keyword string `form:"keyword"` // 关键词
+		Region string `form:"region,optional,default=全国"` // 区域
+	}
+
+	// 地点建议响应
+	LocationSuggestionsResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data []LocationSuggestion `json:"data"`
+	}
+
+	LocationSuggestion {
+		Title string `json:"title"` // 地点名称
+		Address string `json:"address"` // 地址
+		Province string `json:"province"` // 省
+		City string `json:"city"` // 市
+		District string `json:"district"` // 区县
+		Lng float64 `json:"lng"` // 经度
+		Lat float64 `json:"lat"` // 纬度
+	}
+
+	// 地点检索请求
+	SearchPlacesReq {
+		Keyword string `form:"keyword"` // 关键词
+		Region string `form:"region,optional,default=全国"` // 区域
+		Page int `form:"page,optional,default=1"` // 页码
+		PageSize int `form:"pageSize,optional,default=10"` // 每页数量
+	}
+
+	// 地点检索响应
+	SearchPlacesResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data SearchPlacesData `json:"data"`
+	}
+
+	SearchPlacesData {
+		List []Place `json:"list"`
+		Total int `json:"total"`
+		Page int `json:"page"`
+		PageSize int `json:"pageSize"`
+	}
+
+	// 地点
+	Place {
+		Id string `json:"id"` // 地点ID
+		Title string `json:"title"` // 地点名称
+		Address string `json:"address"` // 地址
+		Province string `json:"province"` // 省
+		City string `json:"city"` // 市
+		District string `json:"district"` // 区县
+		Lng float64 `json:"lng"` // 经度
+		Lat float64 `json:"lat"` // 纬度
+		Category string `json:"category,optional"` // 地点类别
+		PhoneNumber string `json:"phoneNumber,optional"` // 电话
+		PostalCode string `json:"postalCode,optional"` // 邮编
+		Distance int `json:"distance,optional"` // 距离(m)
+	}
+
+	// 周边检索请求
+	SearchNearbyReq {
+		Lng float64 `form:"lng"` // 经度
+		Lat float64 `form:"lat"` // 纬度
+		Keyword string `form:"keyword,optional"` // 关键词
+		Radius int `form:"radius,optional,default=1000"` // 半径(m)
+		Page int `form:"page,optional,default=1"` // 页码
+		PageSize int `form:"pageSize,optional,default=10"` // 每页数量
+	}
+
+	// 周边检索响应
+	SearchNearbyResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data SearchNearbyData `json:"data"`
+	}
+
+	SearchNearbyData {
+		List []Place `json:"list"`
+		Total int `json:"total"`
+		Page int `json:"page"`
+		PageSize int `json:"pageSize"`
+	}
+
+	// 获取周边POI信息请求
+	GetNearbyPOIReq {
+		Lat float64 `form:"lat"` // 纬度
+		Lng float64 `form:"lng"` // 经度
+		Radius int `form:"radius,optional,default=1000"` // 半径(m)
+		Keyword string `form:"keyword,optional"` // 关键词
+		Type string `form:"type,optional"` // POI类型
+	}
+
+	// 获取两点间距离请求
+	GetDistanceReq {
+		FromLat float64 `form:"fromLat"` // 起点纬度
+		FromLng float64 `form:"fromLng"` // 起点经度
+		ToLat float64 `form:"toLat"` // 终点纬度
+		ToLng float64 `form:"toLng"` // 终点经度
+	}
+
+	// 获取两点间距离响应
+	GetDistanceResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data GetDistanceData `json:"data"`
+	}
+
+	GetDistanceData {
+		Distance int `json:"distance"` // 距离(m)
+		Duration int `json:"duration"` // 时间(s)
+	}
+
+	// 用户地址
+	UserAddress {
+		Id int64 `json:"id"`
+		UserId int64 `json:"userId"` // 用户ID
+		Title string `json:"title"` // 地址名称
+		Address string `json:"address"` // 地址
+		Lng float64 `json:"lng"` // 经度
+		Lat float64 `json:"lat"` // 纬度
+		Province string `json:"province"` // 省
+		City string `json:"city"` // 市
+		District string `json:"district"` // 区县
+		Street string `json:"street"` // 街道
+		DetailAddress string `json:"detailAddress"` // 详细地址
+		IsDefault bool `json:"isDefault"` // 是否默认地址
+		CreatedAt string `json:"createdAt"` // 创建时间
+		UpdatedAt string `json:"updatedAt"` // 更新时间
+	}
+
+	// 保存用户地址请求
+	SaveUserAddressReq {
+		Title string `json:"title"` // 地址名称
+		Address string `json:"address"` // 地址
+		Lng float64 `json:"lng"` // 经度
+		Lat float64 `json:"lat"` // 纬度
+		Province string `json:"province"` // 省
+		City string `json:"city"` // 市
+		District string `json:"district"` // 区县
+		Street string `json:"street"` // 街道
+		DetailAddress string `json:"detailAddress"` // 详细地址
+		IsDefault bool `json:"isDefault,optional"` // 是否默认地址
+	}
+
+	// 保存用户地址响应
+	SaveUserAddressResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UserAddress `json:"data"`
+	}
+
+	// 获取用户地址列表响应
+	GetUserAddressesResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data []UserAddress `json:"data"`
+	}
+
+	// 删除用户地址请求
+	DeleteUserAddressReq {
+		AddressId int64 `path:"addressId"` // 地址ID
+	}
+
+	// 基础响应
+	BaseResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+)
+
+@server(
+	prefix: /api/map
+)
+service Map {
+	@doc "地址解析（地址转坐标）"
+	@handler Geocode
+	get /geocode (GeocodeReq) returns (GeocodeResp)
+	
+	@doc "逆地址解析（坐标转地址）"
+	@handler ReverseGeocode
+	get /reverse-geocode (ReverseGeocodeReq) returns (ReverseGeocodeResp)
+	
+	@doc "获取位置建议"
+	@handler GetLocationSuggestions
+	get /suggestions (LocationSuggestionsReq) returns (LocationSuggestionsResp)
+	
+	@doc "地点检索"
+	@handler SearchPlaces
+	get /search (SearchPlacesReq) returns (SearchPlacesResp)
+	
+	@doc "周边检索"
+	@handler SearchNearby
+	get /nearby (SearchNearbyReq) returns (SearchNearbyResp)
+	
+	@doc "获取周边POI信息"
+	@handler GetNearbyPOI
+	get /nearby-poi (GetNearbyPOIReq) returns (SearchNearbyResp)
+	
+	@doc "获取两点间距离"
+	@handler GetDistance
+	get /distance (GetDistanceReq) returns (GetDistanceResp)
+}
+
+@server(
+	prefix: /api/map
+	jwt: Auth
+)
+service Map {
+	@doc "保存用户常用地址"
+	@handler SaveUserAddress
+	post /save-address (SaveUserAddressReq) returns (SaveUserAddressResp)
+	
+	@doc "获取用户常用地址列表"
+	@handler GetUserAddresses
+	get /user-addresses returns (GetUserAddressesResp)
+	
+	@doc "删除用户常用地址"
+	@handler DeleteUserAddress
+	delete /address/:addressId (DeleteUserAddressReq) returns (BaseResp)
+}

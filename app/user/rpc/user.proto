@@ -1,0 +1,312 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./user";
+
+// 用户服务
+service UserService {
+  // 用户登录
+  rpc Login(LoginRequest) returns (LoginResponse);
+  
+  // 用户注册
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  
+  // 获取用户信息
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  
+  // 获取用户详细资料
+  rpc GetUserProfile(GetUserProfileRequest) returns (GetUserProfileResponse);
+  
+  // 更新用户信息
+  rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+  
+  // 修改密码
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  
+  // 发送验证码
+  rpc SendVerificationCode(SendVerificationCodeRequest) returns (SendVerificationCodeResponse);
+  
+  // 验证验证码
+  rpc VerifyCode(VerifyCodeRequest) returns (VerifyCodeResponse);
+  
+  // 重置密码
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+  
+  // 关注用户
+  rpc FollowUser(FollowUserRequest) returns (FollowUserResponse);
+  
+  // 取消关注用户
+  rpc UnfollowUser(UnfollowUserRequest) returns (UnfollowUserResponse);
+  
+  // 获取用户通知
+  rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
+  
+  // 标记通知为已读
+  rpc MarkNotificationAsRead(MarkNotificationAsReadRequest) returns (MarkNotificationAsReadResponse);
+  
+  // 退出登录
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+
+// 登录请求
+message LoginRequest {
+  string username = 1; // 用户名/手机号/邮箱
+  string password = 2; // 密码
+  string phone = 3; // 手机号
+  string verification_code = 4; // 验证码
+}
+
+// 登录响应
+message LoginResponse {
+  int32 code = 1;
+  string message = 2;
+  LoginData data = 3;
+}
+
+// 登录数据
+message LoginData {
+  string token = 1;
+  UserInfo user_info = 2;
+}
+
+// 用户信息
+message UserInfo {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+  string phone = 5;
+  string email = 6;
+  string gender = 7;
+  string bio = 8;
+  string role = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+// 获取用户信息请求
+message GetUserInfoRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取用户信息响应
+message GetUserInfoResponse {
+  int32 code = 1;
+  string message = 2;
+  UserInfo data = 3;
+}
+
+// 获取用户详细资料请求
+message GetUserProfileRequest {
+  int64 id = 1;
+}
+
+// 获取用户详细资料响应
+message GetUserProfileResponse {
+  int32 code = 1;
+  string message = 2;
+  UserProfile data = 3;
+}
+
+// 用户详细资料
+message UserProfile {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+  string gender = 5;
+  string bio = 6;
+  int32 product_count = 7; // 发布的商品数量
+  int32 article_count = 8; // 发布的文章数量
+  int32 following_count = 9; // 关注的用户数量
+  int32 follower_count = 10; // 粉丝数量
+  bool is_following = 11; // 当前用户是否已关注
+  string created_at = 12;
+}
+
+// 注册请求
+message RegisterRequest {
+  string username = 1;
+  string password = 2;
+  string phone = 3;
+  string verification_code = 4;
+}
+
+// 注册响应
+message RegisterResponse {
+  int32 code = 1;
+  string message = 2;
+  RegisterData data = 3;
+}
+
+// 注册数据
+message RegisterData {
+  int64 id = 1;
+  string username = 2;
+}
+
+// 更新用户信息请求
+message UpdateUserInfoRequest {
+  string nickname = 1;
+  string avatar = 2;
+  string gender = 3;
+  string bio = 4;
+}
+
+// 更新用户信息响应
+message UpdateUserInfoResponse {
+  int32 code = 1;
+  string message = 2;
+  UserInfo data = 3;
+}
+
+// 修改密码请求
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+
+// 修改密码响应
+message ChangePasswordResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 发送验证码请求
+message SendVerificationCodeRequest {
+  string phone = 1;
+  string type = 2; // 验证码类型：login/register/resetPassword
+}
+
+// 发送验证码响应
+message SendVerificationCodeResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 验证验证码请求
+message VerifyCodeRequest {
+  string phone = 1;
+  string verification_code = 2;
+  string type = 3;
+}
+
+// 验证验证码响应
+message VerifyCodeResponse {
+  int32 code = 1;
+  string message = 2;
+  VerifyCodeData data = 3;
+}
+
+// 验证码验证数据
+message VerifyCodeData {
+  bool valid = 1;
+}
+
+// 重置密码请求
+message ResetPasswordRequest {
+  string phone = 1;
+  string verification_code = 2;
+  string new_password = 3;
+}
+
+// 重置密码响应
+message ResetPasswordResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 关注用户请求
+message FollowUserRequest {
+  int64 user_id = 1;
+}
+
+// 关注用户响应
+message FollowUserResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 取消关注用户请求
+message UnfollowUserRequest {
+  int64 user_id = 1;
+}
+
+// 取消关注用户响应
+message UnfollowUserResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 获取用户通知请求
+message GetNotificationsRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取用户通知响应
+message GetNotificationsResponse {
+  int32 code = 1;
+  string message = 2;
+  NotificationsData data = 3;
+}
+
+// 通知数据
+message NotificationsData {
+  repeated Notification list = 1;
+  int32 total = 2;
+}
+
+// 通知
+message Notification {
+  int64 id = 1;
+  string type = 2; // 通知类型：system/follow/comment/like
+  string title = 3; // 通知标题
+  string content = 4; // 通知内容
+  int64 sender_id = 5; // 发送者ID
+  string sender_name = 6; // 发送者名称
+  string sender_avatar = 7; // 发送者头像
+  int64 target_id = 8; // 目标ID
+  string target_type = 9; // 目标类型：product/article/lostfound
+  bool is_read = 10; // 是否已读
+  string created_at = 11;
+}
+
+// 标记通知为已读请求
+message MarkNotificationAsReadRequest {
+  int64 notification_id = 1;
+}
+
+// 标记通知为已读响应
+message MarkNotificationAsReadResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 上传头像请求
+message UploadAvatarRequest {
+  bytes file = 1;
+}
+
+// 上传头像响应
+message UploadAvatarResponse {
+  int32 code = 1;
+  string message = 2;
+  UploadAvatarData data = 3;
+}
+
+// 上传头像数据
+message UploadAvatarData {
+  string url = 1;
+}
+
+// 退出登录请求
+message LogoutRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 退出登录响应
+message LogoutResponse {
+  int32 code = 1;
+  string message = 2;
+}

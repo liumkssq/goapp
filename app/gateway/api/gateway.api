@@ -1,0 +1,36 @@
+syntax = "v1"
+
+info (
+	title: "API网关"
+	desc: "校园二手交易平台API网关"
+	author: "开发团队"
+	version: "1.0"
+)
+
+import (
+	"user/user.api"
+	"im/im.api"
+	"im/websocket.api"
+	"lostfound/lostfound.api"
+	"product/product.api"
+	"article/article.api"
+	"search/search.api"
+	"ai/ai.api"
+	"map/map.api"
+	"upload/upload.api"
+)
+
+@server(
+	prefix: /api
+	middleware: Cors, Tracing, Metrics, Logging, Limiting, Recovery
+)
+service Gateway {
+	@doc "健康检查接口"
+	@handler Health
+	get /health returns (HealthResp)
+}
+
+type HealthResp {
+	Status string `json:"status"`
+	Time   string `json:"time"`
+}

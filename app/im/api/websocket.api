@@ -1,0 +1,114 @@
+syntax = "v1"
+
+info (
+	title: "WebSocket服务"
+	desc: "校园二手交易平台WebSocket服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// WebSocket连接请求
+	WsConnectReq {
+		Token string `form:"token"` // 用户认证令牌
+	}
+
+	// WebSocket消息结构
+	WsMessage {
+		Type string `json:"type"` // 消息类型
+		Data interface{} `json:"data"` // 消息数据
+	}
+
+	// 聊天消息
+	ChatMessage {
+		Id string `json:"id"`
+		ConversationId string `json:"conversationId"` // 会话ID
+		SenderId int64 `json:"senderId"` // 发送者ID
+		SenderName string `json:"senderName"` // 发送者名称
+		SenderAvatar string `json:"senderAvatar"` // 发送者头像
+		Content string `json:"content"` // 消息内容
+		Type int `json:"type"` // 消息类型
+		Status string `json:"status"` // 消息状态
+		Extra map[string]string `json:"extra,optional"` // 额外信息
+		CreatedAt string `json:"createdAt"`
+	}
+
+	// 用户状态更新
+	UserStatusUpdate {
+		UserId int64 `json:"userId"` // 用户ID
+		Status string `json:"status"` // 状态
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 正在输入状态
+	TypingStatus {
+		ConversationId string `json:"conversationId"` // 会话ID
+		UserId int64 `json:"userId"` // 用户ID
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 消息回执
+	MessageReceipt {
+		MessageId string `json:"messageId"` // 消息ID
+		ConversationId string `json:"conversationId"` // 会话ID
+		Status string `json:"status"` // 状态：delivered/read
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 消息撤回
+	MessageRevoke {
+		MessageId string `json:"messageId"` // 消息ID
+		ConversationId string `json:"conversationId"` // 会话ID
+		OperatorId int64 `json:"operatorId"` // 操作者ID
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 会话更新
+	ConversationUpdate {
+		Conversation string `json:"conversation"` // 会话信息
+		Action string `json:"action"` // 操作：create/update/delete
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 好友状态更新
+	FriendUpdate {
+		FriendId int64 `json:"friendId"` // 好友ID
+		Action string `json:"action"` // 操作：add/delete/update
+		Data interface{} `json:"data,optional"` // 更新数据
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 群组更新
+	GroupUpdate {
+		GroupId int64 `json:"groupId"` // 群组ID
+		Action string `json:"action"` // 操作：create/update/delete/join/leave
+		Data interface{} `json:"data,optional"` // 更新数据
+		Timestamp int64 `json:"timestamp"` // 时间戳
+	}
+
+	// 系统通知
+	SystemNotification {
+		Id string `json:"id"`
+		Type string `json:"type"` // 通知类型
+		Title string `json:"title"` // 通知标题
+		Content string `json:"content"` // 通知内容
+		TargetId int64 `json:"targetId,optional"` // 目标ID
+		TargetType string `json:"targetType,optional"` // 目标类型
+		CreatedAt string `json:"createdAt"`
+	}
+
+	// 错误消息
+	ErrorMessage {
+		Code int `json:"code"` // 错误码
+		Message string `json:"message"` // 错误信息
+	}
+)
+
+@server(
+	prefix: /ws
+)
+service WebSocket {
+	@doc "WebSocket连接"
+	@handler Connect
+	get /im (WsConnectReq)
+}

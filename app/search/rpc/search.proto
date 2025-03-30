@@ -1,0 +1,280 @@
+syntax = "proto3";
+
+package search;
+
+option go_package = "./search";
+
+// 搜索服务
+service SearchService {
+  // 全局搜索
+  rpc GlobalSearch(GlobalSearchRequest) returns (GlobalSearchResponse);
+  
+  // 搜索商品
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  
+  // 搜索文章
+  rpc SearchArticles(SearchArticlesRequest) returns (SearchArticlesResponse);
+  
+  // 搜索失物招领
+  rpc SearchLostFound(SearchLostFoundRequest) returns (SearchLostFoundResponse);
+  
+  // 搜索用户
+  rpc SearchUsers(SearchUsersRequest) returns (SearchUsersResponse);
+  
+  // 获取搜索历史
+  rpc GetSearchHistory(GetSearchHistoryRequest) returns (GetSearchHistoryResponse);
+  
+  // 清除搜索历史
+  rpc ClearSearchHistory(ClearSearchHistoryRequest) returns (BaseResponse);
+  
+  // 获取热门搜索关键词
+  rpc GetHotSearchKeywords(GetHotSearchKeywordsRequest) returns (GetHotSearchKeywordsResponse);
+}
+
+// 全局搜索请求
+message GlobalSearchRequest {
+  string keyword = 1; // 搜索关键词
+  string type = 2; // 搜索类型，可选：all, product, article, lostfound, user
+  int32 page = 3; // 页码
+  int32 limit = 4; // 每页数量
+}
+
+// 搜索结果项
+message SearchItem {
+  int64 id = 1;
+  string type = 2; // 类型：product/article/lostfound/user
+  string title = 3; // 标题/用户名称
+  string summary = 4; // 摘要/描述
+  string cover_image = 5; // 封面图片/头像
+  int64 user_id = 6; // 发布者ID/用户ID
+  string username = 7; // 发布者用户名/用户名
+  string avatar = 8; // 发布者头像/用户头像
+  double price = 9; // 商品价格
+  string created_at = 10; // 发布时间
+  string updated_at = 11; // 更新时间
+}
+
+// 全局搜索响应
+message GlobalSearchResponse {
+  int32 code = 1;
+  string message = 2;
+  GlobalSearchData data = 3;
+}
+
+// 全局搜索数据
+message GlobalSearchData {
+  repeated SearchItem list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 搜索商品请求
+message SearchProductsRequest {
+  string keyword = 1; // 搜索关键词
+  string category = 2; // 分类
+  string sort = 3; // 排序方式
+  int32 page = 4; // 页码
+  int32 limit = 5; // 每页数量
+  double min_price = 6; // 最低价格
+  double max_price = 7; // 最高价格
+  string status = 8; // 状态
+}
+
+// 搜索商品响应
+message SearchProductsResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchProductsData data = 3;
+}
+
+// 搜索商品数据
+message SearchProductsData {
+  repeated ProductSearchItem list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 商品搜索项
+message ProductSearchItem {
+  int64 id = 1;
+  string title = 2; // 标题
+  string description = 3; // 描述
+  double price = 4; // 价格
+  double origin_price = 5; // 原价
+  string category = 6; // 分类
+  repeated string images = 7; // 图片URL列表
+  string status = 8; // 状态
+  string condition = 9; // 商品成色
+  int64 user_id = 10; // 发布者ID
+  string username = 11; // 发布者用户名
+  string nickname = 12; // 发布者昵称
+  string avatar = 13; // 发布者头像
+  string created_at = 14; // 发布时间
+}
+
+// 搜索文章请求
+message SearchArticlesRequest {
+  string keyword = 1; // 搜索关键词
+  string category = 2; // 分类
+  string sort = 3; // 排序方式
+  int32 page = 4; // 页码
+  int32 limit = 5; // 每页数量
+}
+
+// 搜索文章响应
+message SearchArticlesResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchArticlesData data = 3;
+}
+
+// 搜索文章数据
+message SearchArticlesData {
+  repeated ArticleSearchItem list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 文章搜索项
+message ArticleSearchItem {
+  int64 id = 1;
+  string title = 2; // 标题
+  string summary = 3; // 摘要
+  string category = 4; // 分类
+  string cover_image = 5; // 封面图片
+  int64 user_id = 6; // 作者ID
+  string username = 7; // 作者用户名
+  string nickname = 8; // 作者昵称
+  string avatar = 9; // 作者头像
+  int32 view_count = 10; // 查看次数
+  int32 like_count = 11; // 点赞次数
+  int32 comment_count = 12; // 评论次数
+  string created_at = 13; // 发布时间
+}
+
+// 搜索失物招领请求
+message SearchLostFoundRequest {
+  string keyword = 1; // 搜索关键词
+  string type = 2; // 类型：lost, found
+  string sort = 3; // 排序方式
+  int32 page = 4; // 页码
+  int32 limit = 5; // 每页数量
+}
+
+// 搜索失物招领响应
+message SearchLostFoundResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchLostFoundData data = 3;
+}
+
+// 搜索失物招领数据
+message SearchLostFoundData {
+  repeated LostFoundSearchItem list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 失物招领搜索项
+message LostFoundSearchItem {
+  int64 id = 1;
+  string title = 2; // 标题
+  string content = 3; // 内容
+  string type = 4; // 类型(lost/found)
+  string status = 5; // 状态
+  repeated string images = 6; // 图片URL列表
+  string location = 7; // 地点
+  int64 user_id = 8; // 发布者ID
+  string username = 9; // 发布者用户名
+  string nickname = 10; // 发布者昵称
+  string avatar = 11; // 发布者头像
+  string created_at = 12; // 发布时间
+}
+
+// 搜索用户请求
+message SearchUsersRequest {
+  string keyword = 1; // 搜索关键词
+  int32 page = 2; // 页码
+  int32 limit = 3; // 每页数量
+}
+
+// 搜索用户响应
+message SearchUsersResponse {
+  int32 code = 1;
+  string message = 2;
+  SearchUsersData data = 3;
+}
+
+// 搜索用户数据
+message SearchUsersData {
+  repeated UserSearchItem list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 用户搜索项
+message UserSearchItem {
+  int64 id = 1;
+  string username = 2; // 用户名
+  string nickname = 3; // 昵称
+  string avatar = 4; // 头像
+  string bio = 5; // 简介
+  int32 follower_count = 6; // 粉丝数
+  int32 product_count = 7; // 商品数
+  int32 article_count = 8; // 文章数
+  bool is_following = 9; // 当前用户是否已关注
+}
+
+// 获取搜索历史请求
+message GetSearchHistoryRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 搜索历史
+message SearchHistory {
+  int64 id = 1;
+  string keyword = 2; // 关键词
+  string type = 3; // 搜索类型
+  string created_at = 4; // 搜索时间
+}
+
+// 获取搜索历史响应
+message GetSearchHistoryResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated SearchHistory data = 3;
+}
+
+// 清除搜索历史请求
+message ClearSearchHistoryRequest {
+  // 使用JWT认证，无需参数
+}
+
+// 获取热门搜索关键词请求
+message GetHotSearchKeywordsRequest {
+  // 空
+}
+
+// 热门搜索关键词
+message HotKeyword {
+  string keyword = 1; // 关键词
+  int32 count = 2; // 搜索次数
+}
+
+// 获取热门搜索关键词响应
+message GetHotSearchKeywordsResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated HotKeyword data = 3;
+}
+
+// 基础响应
+message BaseResponse {
+  int32 code = 1;
+  string message = 2;
+}

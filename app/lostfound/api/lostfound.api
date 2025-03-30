@@ -1,0 +1,239 @@
+syntax = "v1"
+
+info (
+	title: "失物招领服务"
+	desc: "校园二手交易平台失物招领服务"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 失物招领列表请求
+	LostFoundListReq {
+		Page int `form:"page,optional,default=1"` // 页码
+		Limit int `form:"limit,optional,default=10"` // 每页数量
+		Type string `form:"type,optional"` // 类型(lost/found/all)
+		Status string `form:"status,optional"` // 状态(pending/found/claimed/closed/all)
+		Sort string `form:"sort,optional,default=latest"` // 排序方式(latest/hot)
+		Keywords string `form:"keywords,optional"` // 搜索关键词
+	}
+
+	// 失物招领列表响应
+	LostFoundListResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data LostFoundListData `json:"data"`
+	}
+
+	LostFoundListData {
+		List []LostFound `json:"list"`
+		Total int `json:"total"`
+		Page int `json:"page"`
+		Limit int `json:"limit"`
+	}
+
+	// 失物招领详情
+	LostFound {
+		Id int64 `json:"id"`
+		Title string `json:"title"` // 标题
+		Content string `json:"content"` // 内容
+		Type string `json:"type"` // 类型(lost/found)
+		Category string `json:"category,optional"` // 分类
+		Status string `json:"status"` // 状态(pending/found/claimed/closed)
+		Images []string `json:"images,optional"` // 图片URL列表
+		Location string `json:"location,optional"` // 地点
+		Longitude float64 `json:"longitude,optional"` // 经度
+		Latitude float64 `json:"latitude,optional"` // 纬度
+		ContactName string `json:"contactName,optional"` // 联系人姓名
+		ContactPhone string `json:"contactPhone,optional"` // 联系人电话
+		ContactWechat string `json:"contactWechat,optional"` // 联系人微信
+		UserId int64 `json:"userId"` // 发布者ID
+		Username string `json:"username"` // 发布者用户名
+		Nickname string `json:"nickname"` // 发布者昵称
+		Avatar string `json:"avatar"` // 发布者头像
+		ViewCount int `json:"viewCount"` // 查看次数
+		LikeCount int `json:"likeCount"` // 点赞次数
+		CommentCount int `json:"commentCount"` // 评论次数
+		IsLiked bool `json:"isLiked"` // 当前用户是否点赞
+		LostFoundTime string `json:"lostFoundTime,optional"` // 丢失/拾获时间
+		CreatedAt string `json:"createdAt"` // 发布时间
+		UpdatedAt string `json:"updatedAt"` // 更新时间
+	}
+
+	// 失物招领详情请求
+	LostFoundDetailReq {
+		Id int64 `path:"id"` // 失物招领ID
+	}
+
+	// 失物招领详情响应
+	LostFoundDetailResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data LostFound `json:"data"`
+	}
+
+	// 获取用户发布的失物招领请求
+	UserLostFoundReq {
+		UserId int64 `path:"userId"` // 用户ID
+		Page int `form:"page,optional,default=1"` // 页码
+		Limit int `form:"limit,optional,default=10"` // 每页数量
+	}
+
+	// 发布失物招领请求
+	PublishLostFoundReq {
+		Title string `json:"title"` // 标题
+		Content string `json:"content"` // 内容
+		Type string `json:"type"` // 类型(lost/found)
+		Category string `json:"category,optional"` // 分类
+		Images []string `json:"images,optional"` // 图片URL列表
+		Location string `json:"location,optional"` // 地点
+		Longitude float64 `json:"longitude,optional"` // 经度
+		Latitude float64 `json:"latitude,optional"` // 纬度
+		ContactName string `json:"contactName,optional"` // 联系人姓名
+		ContactPhone string `json:"contactPhone,optional"` // 联系人电话
+		ContactWechat string `json:"contactWechat,optional"` // 联系人微信
+		LostFoundTime string `json:"lostFoundTime,optional"` // 丢失/拾获时间
+	}
+
+	// 发布失物招领响应
+	PublishLostFoundResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data LostFound `json:"data"`
+	}
+
+	// 更新失物招领请求
+	UpdateLostFoundReq {
+		Id int64 `path:"id"` // 失物招领ID
+		Title string `json:"title,optional"` // 标题
+		Content string `json:"content,optional"` // 内容
+		Category string `json:"category,optional"` // 分类
+		Images []string `json:"images,optional"` // 图片URL列表
+		Location string `json:"location,optional"` // 地点
+		Longitude float64 `json:"longitude,optional"` // 经度
+		Latitude float64 `json:"latitude,optional"` // 纬度
+		ContactName string `json:"contactName,optional"` // 联系人姓名
+		ContactPhone string `json:"contactPhone,optional"` // 联系人电话
+		ContactWechat string `json:"contactWechat,optional"` // 联系人微信
+		LostFoundTime string `json:"lostFoundTime,optional"` // 丢失/拾获时间
+	}
+
+	// 更新失物招领响应
+	UpdateLostFoundResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data LostFound `json:"data"`
+	}
+
+	// 删除失物招领请求
+	DeleteLostFoundReq {
+		Id int64 `path:"id"` // 失物招领ID
+	}
+
+	// 更新失物招领状态请求
+	UpdateLostFoundStatusReq {
+		Id int64 `path:"id"` // 失物招领ID
+		Status string `json:"status"` // 状态(pending/found/claimed/closed)
+	}
+
+	// 评论
+	Comment {
+		Id int64 `json:"id"`
+		Content string `json:"content"` // 评论内容
+		UserId int64 `json:"userId"` // 评论者ID
+		Username string `json:"username"` // 评论者用户名
+		Nickname string `json:"nickname"` // 评论者昵称
+		Avatar string `json:"avatar"` // 评论者头像
+		CreatedAt string `json:"createdAt"` // 评论时间
+	}
+
+	// 评论失物招领请求
+	CommentLostFoundReq {
+		Id int64 `path:"id"` // 失物招领ID
+		Content string `json:"content"` // 评论内容
+	}
+
+	// 评论失物招领响应
+	CommentLostFoundResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data Comment `json:"data"`
+	}
+
+	// 上传失物招领图片响应
+	UploadLostFoundImagesResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+		Data UploadLostFoundImagesData `json:"data"`
+	}
+
+	UploadLostFoundImagesData {
+		Urls []string `json:"urls"` // 图片URL列表
+	}
+
+	// 点赞失物招领请求
+	LikeLostFoundReq {
+		Id int64 `path:"id"` // 失物招领ID
+	}
+
+	// 基础响应
+	BaseResp {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	}
+)
+
+@server(
+	prefix: /api/lost-found
+)
+service LostFound {
+	@doc "获取失物招领列表"
+	@handler GetLostFoundList
+	get /list (LostFoundListReq) returns (LostFoundListResp)
+	
+	@doc "获取失物招领详情"
+	@handler GetLostFoundDetail
+	get /detail/:id (LostFoundDetailReq) returns (LostFoundDetailResp)
+	
+	@doc "获取用户发布的失物招领"
+	@handler GetUserLostFound
+	get /user/:userId (UserLostFoundReq) returns (LostFoundListResp)
+}
+
+@server(
+	prefix: /api/lost-found
+	jwt: Auth
+)
+service LostFound {
+	@doc "发布失物招领"
+	@handler PublishLostFound
+	post / (PublishLostFoundReq) returns (PublishLostFoundResp)
+	
+	@doc "更新失物招领"
+	@handler UpdateLostFound
+	put /:id (UpdateLostFoundReq) returns (UpdateLostFoundResp)
+	
+	@doc "删除失物招领"
+	@handler DeleteLostFound
+	delete /:id (DeleteLostFoundReq) returns (BaseResp)
+	
+	@doc "更新失物招领状态"
+	@handler UpdateLostFoundStatus
+	put /:id/status (UpdateLostFoundStatusReq) returns (BaseResp)
+	
+	@doc "评论失物招领"
+	@handler CommentLostFound
+	post /:id/comment (CommentLostFoundReq) returns (CommentLostFoundResp)
+	
+	@doc "上传失物招领图片"
+	@handler UploadLostFoundImages
+	post /images returns (UploadLostFoundImagesResp)
+	
+	@doc "点赞失物招领"
+	@handler LikeLostFound
+	post /:id/like (LikeLostFoundReq) returns (BaseResp)
+	
+	@doc "取消点赞失物招领"
+	@handler UnlikeLostFound
+	post /:id/unlike (LikeLostFoundReq) returns (BaseResp)
+}

@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "./product";
+
+// 商品服务
+service ProductService {
+  // 获取商品列表
+  rpc GetProductList(GetProductListRequest) returns (GetProductListResponse);
+  
+  // 获取商品详情
+  rpc GetProductDetail(GetProductDetailRequest) returns (GetProductDetailResponse);
+  
+  // 获取商品分类
+  rpc GetProductCategories(GetProductCategoriesRequest) returns (GetProductCategoriesResponse);
+  
+  // 发布商品
+  rpc PublishProduct(PublishProductRequest) returns (PublishProductResponse);
+  
+  // 更新商品
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  
+  // 删除商品
+  rpc DeleteProduct(DeleteProductRequest) returns (BaseResponse);
+  
+  // 获取用户发布的商品列表
+  rpc GetUserProducts(GetUserProductsRequest) returns (GetProductListResponse);
+  
+  // 收藏/取消收藏商品
+  rpc FavoriteProduct(FavoriteProductRequest) returns (BaseResponse);
+  
+  // 获取收藏的商品列表
+  rpc GetFavoriteProducts(GetFavoriteProductsRequest) returns (GetProductListResponse);
+  
+  // 举报商品
+  rpc ReportProduct(ReportProductRequest) returns (BaseResponse);
+}
+
+// 获取商品列表请求
+message GetProductListRequest {
+  int32 page = 1; // 页码
+  int32 limit = 2; // 每页数量
+  string category = 3; // 商品分类
+  string keyword = 4; // 搜索关键词
+  string sort = 5; // 排序方式(latest/price-asc/price-desc/hot)
+  double min_price = 6; // 最低价格
+  double max_price = 7; // 最高价格
+  string status = 8; // 商品状态(on_sale/sold/all)
+}
+
+// 获取商品列表响应
+message GetProductListResponse {
+  int32 code = 1;
+  string message = 2;
+  ProductListData data = 3;
+}
+
+// 商品列表数据
+message ProductListData {
+  repeated Product list = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// 商品详情
+message Product {
+  int64 id = 1;
+  string title = 2; // 标题
+  string description = 3; // 描述
+  string category = 4; // 分类
+  double price = 5; // 价格
+  double origin_price = 6; // 原价
+  repeated string images = 7; // 图片URL列表
+  string status = 8; // 状态(on_sale/sold/deleted)
+  string condition = 9; // 商品成色(全新/9成新/8成新/7成新/6成新/5成新及以下)
+  int64 user_id = 10; // 发布者ID
+  string username = 11; // 发布者用户名
+  string nickname = 12; // 发布者昵称
+  string avatar = 13; // 发布者头像
+  repeated string tags = 14; // 标签
+  string location = 15; // 交易地点
+  int32 view_count = 16; // 查看次数
+  int32 favorite_count = 17; // 收藏次数
+  bool is_favorite = 18; // 当前用户是否收藏
+  string created_at = 19; // 发布时间
+  string updated_at = 20; // 更新时间
+}
+
+// 获取商品详情请求
+message GetProductDetailRequest {
+  int64 id = 1; // 商品ID
+}
+
+// 获取商品详情响应
+message GetProductDetailResponse {
+  int32 code = 1;
+  string message = 2;
+  Product data = 3;
+}
+
+// 获取商品分类请求
+message GetProductCategoriesRequest {
+  // 空
+}
+
+// 商品分类
+message Category {
+  int64 id = 1;
+  string name = 2; // 分类名称
+  string icon = 3; // 分类图标
+  int32 sort = 4; // 排序
+}
+
+// 获取商品分类响应
+message GetProductCategoriesResponse {
+  int32 code = 1;
+  string message = 2;
+  repeated Category data = 3;
+}
+
+// 发布商品请求
+message PublishProductRequest {
+  string title = 1; // 标题
+  string description = 2; // 描述
+  string category = 3; // 分类
+  double price = 4; // 价格
+  double origin_price = 5; // 原价
+  repeated string images = 6; // 图片URL列表
+  string condition = 7; // 商品成色
+  repeated string tags = 8; // 标签
+  string location = 9; // 交易地点
+}
+
+// 发布商品响应
+message PublishProductResponse {
+  int32 code = 1;
+  string message = 2;
+  Product data = 3;
+}
+
+// 更新商品请求
+message UpdateProductRequest {
+  int64 id = 1; // 商品ID
+  string title = 2; // 标题
+  string description = 3; // 描述
+  string category = 4; // 分类
+  double price = 5; // 价格
+  double origin_price = 6; // 原价
+  repeated string images = 7; // 图片URL列表
+  string status = 8; // 状态(on_sale/sold)
+  string condition = 9; // 商品成色
+  repeated string tags = 10; // 标签
+  string location = 11; // 交易地点
+}
+
+// 更新商品响应
+message UpdateProductResponse {
+  int32 code = 1;
+  string message = 2;
+  Product data = 3;
+}
+
+// 删除商品请求
+message DeleteProductRequest {
+  int64 id = 1; // 商品ID
+}
+
+// 获取用户发布的商品请求
+message GetUserProductsRequest {
+  int64 user_id = 1; // 用户ID
+  int32 page = 2; // 页码
+  int32 limit = 3; // 每页数量
+  string status = 4; // 商品状态(on_sale/sold/all)
+}
+
+// 收藏/取消收藏商品请求
+message FavoriteProductRequest {
+  int64 id = 1; // 商品ID
+  bool favorite = 2; // 是否收藏
+}
+
+// 获取收藏的商品请求
+message GetFavoriteProductsRequest {
+  int32 page = 1; // 页码
+  int32 limit = 2; // 每页数量
+}
+
+// 举报商品请求
+message ReportProductRequest {
+  int64 id = 1; // 商品ID
+  string reason = 2; // 举报原因
+  string description = 3; // 详细描述
+  repeated string images = 4; // 图片URL列表
+}
+
+// 基础响应
+message BaseResponse {
+  int32 code = 1;
+  string message = 2;
+}

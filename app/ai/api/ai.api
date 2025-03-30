@@ -1,0 +1,189 @@
+syntax = "v0"
+
+info (
+	title: "AI辅助服务API"
+	desc: "提供AI辅助功能，如文本生成、图像识别等"
+	author: "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 智能聊天请求
+	ChatCompletionReq {
+		Messages []ChatMessage `json:"messages"` // 聊天消息列表
+		Model    string        `json:"model,optional"`   // 使用的模型，可选
+		MaxToken int           `json:"max_token,optional,default=2048"` // 最大令牌数
+	}
+
+	// 聊天消息
+	ChatMessage {
+		Role    string `json:"role"`    // 角色: system, user, assistant
+		Content string `json:"content"` // 消息内容
+	}
+
+	// 智能聊天响应
+	ChatCompletionResp {
+		ID      string      `json:"id"`
+		Object  string      `json:"object"`
+		Created int64       `json:"created"`
+		Model   string      `json:"model"`
+		Choices []ChatChoice `json:"choices"`
+		Usage   Usage       `json:"usage"`
+	}
+
+	// 聊天选择
+	ChatChoice {
+		Index        int         `json:"index"`
+		Message      ChatMessage `json:"message"`
+		FinishReason string      `json:"finish_reason"`
+	}
+
+	// 使用统计
+	Usage {
+		PromptTokens     int `json:"prompt_tokens"`
+		CompletionTokens int `json:"completion_tokens"`
+		TotalTokens      int `json:"total_tokens"`
+	}
+
+	// 文本生成请求
+	TextGenerationReq {
+		Prompt   string `json:"prompt"`   // 提示词
+		MaxToken int    `json:"max_token,optional,default=1024"` // 最大令牌数
+		Model    string `json:"model,optional"`    // 使用的模型，可选
+	}
+
+	// 文本生成响应
+	TextGenerationResp {
+		Text     string `json:"text"`     // 生成的文本
+		TokensUsed int   `json:"tokens_used"` // 使用的令牌数
+	}
+
+	// 图像生成请求
+	ImageGenerationReq {
+		Prompt string `json:"prompt"`  // 提示词
+		Size   string `json:"size,optional,default=512x512"`   // 图像尺寸，如 256x256, 512x512, 1024x1024
+		Count  int    `json:"count,optional,default=1"`   // 生成图像数量
+		Style  string `json:"style,optional"`  // 图像风格，如 realistic, cartoon, sketch
+	}
+
+	// 图像生成响应
+	ImageGenerationResp {
+		Images []string `json:"images"` // Base64编码的图像列表或图像URL列表
+		TokensUsed int   `json:"tokens_used"` // 使用的令牌数
+	}
+
+	// 图像识别请求
+	ImageRecognitionReq {
+		ImageUrl string `json:"image_url,optional"` // 图像URL
+		ImageBase64 string `json:"image_base64,optional"` // Base64编码的图像
+		Type string `json:"type,optional,default=general"` // 识别类型：general, product, text, face
+	}
+
+	// 图像识别响应
+	ImageRecognitionResp {
+		Results []RecognitionResult `json:"results"` // 识别结果列表
+		TokensUsed int `json:"tokens_used"` // 使用的令牌数
+	}
+
+	// 识别结果
+	RecognitionResult {
+		Label       string  `json:"label"`       // 标签
+		Confidence  float64 `json:"confidence"`  // 置信度
+		Description string  `json:"description,optional"` // 描述信息
+	}
+
+	// 文本翻译请求
+	TranslationReq {
+		Text        string `json:"text"`        // 待翻译文本
+		SourceLang  string `json:"source_lang,optional"` // 源语言，如 auto, zh, en
+		TargetLang  string `json:"target_lang"` // 目标语言，如 zh, en, ja
+	}
+
+	// 文本翻译响应
+	TranslationResp {
+		TranslatedText string `json:"translated_text"` // 翻译后的文本
+		SourceLang     string `json:"source_lang"`     // 识别的源语言
+		TokensUsed     int    `json:"tokens_used"`     // 使用的令牌数
+	}
+
+	// 文本纠错请求
+	TextCorrectionReq {
+		Text string `json:"text"` // 待纠错文本
+	}
+
+	// 文本纠错响应 
+	TextCorrectionResp {
+		CorrectedText string `json:"corrected_text"` // 纠正后的文本
+		Corrections   []Correction `json:"corrections"` // 纠正详情
+		TokensUsed    int `json:"tokens_used"` // 使用的令牌数
+	}
+
+	// 纠错详情
+	Correction {
+		Original  string `json:"original"`  // 原文本
+		Corrected string `json:"corrected"` // 纠正后文本
+		Position  int    `json:"position"`  // 位置
+		Type      string `json:"type"`      // 错误类型
+	}
+
+	// 摘要生成请求
+	SummarizationReq {
+		Text      string `json:"text"`      // 待摘要文本
+		MaxLength int    `json:"max_length,optional,default=200"` // 最大摘要长度
+	}
+
+	// 摘要生成响应
+	SummarizationResp {
+		Summary    string `json:"summary"`    // 摘要内容
+		TokensUsed int    `json:"tokens_used"` // 使用的令牌数
+	}
+
+	// 情感分析请求
+	SentimentAnalysisReq {
+		Text string `json:"text"` // 待分析文本
+	}
+
+	// 情感分析响应
+	SentimentAnalysisResp {
+		Sentiment  string  `json:"sentiment"`  // 情感：positive, negative, neutral
+		Score      float64 `json:"score"`      // 情感分数
+		TokensUsed int     `json:"tokens_used"` // 使用的令牌数
+	}
+)
+
+@server(
+	prefix: /api/ai
+)
+service AI {
+	@doc "智能聊天"
+	@handler ChatCompletion
+	post /chat/completion (ChatCompletionReq) returns (ChatCompletionResp)
+	
+	@doc "文本生成"
+	@handler TextGeneration
+	post /text/generation (TextGenerationReq) returns (TextGenerationResp)
+	
+	@doc "图像生成"
+	@handler ImageGeneration
+	post /image/generation (ImageGenerationReq) returns (ImageGenerationResp)
+	
+	@doc "图像识别"
+	@handler ImageRecognition
+	post /image/recognition (ImageRecognitionReq) returns (ImageRecognitionResp)
+	
+	@doc "文本翻译"
+	@handler Translation
+	post /translation (TranslationReq) returns (TranslationResp)
+	
+	@doc "文本纠错"
+	@handler TextCorrection
+	post /text/correction (TextCorrectionReq) returns (TextCorrectionResp)
+	
+	@doc "文本摘要"
+	@handler Summarization
+	post /text/summarization (SummarizationReq) returns (SummarizationResp)
+	
+	@doc "情感分析"
+	@handler SentimentAnalysis
+	post /sentiment/analysis (SentimentAnalysisReq) returns (SentimentAnalysisResp)
+}
