@@ -1,0 +1,811 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "用户服务接口",
+    "description": "用户认证、信息管理等功能",
+    "version": "1.0",
+    "contact": {
+      "name": "Campus Team"
+    }
+  },
+  "host": "localhost:8888",
+  "basePath": "/api/user",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "用户登录",
+        "operationId": "Login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "登录成功",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "用户注册",
+        "operationId": "Register",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "注册成功",
+            "schema": {
+              "$ref": "#/definitions/RegisterResp"
+            }
+          }
+        }
+      }
+    },
+    "/info": {
+      "get": {
+        "summary": "获取用户信息",
+        "operationId": "GetUserInfo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户信息",
+            "schema": {
+              "$ref": "#/definitions/UserInfoResp"
+            }
+          }
+        }
+      }
+    },
+    "/profile/{id}": {
+      "get": {
+        "summary": "获取用户详细资料",
+        "operationId": "GetUserProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户详细资料",
+            "schema": {
+              "$ref": "#/definitions/UserProfileResp"
+            }
+          }
+        }
+      }
+    },
+    "/info": {
+      "put": {
+        "summary": "更新用户信息",
+        "operationId": "UpdateUserInfo",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoResp"
+            }
+          }
+        }
+      }
+    },
+    "/password": {
+      "put": {
+        "summary": "修改密码",
+        "operationId": "ChangePassword",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChangePasswordReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "修改成功",
+            "schema": {
+              "$ref": "#/definitions/ChangePasswordResp"
+            }
+          }
+        }
+      }
+    },
+    "/verification-code": {
+      "post": {
+        "summary": "发送验证码",
+        "operationId": "SendVerificationCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendVerificationCodeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/SendVerificationCodeResp"
+            }
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "summary": "重置密码",
+        "operationId": "ResetPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ResetPasswordReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "重置成功",
+            "schema": {
+              "$ref": "#/definitions/ResetPasswordResp"
+            }
+          }
+        }
+      }
+    },
+    "/verify-code": {
+      "post": {
+        "summary": "验证验证码",
+        "operationId": "VerifyCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VerifyCodeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/VerifyCodeResp"
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "获取用户通知",
+        "operationId": "GetNotifications",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户通知",
+            "schema": {
+              "$ref": "#/definitions/NotificationsResp"
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{id}/read": {
+      "put": {
+        "summary": "标记通知为已读",
+        "operationId": "MarkNotificationAsRead",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "标记成功",
+            "schema": {
+              "$ref": "#/definitions/MarkNotificationAsReadResp"
+            }
+          }
+        }
+      }
+    },
+    "/follow/{id}": {
+      "post": {
+        "summary": "关注用户",
+        "operationId": "FollowUser",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "关注成功",
+            "schema": {
+              "$ref": "#/definitions/FollowUserResp"
+            }
+          }
+        }
+      }
+    },
+    "/unfollow/{id}": {
+      "post": {
+        "summary": "取消关注用户",
+        "operationId": "UnfollowUser",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消关注成功",
+            "schema": {
+              "$ref": "#/definitions/UnfollowUserResp"
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "用户退出登录",
+        "operationId": "Logout",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "退出登录成功",
+            "schema": {
+              "$ref": "#/definitions/CommonResp"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LoginReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "用户名/手机号/邮箱"
+        },
+        "password": {
+          "type": "string",
+          "description": "密码"
+        },
+        "phone": {
+          "type": "string",
+          "description": "手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": "验证码"
+        }
+      }
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "accessExpire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refreshAfter": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "userId",
+        "username",
+        "accessToken",
+        "accessExpire",
+        "refreshAfter"
+      ]
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "用户名"
+        },
+        "password": {
+          "type": "string",
+          "description": "密码"
+        },
+        "phone": {
+          "type": "string",
+          "description": "手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": "验证码"
+        }
+      },
+      "required": [
+        "username",
+        "password",
+        "phone",
+        "verificationCode"
+      ]
+    },
+    "RegisterResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "accessExpire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refreshAfter": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "userId",
+        "username",
+        "accessToken",
+        "accessExpire",
+        "refreshAfter"
+      ]
+    },
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId",
+        "username"
+      ]
+    },
+    "UserInfoResp": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/UserInfo"
+        }
+      },
+      "required": [
+        "user"
+      ]
+    },
+    "UserProfileResp": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/UserInfo"
+        },
+        "followersCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "followingCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "isFollowing": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "user",
+        "followersCount",
+        "followingCount",
+        "isFollowing"
+      ]
+    },
+    "UpdateUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateUserInfoResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "ChangePasswordReq": {
+      "type": "object",
+      "properties": {
+        "oldPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "oldPassword",
+        "newPassword"
+      ]
+    },
+    "ChangePasswordResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "SendVerificationCodeReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": "类型: register, login, resetPassword"
+        }
+      },
+      "required": [
+        "phone"
+      ]
+    },
+    "SendVerificationCodeResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "ResetPasswordReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "verificationCode": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone",
+        "verificationCode",
+        "newPassword"
+      ]
+    },
+    "ResetPasswordResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "VerifyCodeReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "verificationCode": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone",
+        "verificationCode",
+        "type"
+      ]
+    },
+    "VerifyCodeResp": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "valid",
+        "message"
+      ]
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "isRead": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "content",
+        "isRead",
+        "createdAt"
+      ]
+    },
+    "NotificationsResp": {
+      "type": "object",
+      "properties": {
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Notification"
+          }
+        },
+        "unreadCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "required": [
+        "notifications",
+        "unreadCount"
+      ]
+    },
+    "MarkNotificationAsReadResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "FollowUserResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "UnfollowUserResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "CommonResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

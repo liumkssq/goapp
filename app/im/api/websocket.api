@@ -1,114 +1,125 @@
 syntax = "v1"
 
 info (
-	title: "WebSocket服务"
-	desc: "校园二手交易平台WebSocket服务"
-	author: "开发团队"
-	version: "1.0"
+    title: "WebSocket接口定义"
+    desc: "提供WebSocket实时通讯功能"
+    author: "Campus Team"
+    version: "1.0"
 )
 
+// WebSocket消息类型定义
 type (
-	// WebSocket连接请求
-	WsConnectReq {
-		Token string `form:"token"` // 用户认证令牌
-	}
+    // WebSocket连接请求
+    WebSocketConnectReq {
+        Token string `form:"token"`
+    }
 
-	// WebSocket消息结构
-	WsMessage {
-		Type string `json:"type"` // 消息类型
-		Data interface{} `json:"data"` // 消息数据
-	}
+    // WebSocket消息格式
+    WSMessage {
+        Type string `json:"type"`         // 消息类型
+        Data interface{} `json:"data"`    // 消息数据
+    }
 
-	// 聊天消息
-	ChatMessage {
-		Id string `json:"id"`
-		ConversationId string `json:"conversationId"` // 会话ID
-		SenderId int64 `json:"senderId"` // 发送者ID
-		SenderName string `json:"senderName"` // 发送者名称
-		SenderAvatar string `json:"senderAvatar"` // 发送者头像
-		Content string `json:"content"` // 消息内容
-		Type int `json:"type"` // 消息类型
-		Status string `json:"status"` // 消息状态
-		Extra map[string]string `json:"extra,optional"` // 额外信息
-		CreatedAt string `json:"createdAt"`
-	}
+    // 聊天消息
+    ChatMessage {
+        MessageId string `json:"messageId"`
+        ConversationId string `json:"conversationId"`
+        SenderId int64 `json:"senderId"`
+        SenderName string `json:"senderName"`
+        SenderAvatar string `json:"senderAvatar,optional"`
+        Type string `json:"type"` // text, image, audio, video, file, location
+        Content string `json:"content"`
+        Status string `json:"status"`
+        Timestamp string `json:"timestamp"`
+        IsRead bool `json:"isRead"`
+        Extra map[string]string `json:"extra,optional"`
+    }
 
-	// 用户状态更新
-	UserStatusUpdate {
-		UserId int64 `json:"userId"` // 用户ID
-		Status string `json:"status"` // 状态
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 已读状态消息
+    ReadStatusMessage {
+        ConversationId string `json:"conversationId"`
+        LastReadTime string `json:"lastReadTime"`
+        UserId int64 `json:"userId"`
+    }
 
-	// 正在输入状态
-	TypingStatus {
-		ConversationId string `json:"conversationId"` // 会话ID
-		UserId int64 `json:"userId"` // 用户ID
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 输入状态消息
+    TypingStatusMessage {
+        ConversationId string `json:"conversationId"`
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Timestamp int64 `json:"timestamp"`
+    }
 
-	// 消息回执
-	MessageReceipt {
-		MessageId string `json:"messageId"` // 消息ID
-		ConversationId string `json:"conversationId"` // 会话ID
-		Status string `json:"status"` // 状态：delivered/read
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 撤回消息
+    RecallMessage {
+        MessageId string `json:"messageId"`
+        ConversationId string `json:"conversationId"`
+        OperatorId int64 `json:"operatorId"`
+        OperatorName string `json:"operatorName"`
+        Timestamp string `json:"timestamp"`
+    }
 
-	// 消息撤回
-	MessageRevoke {
-		MessageId string `json:"messageId"` // 消息ID
-		ConversationId string `json:"conversationId"` // 会话ID
-		OperatorId int64 `json:"operatorId"` // 操作者ID
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 在线状态变更消息
+    OnlineStatusMessage {
+        UserId int64 `json:"userId"`
+        Status string `json:"status"` // online, offline, away, busy
+        LastActiveTime string `json:"lastActiveTime"`
+    }
 
-	// 会话更新
-	ConversationUpdate {
-		Conversation string `json:"conversation"` // 会话信息
-		Action string `json:"action"` // 操作：create/update/delete
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 系统通知消息
+    SystemNotificationMessage {
+        Type string `json:"type"` // 通知类型
+        Title string `json:"title"`
+        Content string `json:"content"`
+        CreatedAt string `json:"createdAt"`
+        Data map[string]string `json:"data,optional"`
+    }
 
-	// 好友状态更新
-	FriendUpdate {
-		FriendId int64 `json:"friendId"` // 好友ID
-		Action string `json:"action"` // 操作：add/delete/update
-		Data interface{} `json:"data,optional"` // 更新数据
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 好友请求消息
+    FriendRequestMessage {
+        RequestId int64 `json:"requestId"`
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Message string `json:"message,optional"`
+        CreatedAt string `json:"createdAt"`
+    }
 
-	// 群组更新
-	GroupUpdate {
-		GroupId int64 `json:"groupId"` // 群组ID
-		Action string `json:"action"` // 操作：create/update/delete/join/leave
-		Data interface{} `json:"data,optional"` // 更新数据
-		Timestamp int64 `json:"timestamp"` // 时间戳
-	}
+    // 群组邀请消息
+    GroupInviteMessage {
+        InviteId int64 `json:"inviteId"`
+        GroupId int64 `json:"groupId"`
+        GroupName string `json:"groupName"`
+        InviterId int64 `json:"inviterId"`
+        InviterName string `json:"inviterName"`
+        CreatedAt string `json:"createdAt"`
+    }
 
-	// 系统通知
-	SystemNotification {
-		Id string `json:"id"`
-		Type string `json:"type"` // 通知类型
-		Title string `json:"title"` // 通知标题
-		Content string `json:"content"` // 通知内容
-		TargetId int64 `json:"targetId,optional"` // 目标ID
-		TargetType string `json:"targetType,optional"` // 目标类型
-		CreatedAt string `json:"createdAt"`
-	}
+    // 群组通知消息
+    GroupNotificationMessage {
+        GroupId int64 `json:"groupId"`
+        GroupName string `json:"groupName"`
+        Type string `json:"type"` // 通知类型: member_join, member_leave, role_change, group_dismiss
+        OperatorId int64 `json:"operatorId"`
+        OperatorName string `json:"operatorName"`
+        TargetId int64 `json:"targetId,optional"`
+        TargetName string `json:"targetName,optional"`
+        Content string `json:"content,optional"`
+        CreatedAt string `json:"createdAt"`
+    }
 
-	// 错误消息
-	ErrorMessage {
-		Code int `json:"code"` // 错误码
-		Message string `json:"message"` // 错误信息
-	}
+    // 错误消息
+    ErrorMessage {
+        Code int `json:"code"`
+        Message string `json:"message"`
+    }
 )
 
 @server(
-	prefix: /ws
+    prefix: /api/im
 )
 service WebSocket {
-	@doc "WebSocket连接"
-	@handler Connect
-	get /im (WsConnectReq)
+    // WebSocket连接
+    @handler Connect
+    get /ws (WebSocketConnectReq) returns ()
 }

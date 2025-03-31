@@ -1,0 +1,489 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "上传服务接口",
+    "description": "提供文件和图片上传功能",
+    "version": "1.0",
+    "contact": {
+      "name": "Campus Team"
+    }
+  },
+  "host": "localhost:8887",
+  "basePath": "/api/upload",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "multipart/form-data",
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/image": {
+      "post": {
+        "summary": "上传单张图片",
+        "operationId": "UploadImage",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "要上传的图片文件",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "图片类型：product, avatar, article等",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadImageResp"
+            }
+          }
+        }
+      }
+    },
+    "/images": {
+      "post": {
+        "summary": "上传多张图片",
+        "operationId": "UploadImages",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "files",
+            "in": "formData",
+            "description": "要上传的多张图片文件",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "file"
+            }
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "图片类型：product, avatar, article等",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadImagesResp"
+            }
+          }
+        }
+      }
+    },
+    "/file": {
+      "post": {
+        "summary": "上传单个文件",
+        "operationId": "UploadFile",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "要上传的文件",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "文件类型",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadFileResp"
+            }
+          }
+        }
+      }
+    },
+    "/files": {
+      "post": {
+        "summary": "上传多个文件",
+        "operationId": "UploadFiles",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "files",
+            "in": "formData",
+            "description": "要上传的多个文件",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "file"
+            }
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "文件类型",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadFilesResp"
+            }
+          }
+        }
+      }
+    },
+    "/avatar": {
+      "post": {
+        "summary": "上传头像",
+        "operationId": "UploadAvatar",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "要上传的头像图片",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadAvatarResp"
+            }
+          }
+        }
+      }
+    },
+    "/image-by-url": {
+      "post": {
+        "summary": "通过URL上传图片",
+        "operationId": "UploadImageByUrl",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadImageByUrlReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "schema": {
+              "$ref": "#/definitions/UploadImageByUrlResp"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "FileInfo": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "文件访问URL"
+        },
+        "path": {
+          "type": "string",
+          "description": "文件路径"
+        },
+        "name": {
+          "type": "string",
+          "description": "文件名称"
+        },
+        "originalName": {
+          "type": "string",
+          "description": "原始文件名"
+        },
+        "extension": {
+          "type": "string",
+          "description": "文件扩展名"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "description": "文件大小(字节)"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME类型"
+        }
+      },
+      "required": [
+        "url",
+        "path",
+        "name",
+        "originalName",
+        "size"
+      ]
+    },
+    "ImageInfo": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "图片访问URL"
+        },
+        "path": {
+          "type": "string",
+          "description": "图片路径"
+        },
+        "name": {
+          "type": "string",
+          "description": "图片名称"
+        },
+        "originalName": {
+          "type": "string",
+          "description": "原始图片名"
+        },
+        "extension": {
+          "type": "string",
+          "description": "图片扩展名"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "description": "图片大小(字节)"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32",
+          "description": "图片宽度(像素)"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32",
+          "description": "图片高度(像素)"
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "description": "缩略图URL"
+        }
+      },
+      "required": [
+        "url",
+        "path",
+        "name",
+        "originalName",
+        "size",
+        "width",
+        "height"
+      ]
+    },
+    "UploadImageResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/ImageInfo"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    },
+    "UploadImagesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ImageInfo"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    },
+    "UploadFileResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/FileInfo"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    },
+    "UploadFilesResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileInfo"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    },
+    "UploadAvatarResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/ImageInfo"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    },
+    "UploadImageByUrlReq": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "图片URL"
+        },
+        "type": {
+          "type": "string",
+          "description": "图片类型"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "UploadImageByUrlResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/ImageInfo"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "data"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

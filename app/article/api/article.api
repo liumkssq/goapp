@@ -1,284 +1,298 @@
 syntax = "v1"
 
 info (
-	title: "文章服务"
-	desc: "校园二手交易平台文章服务"
-	author: "开发团队"
-	version: "1.0"
+    title: "文章服务API"
+    desc: "提供校园社区文章相关功能"
+    author: "Campus Team"
+    version: "1.0"
 )
 
+// 数据类型定义
 type (
-	// 文章列表请求
-	ArticleListReq {
-		Page int `form:"page,optional,default=1"` // 页码
-		Limit int `form:"limit,optional,default=10"` // 每页数量
-		Category string `form:"category,optional"` // 文章分类
-		Keyword string `form:"keyword,optional"` // 搜索关键词
-		Sort string `form:"sort,optional,default=latest"` // 排序方式(latest/hot)
-	}
+    // 文章信息
+    Article {
+        Id int64 `json:"id"`
+        Title string `json:"title"`
+        Content string `json:"content"`
+        Summary string `json:"summary,optional"` // 文章摘要
+        CoverImage string `json:"coverImage,optional"` // 封面图片
+        CategoryId int64 `json:"categoryId"`
+        CategoryName string `json:"categoryName"`
+        Tags []string `json:"tags,optional"`
+        Status string `json:"status"` // 草稿、已发布、已删除
+        AuthorId int64 `json:"authorId"`
+        AuthorName string `json:"authorName"`
+        AuthorAvatar string `json:"authorAvatar,optional"`
+        ViewCount int64 `json:"viewCount"`
+        LikeCount int64 `json:"likeCount"`
+        CommentCount int64 `json:"commentCount"`
+        IsFavorite bool `json:"isFavorite,optional"` // 当前用户是否收藏
+        IsLiked bool `json:"isLiked,optional"` // 当前用户是否点赞
+        CreatedAt string `json:"createdAt"`
+        UpdatedAt string `json:"updatedAt"`
+    }
 
-	// 文章列表响应
-	ArticleListResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data ArticleListData `json:"data"`
-	}
+    // 文章分类
+    Category {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Icon string `json:"icon,optional"`
+        ParentId int64 `json:"parentId,optional"`
+        Level int `json:"level"`
+        Sort int `json:"sort,optional"`
+    }
 
-	ArticleListData {
-		List []Article `json:"list"`
-		Total int `json:"total"`
-		Page int `json:"page"`
-		Limit int `json:"limit"`
-	}
+    // 文章评论
+    Comment {
+        Id int64 `json:"id"`
+        Content string `json:"content"`
+        UserId int64 `json:"userId"`
+        UserName string `json:"userName"`
+        UserAvatar string `json:"userAvatar,optional"`
+        LikeCount int64 `json:"likeCount"`
+        ReplyCount int64 `json:"replyCount,optional"`
+        ParentId int64 `json:"parentId,optional"` // 回复的评论ID
+        IsLiked bool `json:"isLiked,optional"` // 当前用户是否点赞
+        CreatedAt string `json:"createdAt"`
+    }
 
-	// 文章详情
-	Article {
-		Id int64 `json:"id"`
-		Title string `json:"title"` // 标题
-		Content string `json:"content"` // 内容
-		Summary string `json:"summary,optional"` // 摘要
-		Category string `json:"category"` // 分类
-		CoverImage string `json:"coverImage,optional"` // 封面图片
-		Images []string `json:"images,optional"` // 文章图片
-		Tags []string `json:"tags,optional"` // 标签
-		Status string `json:"status"` // 状态(published/draft/deleted)
-		UserId int64 `json:"userId"` // 作者ID
-		Username string `json:"username"` // 作者用户名
-		Nickname string `json:"nickname"` // 作者昵称
-		Avatar string `json:"avatar"` // 作者头像
-		ViewCount int `json:"viewCount"` // 查看次数
-		LikeCount int `json:"likeCount"` // 点赞次数
-		CommentCount int `json:"commentCount"` // 评论次数
-		FavoriteCount int `json:"favoriteCount"` // 收藏次数
-		IsLiked bool `json:"isLiked"` // 当前用户是否点赞
-		IsFavorite bool `json:"isFavorite"` // 当前用户是否收藏
-		CreatedAt string `json:"createdAt"` // 发布时间
-		UpdatedAt string `json:"updatedAt"` // 更新时间
-	}
+    // 文章列表请求
+    ArticleListReq {
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+        CategoryId int64 `form:"category,optional"`
+        Keyword string `form:"keyword,optional"`
+        Sort string `form:"sort,optional,default=latest"` // latest, popular, hottest
+        Tags []string `form:"tags,optional"`
+    }
 
-	// 文章详情请求
-	ArticleDetailReq {
-		Id int64 `path:"id"` // 文章ID
-	}
+    // 文章列表响应
+    ArticleListResp {
+        List []Article `json:"list"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
 
-	// 文章详情响应
-	ArticleDetailResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data Article `json:"data"`
-	}
+    // 文章详情请求
+    ArticleDetailReq {
+        Id int64 `path:"id"`
+    }
 
-	// 文章分类
-	ArticleCategory {
-		Id int64 `json:"id"`
-		Name string `json:"name"` // 分类名称
-		Description string `json:"description,optional"` // 分类描述
-		Icon string `json:"icon,optional"` // 分类图标
-		Sort int `json:"sort"` // 排序
-	}
+    // 文章详情响应
+    ArticleDetailResp {
+        Article Article `json:"article"`
+        RelatedArticles []Article `json:"relatedArticles,optional"`
+    }
 
-	// 文章分类响应
-	ArticleCategoriesResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data []ArticleCategory `json:"data"`
-	}
+    // 文章分类响应
+    ArticleCategoriesResp {
+        Categories []Category `json:"categories"`
+    }
 
-	// 发布文章请求
-	PublishArticleReq {
-		Title string `json:"title"` // 标题
-		Content string `json:"content"` // 内容
-		Summary string `json:"summary,optional"` // 摘要
-		Category string `json:"category"` // 分类
-		CoverImage string `json:"coverImage,optional"` // 封面图片
-		Images []string `json:"images,optional"` // 文章图片
-		Tags []string `json:"tags,optional"` // 标签
-		Status string `json:"status,optional,default=published"` // 状态(published/draft)
-	}
+    // 发布文章请求
+    PublishArticleReq {
+        Title string `json:"title"`
+        Content string `json:"content"`
+        Summary string `json:"summary,optional"`
+        CoverImage string `json:"coverImage,optional"`
+        CategoryId int64 `json:"categoryId"`
+        Tags []string `json:"tags,optional"`
+        Status string `json:"status,optional,default=published"` // draft 或 published
+    }
 
-	// 发布文章响应
-	PublishArticleResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data Article `json:"data"`
-	}
+    // 发布文章响应
+    PublishArticleResp {
+        Id int64 `json:"id"`
+        Message string `json:"message"`
+    }
 
-	// 更新文章请求
-	UpdateArticleReq {
-		Id int64 `path:"id"` // 文章ID
-		Title string `json:"title,optional"` // 标题
-		Content string `json:"content,optional"` // 内容
-		Summary string `json:"summary,optional"` // 摘要
-		Category string `json:"category,optional"` // 分类
-		CoverImage string `json:"coverImage,optional"` // 封面图片
-		Images []string `json:"images,optional"` // 文章图片
-		Tags []string `json:"tags,optional"` // 标签
-		Status string `json:"status,optional"` // 状态(published/draft)
-	}
+    // 更新文章请求
+    UpdateArticleReq {
+        Id int64 `path:"id"`
+        Title string `json:"title,optional"`
+        Content string `json:"content,optional"`
+        Summary string `json:"summary,optional"`
+        CoverImage string `json:"coverImage,optional"`
+        CategoryId int64 `json:"categoryId,optional"`
+        Tags []string `json:"tags,optional"`
+        Status string `json:"status,optional"` // draft 或 published
+    }
 
-	// 更新文章响应
-	UpdateArticleResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data Article `json:"data"`
-	}
+    // 更新文章响应
+    UpdateArticleResp {
+        Message string `json:"message"`
+    }
 
-	// 删除文章请求
-	DeleteArticleReq {
-		Id int64 `path:"id"` // 文章ID
-	}
+    // 删除文章请求
+    DeleteArticleReq {
+        Id int64 `path:"id"`
+    }
 
-	// 获取用户发布的文章请求
-	UserArticlesReq {
-		UserId int64 `path:"userId"` // 用户ID
-		Page int `form:"page,optional,default=1"` // 页码
-		Limit int `form:"limit,optional,default=10"` // 每页数量
-	}
+    // 删除文章响应
+    DeleteArticleResp {
+        Message string `json:"message"`
+    }
 
-	// 点赞/取消点赞文章请求
-	LikeArticleReq {
-		Id int64 `path:"id"` // 文章ID
-		Like bool `json:"like"` // 是否点赞
-	}
+    // 用户文章列表请求
+    UserArticlesReq {
+        UserId int64 `path:"userId"`
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+        Status string `form:"status,optional,default=published"` // all, draft, published
+    }
 
-	// 收藏/取消收藏文章请求
-	FavoriteArticleReq {
-		Id int64 `path:"id"` // 文章ID
-		Favorite bool `json:"favorite"` // 是否收藏
-	}
+    // 用户文章列表响应
+    UserArticlesResp {
+        List []Article `json:"list"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
 
-	// 获取收藏的文章请求
-	FavoriteArticlesReq {
-		Page int `form:"page,optional,default=1"` // 页码
-		Limit int `form:"limit,optional,default=10"` // 每页数量
-	}
+    // 点赞文章请求
+    LikeArticleReq {
+        Id int64 `path:"id"`
+        Like bool `json:"like,default=true"`
+    }
 
-	// 评论
-	Comment {
-		Id int64 `json:"id"`
-		Content string `json:"content"` // 评论内容
-		ArticleId int64 `json:"articleId"` // 文章ID
-		UserId int64 `json:"userId"` // 评论者ID
-		Username string `json:"username"` // 评论者用户名
-		Nickname string `json:"nickname"` // 评论者昵称
-		Avatar string `json:"avatar"` // 评论者头像
-		ParentId int64 `json:"parentId,optional"` // 父评论ID
-		ReplyToId int64 `json:"replyToId,optional"` // 回复评论ID
-		ReplyToUser string `json:"replyToUser,optional"` // 回复用户名
-		LikeCount int `json:"likeCount"` // 点赞次数
-		IsLiked bool `json:"isLiked"` // 当前用户是否点赞
-		CreatedAt string `json:"createdAt"` // 评论时间
-	}
+    // 点赞文章响应
+    LikeArticleResp {
+        Message string `json:"message"`
+    }
 
-	// (获取)文章评论列表请求
-	ArticleCommentsReq {
-		Id int64 `path:"id"` // 文章ID
-		Page int `form:"page,optional,default=1"` // 页码
-		Limit int `form:"limit,optional,default=10"` // 每页数量
-	}
+    // 收藏文章请求
+    FavoriteArticleReq {
+        Id int64 `path:"id"`
+        Favorite bool `json:"favorite,default=true"`
+    }
 
-	// 文章评论列表响应
-	ArticleCommentsResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data ArticleCommentsData `json:"data"`
-	}
+    // 收藏文章响应
+    FavoriteArticleResp {
+        Message string `json:"message"`
+    }
 
-	ArticleCommentsData {
-		List []Comment `json:"list"`
-		Total int `json:"total"`
-		Page int `json:"page"`
-		Limit int `json:"limit"`
-	}
+    // 收藏文章列表请求
+    FavoriteArticlesReq {
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+    }
 
-	// 评论文章请求
-	CommentArticleReq {
-		Id int64 `path:"id"` // 文章ID
-		Content string `json:"content"` // 评论内容
-		ParentId int64 `json:"parentId,optional"` // 父评论ID
-		ReplyToId int64 `json:"replyToId,optional"` // 回复评论ID
-	}
+    // 收藏文章列表响应
+    FavoriteArticlesResp {
+        List []Article `json:"list"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
 
-	// 评论文章响应
-	CommentArticleResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-		Data Comment `json:"data"`
-	}
+    // 文章评论列表请求
+    ArticleCommentsReq {
+        Id int64 `path:"id"`
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+        Sort string `form:"sort,optional,default=latest"` // latest 或 hot
+    }
 
-	// 举报文章请求
-	ReportArticleReq {
-		Id int64 `path:"id"` // 文章ID
-		Reason string `json:"reason"` // 举报原因
-		Description string `json:"description,optional"` // 详细描述
-	}
+    // 文章评论列表响应
+    ArticleCommentsResp {
+        Comments []Comment `json:"comments"`
+        Total int64 `json:"total"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
 
-	// 基础响应
-	BaseResp {
-		Code int `json:"code"`
-		Message string `json:"message"`
-	}
+    // 评论文章请求
+    CommentArticleReq {
+        Id int64 `path:"id"`
+        Content string `json:"content"`
+        ParentId int64 `json:"parentId,optional"` // 回复的评论ID
+    }
+
+    // 评论文章响应
+    CommentArticleResp {
+        CommentId int64 `json:"commentId"`
+        Message string `json:"message"`
+    }
+
+    // 举报文章请求
+    ReportArticleReq {
+        Id int64 `path:"id"`
+        Reason string `json:"reason"` // 举报原因
+        Description string `json:"description,optional"` // 详细说明
+    }
+
+    // 举报文章响应
+    ReportArticleResp {
+        ReportId int64 `json:"reportId"`
+        Message string `json:"message"`
+    }
+
+    // 通用响应
+    CommonResp {
+        Message string `json:"message"`
+    }
 )
 
 @server(
-	prefix: /api/article
+    prefix: /api/article
 )
 service Article {
-	@doc "获取文章列表"
-	@handler GetArticleList
-	get /list (ArticleListReq) returns (ArticleListResp)
-	
-	@doc "获取文章详情"
-	@handler GetArticleDetail
-	get /detail/:id (ArticleDetailReq) returns (ArticleDetailResp)
-	
-	@doc "获取文章分类"
-	@handler GetArticleCategories
-	get /categories returns (ArticleCategoriesResp)
-	
-	@doc "获取用户发布的文章列表"
-	@handler GetUserArticles
-	get /user/:userId (UserArticlesReq) returns (ArticleListResp)
-	
-	@doc "获取文章评论列表"
-	@handler GetArticleComments
-	get /comments/:id (ArticleCommentsReq) returns (ArticleCommentsResp)
+    // 获取文章列表
+    @handler GetArticleList
+    get /list (ArticleListReq) returns (ArticleListResp)
+
+    // 获取文章详情
+    @handler GetArticleDetail
+    get /detail/:id (ArticleDetailReq) returns (ArticleDetailResp)
+
+    // 获取文章分类
+    @handler GetArticleCategories
+    get /categories returns (ArticleCategoriesResp)
 }
 
 @server(
-	prefix: /api/article
-	jwt: Auth
+    prefix: /api/article
+    jwt: Auth
 )
 service Article {
-	@doc "发布文章"
-	@handler PublishArticle
-	post /publish (PublishArticleReq) returns (PublishArticleResp)
-	
-	@doc "更新文章"
-	@handler UpdateArticle
-	put /update/:id (UpdateArticleReq) returns (UpdateArticleResp)
-	
-	@doc "删除文章"
-	@handler DeleteArticle
-	delete /delete/:id (DeleteArticleReq) returns (BaseResp)
-	
-	@doc "点赞/取消点赞文章"
-	@handler LikeArticle
-	post /like/:id (LikeArticleReq) returns (BaseResp)
-	
-	@doc "收藏/取消收藏文章"
-	@handler FavoriteArticle
-	post /favorite/:id (FavoriteArticleReq) returns (BaseResp)
-	
-	@doc "获取收藏的文章列表"
-	@handler GetFavoriteArticles
-	get /favorites (FavoriteArticlesReq) returns (ArticleListResp)
-	
-	@doc "评论文章"
-	@handler CommentArticle
-	post /comment/:id (CommentArticleReq) returns (CommentArticleResp)
-	
-	@doc "举报文章"
-	@handler ReportArticle
-	post /report/:id (ReportArticleReq) returns (BaseResp)
+    // 发布文章
+    @handler PublishArticle
+    post /publish (PublishArticleReq) returns (PublishArticleResp)
+
+    // 更新文章
+    @handler UpdateArticle
+    put /update/:id (UpdateArticleReq) returns (UpdateArticleResp)
+
+    // 删除文章
+    @handler DeleteArticle
+    delete /delete/:id (DeleteArticleReq) returns (DeleteArticleResp)
+
+    // 获取用户文章列表
+    @handler GetUserArticles
+    get /user/:userId (UserArticlesReq) returns (UserArticlesResp)
+
+    // 点赞/取消点赞文章
+    @handler LikeArticle
+    post /like/:id (LikeArticleReq) returns (LikeArticleResp)
+
+    // 收藏/取消收藏文章
+    @handler FavoriteArticle
+    post /favorite/:id (FavoriteArticleReq) returns (FavoriteArticleResp)
+
+    // 获取收藏的文章列表
+    @handler GetFavoriteArticles
+    get /favorites (FavoriteArticlesReq) returns (FavoriteArticlesResp)
+
+    // 获取文章评论列表
+    @handler GetArticleComments
+    get /comments/:id (ArticleCommentsReq) returns (ArticleCommentsResp)
+
+    // 评论文章
+    @handler CommentArticle
+    post /comment/:id (CommentArticleReq) returns (CommentArticleResp)
+
+    // 举报文章
+    @handler ReportArticle
+    post /report/:id (ReportArticleReq) returns (ReportArticleResp)
 }

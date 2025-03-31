@@ -13,7 +13,7 @@ service LostFoundService {
   rpc GetLostFoundDetail(GetLostFoundDetailRequest) returns (GetLostFoundDetailResponse);
   
   // 获取用户发布的失物招领
-  rpc GetUserLostFound(GetUserLostFoundRequest) returns (GetLostFoundListResponse);
+  rpc GetUserLostFound(GetUserLostFoundRequest) returns (GetUserLostFoundResponse);
   
   // 发布失物招领
   rpc PublishLostFound(PublishLostFoundRequest) returns (PublishLostFoundResponse);
@@ -22,186 +22,222 @@ service LostFoundService {
   rpc UpdateLostFound(UpdateLostFoundRequest) returns (UpdateLostFoundResponse);
   
   // 删除失物招领
-  rpc DeleteLostFound(DeleteLostFoundRequest) returns (BaseResponse);
+  rpc DeleteLostFound(DeleteLostFoundRequest) returns (DeleteLostFoundResponse);
   
   // 更新失物招领状态
-  rpc UpdateLostFoundStatus(UpdateLostFoundStatusRequest) returns (BaseResponse);
+  rpc UpdateLostFoundStatus(UpdateLostFoundStatusRequest) returns (UpdateLostFoundStatusResponse);
   
   // 评论失物招领
   rpc CommentLostFound(CommentLostFoundRequest) returns (CommentLostFoundResponse);
   
+  // 获取失物招领评论
+  rpc GetLostFoundComments(GetLostFoundCommentsRequest) returns (GetLostFoundCommentsResponse);
+  
   // 点赞失物招领
-  rpc LikeLostFound(LikeLostFoundRequest) returns (BaseResponse);
+  rpc LikeLostFound(LikeLostFoundRequest) returns (LikeLostFoundResponse);
   
   // 取消点赞失物招领
-  rpc UnlikeLostFound(UnlikeLostFoundRequest) returns (BaseResponse);
+  rpc UnlikeLostFound(UnlikeLostFoundRequest) returns (UnlikeLostFoundResponse);
+}
+
+// 失物招领详情
+message LostFoundItem {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string type = 4; // lost 或 found
+  string category = 5;
+  string location = 6;
+  map<string, string> location_detail = 7; // 详细位置信息
+  string contact_info = 8;
+  string contact_way = 9;
+  repeated string images = 10;
+  string status = 11; // pending, found, claimed, closed
+  repeated string tags = 12;
+  string reward_info = 13;
+  string lost_found_time = 14;
+  int64 publisher_id = 15;
+  string publisher_name = 16;
+  string publisher_avatar = 17;
+  int64 view_count = 18;
+  int64 like_count = 19;
+  int64 comment_count = 20;
+  bool is_liked = 21;
+  string created_at = 22;
+  string updated_at = 23;
+}
+
+// 评论信息
+message Comment {
+  int64 id = 1;
+  string content = 2;
+  int64 user_id = 3;
+  string user_name = 4;
+  string user_avatar = 5;
+  string created_at = 6;
 }
 
 // 获取失物招领列表请求
 message GetLostFoundListRequest {
-  int32 page = 1; // 页码
-  int32 limit = 2; // 每页数量
-  string type = 3; // 类型(lost/found/all)
-  string status = 4; // 状态(pending/found/claimed/closed/all)
-  string sort = 5; // 排序方式(latest/hot)
-  string keywords = 6; // 搜索关键词
+  int64 page = 1;
+  int64 limit = 2;
+  string type = 3; // lost/found/all
+  string status = 4; // pending/found/claimed/closed/all
+  string sort = 5; // latest/hot
+  string keywords = 6;
+  int64 category_id = 7;
+  int64 user_id = 8; // 查询特定用户的发布
 }
 
 // 获取失物招领列表响应
 message GetLostFoundListResponse {
-  int32 code = 1;
-  string message = 2;
-  LostFoundListData data = 3;
-}
-
-// 失物招领列表数据
-message LostFoundListData {
-  repeated LostFound list = 1;
-  int32 total = 2;
-  int32 page = 3;
-  int32 limit = 4;
-}
-
-// 失物招领详情
-message LostFound {
-  int64 id = 1;
-  string title = 2; // 标题
-  string content = 3; // 内容
-  string type = 4; // 类型(lost/found)
-  string category = 5; // 分类
-  string status = 6; // 状态(pending/found/claimed/closed)
-  repeated string images = 7; // 图片URL列表
-  string location = 8; // 地点
-  double longitude = 9; // 经度
-  double latitude = 10; // 纬度
-  string contact_name = 11; // 联系人姓名
-  string contact_phone = 12; // 联系人电话
-  string contact_wechat = 13; // 联系人微信
-  int64 user_id = 14; // 发布者ID
-  string username = 15; // 发布者用户名
-  string nickname = 16; // 发布者昵称
-  string avatar = 17; // 发布者头像
-  int32 view_count = 18; // 查看次数
-  int32 like_count = 19; // 点赞次数
-  int32 comment_count = 20; // 评论次数
-  bool is_liked = 21; // 当前用户是否点赞
-  string lost_found_time = 22; // 丢失/拾获时间
-  string created_at = 23; // 发布时间
-  string updated_at = 24; // 更新时间
+  repeated LostFoundItem list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 获取失物招领详情请求
 message GetLostFoundDetailRequest {
-  int64 id = 1; // 失物招领ID
+  int64 id = 1;
+  int64 user_id = 2; // 当前用户ID，用于判断是否点赞
 }
 
 // 获取失物招领详情响应
 message GetLostFoundDetailResponse {
-  int32 code = 1;
-  string message = 2;
-  LostFound data = 3;
+  LostFoundItem item = 1;
+  repeated Comment comments = 2;
 }
 
 // 获取用户发布的失物招领请求
 message GetUserLostFoundRequest {
-  int64 user_id = 1; // 用户ID
-  int32 page = 2; // 页码
-  int32 limit = 3; // 每页数量
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+// 获取用户发布的失物招领响应
+message GetUserLostFoundResponse {
+  repeated LostFoundItem list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 发布失物招领请求
 message PublishLostFoundRequest {
-  string title = 1; // 标题
-  string content = 2; // 内容
-  string type = 3; // 类型(lost/found)
-  string category = 4; // 分类
-  repeated string images = 5; // 图片URL列表
-  string location = 6; // 地点
-  double longitude = 7; // 经度
-  double latitude = 8; // 纬度
-  string contact_name = 9; // 联系人姓名
-  string contact_phone = 10; // 联系人电话
-  string contact_wechat = 11; // 联系人微信
-  string lost_found_time = 12; // 丢失/拾获时间
+  int64 user_id = 1;
+  string title = 2;
+  string description = 3;
+  string type = 4; // lost 或 found
+  string category = 5;
+  string location = 6;
+  map<string, string> location_detail = 7;
+  string contact_info = 8;
+  string contact_way = 9;
+  repeated string images = 10;
+  repeated string tags = 11;
+  string reward_info = 12;
+  string lost_found_time = 13;
 }
 
 // 发布失物招领响应
 message PublishLostFoundResponse {
-  int32 code = 1;
+  int64 id = 1;
   string message = 2;
-  LostFound data = 3;
 }
 
 // 更新失物招领请求
 message UpdateLostFoundRequest {
-  int64 id = 1; // 失物招领ID
-  string title = 2; // 标题
-  string content = 3; // 内容
-  string category = 4; // 分类
-  repeated string images = 5; // 图片URL列表
-  string location = 6; // 地点
-  double longitude = 7; // 经度
-  double latitude = 8; // 纬度
-  string contact_name = 9; // 联系人姓名
-  string contact_phone = 10; // 联系人电话
-  string contact_wechat = 11; // 联系人微信
-  string lost_found_time = 12; // 丢失/拾获时间
+  int64 id = 1;
+  int64 user_id = 2; // 当前操作用户ID，用于权限检查
+  string title = 3;
+  string description = 4;
+  string category = 5;
+  string location = 6;
+  map<string, string> location_detail = 7;
+  string contact_info = 8;
+  string contact_way = 9;
+  repeated string images = 10;
+  repeated string tags = 11;
+  string reward_info = 12;
+  string lost_found_time = 13;
 }
 
 // 更新失物招领响应
 message UpdateLostFoundResponse {
-  int32 code = 1;
-  string message = 2;
-  LostFound data = 3;
+  string message = 1;
 }
 
 // 删除失物招领请求
 message DeleteLostFoundRequest {
-  int64 id = 1; // 失物招领ID
+  int64 id = 1;
+  int64 user_id = 2; // 当前操作用户ID，用于权限检查
+}
+
+// 删除失物招领响应
+message DeleteLostFoundResponse {
+  string message = 1;
 }
 
 // 更新失物招领状态请求
 message UpdateLostFoundStatusRequest {
-  int64 id = 1; // 失物招领ID
-  string status = 2; // 状态(pending/found/claimed/closed)
+  int64 id = 1;
+  int64 user_id = 2; // 当前操作用户ID，用于权限检查
+  string status = 3; // pending, found, claimed, closed
 }
 
-// 评论
-message Comment {
-  int64 id = 1;
-  string content = 2; // 评论内容
-  int64 user_id = 3; // 评论者ID
-  string username = 4; // 评论者用户名
-  string nickname = 5; // 评论者昵称
-  string avatar = 6; // 评论者头像
-  string created_at = 7; // 评论时间
+// 更新失物招领状态响应
+message UpdateLostFoundStatusResponse {
+  string message = 1;
 }
 
 // 评论失物招领请求
 message CommentLostFoundRequest {
-  int64 id = 1; // 失物招领ID
-  string content = 2; // 评论内容
+  int64 id = 1;
+  int64 user_id = 2;
+  string content = 3;
 }
 
 // 评论失物招领响应
 message CommentLostFoundResponse {
-  int32 code = 1;
+  int64 comment_id = 1;
   string message = 2;
-  Comment data = 3;
+}
+
+// 获取失物招领评论请求
+message GetLostFoundCommentsRequest {
+  int64 id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+// 获取失物招领评论响应
+message GetLostFoundCommentsResponse {
+  repeated Comment comments = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 点赞失物招领请求
 message LikeLostFoundRequest {
-  int64 id = 1; // 失物招领ID
+  int64 id = 1;
+  int64 user_id = 2;
+}
+
+// 点赞失物招领响应
+message LikeLostFoundResponse {
+  string message = 1;
 }
 
 // 取消点赞失物招领请求
 message UnlikeLostFoundRequest {
-  int64 id = 1; // 失物招领ID
+  int64 id = 1;
+  int64 user_id = 2;
 }
 
-// 基础响应
-message BaseResponse {
-  int32 code = 1;
-  string message = 2;
+// 取消点赞失物招领响应
+message UnlikeLostFoundResponse {
+  string message = 1;
 }

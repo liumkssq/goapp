@@ -1,0 +1,122 @@
+version: '3'
+
+services:
+  # 用户服务Swagger UI
+  swagger-user:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-user
+    ports:
+      - "8901:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/user:/app
+    restart: always
+
+  # 即时通讯服务Swagger UI
+  swagger-im:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-im
+    ports:
+      - "8902:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/im:/app
+    restart: always
+
+  # 失物招领服务Swagger UI
+  swagger-lostfound:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-lostfound
+    ports:
+      - "8903:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/lostfound:/app
+    restart: always
+
+  # 商品服务Swagger UI
+  swagger-product:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-product
+    ports:
+      - "8904:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/product:/app
+    restart: always
+
+  # 文章服务Swagger UI
+  swagger-article:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-article
+    ports:
+      - "8905:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/article:/app
+    restart: always
+
+  # 搜索服务Swagger UI
+  swagger-search:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-search
+    ports:
+      - "8906:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/search:/app
+    restart: always
+
+  # AI辅助服务Swagger UI
+  swagger-ai:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ai
+    ports:
+      - "8907:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/ai:/app
+    restart: always
+
+  # 地图服务Swagger UI
+  swagger-map:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-map
+    ports:
+      - "8908:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/map:/app
+    restart: always
+
+  # 上传服务Swagger UI
+  swagger-upload:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-upload
+    ports:
+      - "8909:8080"
+    environment:
+      - SWAGGER_JSON=/app/swagger.json
+    volumes:
+      - ../../doc/swagger/upload:/app
+    restart: always
+
+  # 聚合所有服务的Swagger UI
+  swagger-all:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-all
+    ports:
+      - "8900:8080"
+    environment:
+      - SWAGGER_JSON=/app/aggregated-swagger.json
+    volumes:
+      - ../../doc/swagger:/app
+    restart: always

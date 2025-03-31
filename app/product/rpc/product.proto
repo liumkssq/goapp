@@ -22,181 +22,258 @@ service ProductService {
   rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
   
   // 删除商品
-  rpc DeleteProduct(DeleteProductRequest) returns (BaseResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
   
-  // 获取用户发布的商品列表
-  rpc GetUserProducts(GetUserProductsRequest) returns (GetProductListResponse);
+  // 获取用户的商品
+  rpc GetUserProducts(GetUserProductsRequest) returns (GetUserProductsResponse);
   
   // 收藏/取消收藏商品
-  rpc FavoriteProduct(FavoriteProductRequest) returns (BaseResponse);
+  rpc FavoriteProduct(FavoriteProductRequest) returns (FavoriteProductResponse);
   
-  // 获取收藏的商品列表
-  rpc GetFavoriteProducts(GetFavoriteProductsRequest) returns (GetProductListResponse);
+  // 获取收藏的商品
+  rpc GetFavoriteProducts(GetFavoriteProductsRequest) returns (GetFavoriteProductsResponse);
   
   // 举报商品
-  rpc ReportProduct(ReportProductRequest) returns (BaseResponse);
+  rpc ReportProduct(ReportProductRequest) returns (ReportProductResponse);
+  
+  // 评论商品
+  rpc CommentProduct(CommentProductRequest) returns (CommentProductResponse);
+  
+  // 获取商品评论
+  rpc GetProductComments(GetProductCommentsRequest) returns (GetProductCommentsResponse);
 }
 
-// 获取商品列表请求
-message GetProductListRequest {
-  int32 page = 1; // 页码
-  int32 limit = 2; // 每页数量
-  string category = 3; // 商品分类
-  string keyword = 4; // 搜索关键词
-  string sort = 5; // 排序方式(latest/price-asc/price-desc/hot)
-  double min_price = 6; // 最低价格
-  double max_price = 7; // 最高价格
-  string status = 8; // 商品状态(on_sale/sold/all)
-}
-
-// 获取商品列表响应
-message GetProductListResponse {
-  int32 code = 1;
-  string message = 2;
-  ProductListData data = 3;
-}
-
-// 商品列表数据
-message ProductListData {
-  repeated Product list = 1;
-  int32 total = 2;
-  int32 page = 3;
-  int32 limit = 4;
-}
-
-// 商品详情
+// 商品信息
 message Product {
   int64 id = 1;
-  string title = 2; // 标题
-  string description = 3; // 描述
-  string category = 4; // 分类
-  double price = 5; // 价格
-  double origin_price = 6; // 原价
-  repeated string images = 7; // 图片URL列表
-  string status = 8; // 状态(on_sale/sold/deleted)
-  string condition = 9; // 商品成色(全新/9成新/8成新/7成新/6成新/5成新及以下)
-  int64 user_id = 10; // 发布者ID
-  string username = 11; // 发布者用户名
-  string nickname = 12; // 发布者昵称
-  string avatar = 13; // 发布者头像
-  repeated string tags = 14; // 标签
-  string location = 15; // 交易地点
-  int32 view_count = 16; // 查看次数
-  int32 favorite_count = 17; // 收藏次数
-  bool is_favorite = 18; // 当前用户是否收藏
-  string created_at = 19; // 发布时间
-  string updated_at = 20; // 更新时间
-}
-
-// 获取商品详情请求
-message GetProductDetailRequest {
-  int64 id = 1; // 商品ID
-}
-
-// 获取商品详情响应
-message GetProductDetailResponse {
-  int32 code = 1;
-  string message = 2;
-  Product data = 3;
-}
-
-// 获取商品分类请求
-message GetProductCategoriesRequest {
-  // 空
+  string title = 2;
+  string description = 3;
+  double price = 4;
+  double original_price = 5;
+  int64 category_id = 6;
+  string category_name = 7;
+  repeated string images = 8;
+  string condition = 9;
+  string contact_info = 10;
+  string contact_way = 11;
+  string location = 12;
+  map<string, string> location_detail = 13;
+  repeated string tags = 14;
+  string status = 15;
+  int64 seller_id = 16;
+  string seller_name = 17;
+  string seller_avatar = 18;
+  int64 view_count = 19;
+  int64 like_count = 20;
+  int64 comment_count = 21;
+  bool is_favorite = 22;
+  string created_at = 23;
+  string updated_at = 24;
 }
 
 // 商品分类
 message Category {
   int64 id = 1;
-  string name = 2; // 分类名称
-  string icon = 3; // 分类图标
-  int32 sort = 4; // 排序
+  string name = 2;
+  string icon = 3;
+  int64 parent_id = 4;
+  int32 level = 5;
+  int32 sort = 6;
 }
+
+// 商品评论
+message Comment {
+  int64 id = 1;
+  string content = 2;
+  int64 user_id = 3;
+  string user_name = 4;
+  string user_avatar = 5;
+  string created_at = 6;
+}
+
+// 获取商品列表请求
+message GetProductListRequest {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 category_id = 3;
+  string keyword = 4;
+  string sort = 5; // latest, priceAsc, priceDesc, popular
+  double min_price = 6;
+  double max_price = 7;
+  string status = 8; // active, sold, all
+  int64 user_id = 9; // 可选，当前用户ID，用于显示是否收藏
+}
+
+// 获取商品列表响应
+message GetProductListResponse {
+  repeated Product list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
+}
+
+// 获取商品详情请求
+message GetProductDetailRequest {
+  int64 id = 1;
+  int64 user_id = 2; // 可选，当前用户ID，用于显示是否收藏
+}
+
+// 获取商品详情响应
+message GetProductDetailResponse {
+  Product product = 1;
+  repeated Comment comments = 2;
+  repeated Product related_products = 3;
+}
+
+// 获取商品分类请求
+message GetProductCategoriesRequest {}
 
 // 获取商品分类响应
 message GetProductCategoriesResponse {
-  int32 code = 1;
-  string message = 2;
-  repeated Category data = 3;
+  repeated Category categories = 1;
 }
 
 // 发布商品请求
 message PublishProductRequest {
-  string title = 1; // 标题
-  string description = 2; // 描述
-  string category = 3; // 分类
-  double price = 4; // 价格
-  double origin_price = 5; // 原价
-  repeated string images = 6; // 图片URL列表
-  string condition = 7; // 商品成色
-  repeated string tags = 8; // 标签
-  string location = 9; // 交易地点
+  int64 user_id = 1;
+  string title = 2;
+  string description = 3;
+  double price = 4;
+  double original_price = 5;
+  int64 category_id = 6;
+  repeated string images = 7;
+  string condition = 8;
+  string contact_info = 9;
+  string contact_way = 10;
+  string location = 11;
+  map<string, string> location_detail = 12;
+  repeated string tags = 13;
 }
 
 // 发布商品响应
 message PublishProductResponse {
-  int32 code = 1;
+  int64 id = 1;
   string message = 2;
-  Product data = 3;
 }
 
 // 更新商品请求
 message UpdateProductRequest {
-  int64 id = 1; // 商品ID
-  string title = 2; // 标题
-  string description = 3; // 描述
-  string category = 4; // 分类
-  double price = 5; // 价格
-  double origin_price = 6; // 原价
-  repeated string images = 7; // 图片URL列表
-  string status = 8; // 状态(on_sale/sold)
-  string condition = 9; // 商品成色
-  repeated string tags = 10; // 标签
-  string location = 11; // 交易地点
+  int64 id = 1;
+  int64 user_id = 2; // 操作用户ID，用于权限验证
+  string title = 3;
+  string description = 4;
+  double price = 5;
+  double original_price = 6;
+  int64 category_id = 7;
+  repeated string images = 8;
+  string condition = 9;
+  string contact_info = 10;
+  string contact_way = 11;
+  string location = 12;
+  map<string, string> location_detail = 13;
+  repeated string tags = 14;
+  string status = 15;
 }
 
 // 更新商品响应
 message UpdateProductResponse {
-  int32 code = 1;
-  string message = 2;
-  Product data = 3;
+  string message = 1;
 }
 
 // 删除商品请求
 message DeleteProductRequest {
-  int64 id = 1; // 商品ID
+  int64 id = 1;
+  int64 user_id = 2; // 操作用户ID，用于权限验证
 }
 
-// 获取用户发布的商品请求
+// 删除商品响应
+message DeleteProductResponse {
+  string message = 1;
+}
+
+// 获取用户的商品请求
 message GetUserProductsRequest {
-  int64 user_id = 1; // 用户ID
-  int32 page = 2; // 页码
-  int32 limit = 3; // 每页数量
-  string status = 4; // 商品状态(on_sale/sold/all)
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  string status = 4;
+  int64 current_user_id = 5; // 当前请求用户ID，用于权限和显示是否收藏
 }
 
-// 收藏/取消收藏商品请求
+// 获取用户的商品响应
+message GetUserProductsResponse {
+  repeated Product list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
+}
+
+// 收藏商品请求
 message FavoriteProductRequest {
-  int64 id = 1; // 商品ID
-  bool favorite = 2; // 是否收藏
+  int64 id = 1;
+  int64 user_id = 2;
+  bool favorite = 3;
+}
+
+// 收藏商品响应
+message FavoriteProductResponse {
+  string message = 1;
 }
 
 // 获取收藏的商品请求
 message GetFavoriteProductsRequest {
-  int32 page = 1; // 页码
-  int32 limit = 2; // 每页数量
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+// 获取收藏的商品响应
+message GetFavoriteProductsResponse {
+  repeated Product list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 举报商品请求
 message ReportProductRequest {
-  int64 id = 1; // 商品ID
-  string reason = 2; // 举报原因
-  string description = 3; // 详细描述
-  repeated string images = 4; // 图片URL列表
+  int64 id = 1;
+  int64 user_id = 2;
+  string reason = 3;
+  string description = 4;
+  repeated string images = 5;
 }
 
-// 基础响应
-message BaseResponse {
-  int32 code = 1;
+// 举报商品响应
+message ReportProductResponse {
+  int64 report_id = 1;
   string message = 2;
+}
+
+// 评论商品请求
+message CommentProductRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+  string content = 3;
+}
+
+// 评论商品响应
+message CommentProductResponse {
+  int64 comment_id = 1;
+  string message = 2;
+}
+
+// 获取商品评论请求
+message GetProductCommentsRequest {
+  int64 id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+// 获取商品评论响应
+message GetProductCommentsResponse {
+  repeated Comment comments = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }

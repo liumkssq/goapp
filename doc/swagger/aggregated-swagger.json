@@ -1,0 +1,71 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "校园二手交易平台API",
+    "description": "校园二手交易平台所有微服务的API聚合文档",
+    "version": "1.0",
+    "contact": {
+      "name": "Campus Team"
+    }
+  },
+  "host": "api.campus.com",
+  "basePath": "/api",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "multipart/form-data"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "user",
+      "description": "用户服务API"
+    },
+    {
+      "name": "im",
+      "description": "即时通讯服务API"
+    },
+    {
+      "name": "lostfound",
+      "description": "失物招领服务API"
+    },
+    {
+      "name": "product",
+      "description": "商品服务API"
+    },
+    {
+      "name": "article",
+      "description": "文章服务API"
+    },
+    {
+      "name": "search",
+      "description": "搜索服务API"
+    },
+    {
+      "name": "ai",
+      "description": "AI辅助服务API"
+    },
+    {
+      "name": "map",
+      "description": "地图服务API"
+    },
+    {
+      "name": "upload",
+      "description": "上传服务API"
+    }
+  ],
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "paths": {},
+  "definitions": {}
+}

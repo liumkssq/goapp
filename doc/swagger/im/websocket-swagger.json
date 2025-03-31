@@ -1,0 +1,268 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "即时通讯WebSocket接口",
+    "description": "提供WebSocket实时通讯功能",
+    "version": "1.0",
+    "contact": {
+      "name": "Campus Team"
+    }
+  },
+  "host": "localhost:8889",
+  "basePath": "/api/im/ws",
+  "schemes": [
+    "ws",
+    "wss"
+  ],
+  "paths": {
+    "/connect": {
+      "get": {
+        "summary": "建立WebSocket连接",
+        "description": "建立实时通讯WebSocket连接，需要提供token进行身份验证",
+        "operationId": "ConnectWebSocket",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "用户认证Token"
+          }
+        ],
+        "responses": {
+          "101": {
+            "description": "WebSocket协议切换成功"
+          },
+          "401": {
+            "description": "未授权，身份验证失败"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WebSocketMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "消息类型: message, typing, read, online, offline",
+          "enum": ["message", "typing", "read", "online", "offline"]
+        },
+        "data": {
+          "type": "object",
+          "description": "消息数据，根据消息类型不同而变化"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "TextMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["message"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "消息唯一ID"
+            },
+            "conversationId": {
+              "type": "string",
+              "description": "会话ID"
+            },
+            "senderId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "发送者ID"
+            },
+            "receiverId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "接收者ID"
+            },
+            "content": {
+              "type": "string",
+              "description": "消息内容"
+            },
+            "contentType": {
+              "type": "integer",
+              "format": "int32",
+              "description": "内容类型: 1-文本, 2-图片, 3-语音, 4-视频, 5-文件"
+            },
+            "messageType": {
+              "type": "integer",
+              "format": "int32",
+              "description": "消息类型: 1-单聊, 2-群聊"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "创建时间"
+            }
+          },
+          "required": [
+            "id",
+            "conversationId",
+            "senderId",
+            "content",
+            "contentType",
+            "messageType",
+            "createdAt"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "TypingMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["typing"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversationId": {
+              "type": "string",
+              "description": "会话ID"
+            },
+            "userId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "正在输入的用户ID"
+            },
+            "timestamp": {
+              "type": "integer",
+              "format": "int64",
+              "description": "时间戳"
+            }
+          },
+          "required": [
+            "conversationId",
+            "userId",
+            "timestamp"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "ReadMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["read"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "conversationId": {
+              "type": "string",
+              "description": "会话ID"
+            },
+            "userId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "已读消息的用户ID"
+            },
+            "messageId": {
+              "type": "string",
+              "description": "已读的消息ID"
+            },
+            "timestamp": {
+              "type": "integer",
+              "format": "int64",
+              "description": "时间戳"
+            }
+          },
+          "required": [
+            "conversationId",
+            "userId",
+            "messageId",
+            "timestamp"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "OnlineMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["online"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "上线的用户ID"
+            },
+            "timestamp": {
+              "type": "integer",
+              "format": "int64",
+              "description": "时间戳"
+            }
+          },
+          "required": [
+            "userId",
+            "timestamp"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    },
+    "OfflineMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["offline"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int64",
+              "description": "离线的用户ID"
+            },
+            "timestamp": {
+              "type": "integer",
+              "format": "int64",
+              "description": "时间戳"
+            }
+          },
+          "required": [
+            "userId",
+            "timestamp"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ]
+    }
+  }
+}

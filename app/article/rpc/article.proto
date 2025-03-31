@@ -22,19 +22,19 @@ service ArticleService {
   rpc UpdateArticle(UpdateArticleRequest) returns (UpdateArticleResponse);
   
   // 删除文章
-  rpc DeleteArticle(DeleteArticleRequest) returns (BaseResponse);
+  rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse);
   
-  // 获取用户发布的文章列表
-  rpc GetUserArticles(GetUserArticlesRequest) returns (GetArticleListResponse);
+  // 获取用户文章列表
+  rpc GetUserArticles(GetUserArticlesRequest) returns (GetUserArticlesResponse);
   
   // 点赞/取消点赞文章
-  rpc LikeArticle(LikeArticleRequest) returns (BaseResponse);
+  rpc LikeArticle(LikeArticleRequest) returns (LikeArticleResponse);
   
   // 收藏/取消收藏文章
-  rpc FavoriteArticle(FavoriteArticleRequest) returns (BaseResponse);
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (FavoriteArticleResponse);
   
   // 获取收藏的文章列表
-  rpc GetFavoriteArticles(GetFavoriteArticlesRequest) returns (GetArticleListResponse);
+  rpc GetFavoriteArticles(GetFavoriteArticlesRequest) returns (GetFavoriteArticlesResponse);
   
   // 获取文章评论列表
   rpc GetArticleComments(GetArticleCommentsRequest) returns (GetArticleCommentsResponse);
@@ -43,223 +43,239 @@ service ArticleService {
   rpc CommentArticle(CommentArticleRequest) returns (CommentArticleResponse);
   
   // 举报文章
-  rpc ReportArticle(ReportArticleRequest) returns (BaseResponse);
+  rpc ReportArticle(ReportArticleRequest) returns (ReportArticleResponse);
+}
+
+// 文章信息
+message Article {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string summary = 4;
+  string cover_image = 5;
+  int64 category_id = 6;
+  string category_name = 7;
+  repeated string tags = 8;
+  string status = 9;
+  int64 author_id = 10;
+  string author_name = 11;
+  string author_avatar = 12;
+  int64 view_count = 13;
+  int64 like_count = 14;
+  int64 comment_count = 15;
+  bool is_favorite = 16;
+  bool is_liked = 17;
+  string created_at = 18;
+  string updated_at = 19;
+}
+
+// 文章分类
+message Category {
+  int64 id = 1;
+  string name = 2;
+  string icon = 3;
+  int64 parent_id = 4;
+  int32 level = 5;
+  int32 sort = 6;
+}
+
+// 文章评论
+message Comment {
+  int64 id = 1;
+  string content = 2;
+  int64 user_id = 3;
+  string user_name = 4;
+  string user_avatar = 5;
+  int64 like_count = 6;
+  int64 reply_count = 7;
+  int64 parent_id = 8;
+  bool is_liked = 9;
+  string created_at = 10;
 }
 
 // 获取文章列表请求
 message GetArticleListRequest {
-  int32 page = 1; // 页码
-  int32 limit = 2; // 每页数量
-  string category = 3; // 文章分类
-  string keyword = 4; // 搜索关键词
-  string sort = 5; // 排序方式(latest/hot)
+  int64 page = 1;
+  int64 limit = 2;
+  int64 category_id = 3;
+  string keyword = 4;
+  string sort = 5; // latest, popular, hottest
+  repeated string tags = 6;
+  int64 user_id = 7; // 可选，当前用户ID，用于显示是否收藏/点赞
 }
 
 // 获取文章列表响应
 message GetArticleListResponse {
-  int32 code = 1;
-  string message = 2;
-  ArticleListData data = 3;
-}
-
-// 文章列表数据
-message ArticleListData {
   repeated Article list = 1;
-  int32 total = 2;
-  int32 page = 3;
-  int32 limit = 4;
-}
-
-// 文章详情
-message Article {
-  int64 id = 1;
-  string title = 2; // 标题
-  string content = 3; // 内容
-  string summary = 4; // 摘要
-  string category = 5; // 分类
-  string cover_image = 6; // 封面图片
-  repeated string images = 7; // 文章图片
-  repeated string tags = 8; // 标签
-  string status = 9; // 状态(published/draft/deleted)
-  int64 user_id = 10; // 作者ID
-  string username = 11; // 作者用户名
-  string nickname = 12; // 作者昵称
-  string avatar = 13; // 作者头像
-  int32 view_count = 14; // 查看次数
-  int32 like_count = 15; // 点赞次数
-  int32 comment_count = 16; // 评论次数
-  int32 favorite_count = 17; // 收藏次数
-  bool is_liked = 18; // 当前用户是否点赞
-  bool is_favorite = 19; // 当前用户是否收藏
-  string created_at = 20; // 发布时间
-  string updated_at = 21; // 更新时间
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 获取文章详情请求
 message GetArticleDetailRequest {
-  int64 id = 1; // 文章ID
+  int64 id = 1;
+  int64 user_id = 2; // 可选，当前用户ID，用于显示是否收藏/点赞
 }
 
 // 获取文章详情响应
 message GetArticleDetailResponse {
-  int32 code = 1;
-  string message = 2;
-  Article data = 3;
+  Article article = 1;
+  repeated Article related_articles = 2;
 }
 
 // 获取文章分类请求
-message GetArticleCategoriesRequest {
-  // 空
-}
-
-// 文章分类
-message ArticleCategory {
-  int64 id = 1;
-  string name = 2; // 分类名称
-  string description = 3; // 分类描述
-  string icon = 4; // 分类图标
-  int32 sort = 5; // 排序
-}
+message GetArticleCategoriesRequest {}
 
 // 获取文章分类响应
 message GetArticleCategoriesResponse {
-  int32 code = 1;
-  string message = 2;
-  repeated ArticleCategory data = 3;
+  repeated Category categories = 1;
 }
 
 // 发布文章请求
 message PublishArticleRequest {
-  string title = 1; // 标题
-  string content = 2; // 内容
-  string summary = 3; // 摘要
-  string category = 4; // 分类
-  string cover_image = 5; // 封面图片
-  repeated string images = 6; // 文章图片
-  repeated string tags = 7; // 标签
-  string status = 8; // 状态(published/draft)
+  int64 user_id = 1;
+  string title = 2;
+  string content = 3;
+  string summary = 4;
+  string cover_image = 5;
+  int64 category_id = 6;
+  repeated string tags = 7;
+  string status = 8; // draft 或 published
 }
 
 // 发布文章响应
 message PublishArticleResponse {
-  int32 code = 1;
+  int64 id = 1;
   string message = 2;
-  Article data = 3;
 }
 
 // 更新文章请求
 message UpdateArticleRequest {
-  int64 id = 1; // 文章ID
-  string title = 2; // 标题
-  string content = 3; // 内容
-  string summary = 4; // 摘要
-  string category = 5; // 分类
-  string cover_image = 6; // 封面图片
-  repeated string images = 7; // 文章图片
-  repeated string tags = 8; // 标签
-  string status = 9; // 状态(published/draft)
+  int64 id = 1;
+  int64 user_id = 2; // 当前操作用户ID，用于权限验证
+  string title = 3;
+  string content = 4;
+  string summary = 5;
+  string cover_image = 6;
+  int64 category_id = 7;
+  repeated string tags = 8;
+  string status = 9; // draft 或 published
 }
 
 // 更新文章响应
 message UpdateArticleResponse {
-  int32 code = 1;
-  string message = 2;
-  Article data = 3;
+  string message = 1;
 }
 
 // 删除文章请求
 message DeleteArticleRequest {
-  int64 id = 1; // 文章ID
-}
-
-// 获取用户发布的文章请求
-message GetUserArticlesRequest {
-  int64 user_id = 1; // 用户ID
-  int32 page = 2; // 页码
-  int32 limit = 3; // 每页数量
-}
-
-// 点赞/取消点赞文章请求
-message LikeArticleRequest {
-  int64 id = 1; // 文章ID
-  bool like = 2; // 是否点赞
-}
-
-// 收藏/取消收藏文章请求
-message FavoriteArticleRequest {
-  int64 id = 1; // 文章ID
-  bool favorite = 2; // 是否收藏
-}
-
-// 获取收藏的文章请求
-message GetFavoriteArticlesRequest {
-  int32 page = 1; // 页码
-  int32 limit = 2; // 每页数量
-}
-
-// 评论
-message Comment {
   int64 id = 1;
-  string content = 2; // 评论内容
-  int64 article_id = 3; // 文章ID
-  int64 user_id = 4; // 评论者ID
-  string username = 5; // 评论者用户名
-  string nickname = 6; // 评论者昵称
-  string avatar = 7; // 评论者头像
-  int64 parent_id = 8; // 父评论ID
-  int64 reply_to_id = 9; // 回复评论ID
-  string reply_to_user = 10; // 回复用户名
-  int32 like_count = 11; // 点赞次数
-  bool is_liked = 12; // 当前用户是否点赞
-  string created_at = 13; // 评论时间
+  int64 user_id = 2; // 当前操作用户ID，用于权限验证
+}
+
+// 删除文章响应
+message DeleteArticleResponse {
+  string message = 1;
+}
+
+// 获取用户文章列表请求
+message GetUserArticlesRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  string status = 4; // all, draft, published
+  int64 current_user_id = 5; // 当前请求用户ID，用于权限和显示是否收藏/点赞
+}
+
+// 获取用户文章列表响应
+message GetUserArticlesResponse {
+  repeated Article list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
+}
+
+// 点赞文章请求
+message LikeArticleRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+  bool like = 3;
+}
+
+// 点赞文章响应
+message LikeArticleResponse {
+  string message = 1;
+}
+
+// 收藏文章请求
+message FavoriteArticleRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+  bool favorite = 3;
+}
+
+// 收藏文章响应
+message FavoriteArticleResponse {
+  string message = 1;
+}
+
+// 获取收藏的文章列表请求
+message GetFavoriteArticlesRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+// 获取收藏的文章列表响应
+message GetFavoriteArticlesResponse {
+  repeated Article list = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 获取文章评论列表请求
 message GetArticleCommentsRequest {
-  int64 id = 1; // 文章ID
-  int32 page = 2; // 页码
-  int32 limit = 3; // 每页数量
+  int64 id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  string sort = 4; // latest 或 hot
+  int64 user_id = 5; // 可选，当前用户ID，用于显示是否点赞
 }
 
 // 获取文章评论列表响应
 message GetArticleCommentsResponse {
-  int32 code = 1;
-  string message = 2;
-  ArticleCommentsData data = 3;
-}
-
-// 文章评论列表数据
-message ArticleCommentsData {
-  repeated Comment list = 1;
-  int32 total = 2;
-  int32 page = 3;
-  int32 limit = 4;
+  repeated Comment comments = 1;
+  int64 total = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
 // 评论文章请求
 message CommentArticleRequest {
-  int64 id = 1; // 文章ID
-  string content = 2; // 评论内容
-  int64 parent_id = 3; // 父评论ID
-  int64 reply_to_id = 4; // 回复评论ID
+  int64 id = 1;
+  int64 user_id = 2;
+  string content = 3;
+  int64 parent_id = 4; // 回复的评论ID
 }
 
 // 评论文章响应
 message CommentArticleResponse {
-  int32 code = 1;
+  int64 comment_id = 1;
   string message = 2;
-  Comment data = 3;
 }
 
 // 举报文章请求
 message ReportArticleRequest {
-  int64 id = 1; // 文章ID
-  string reason = 2; // 举报原因
-  string description = 3; // 详细描述
+  int64 id = 1;
+  int64 user_id = 2;
+  string reason = 3;
+  string description = 4;
 }
 
-// 基础响应
-message BaseResponse {
-  int32 code = 1;
+// 举报文章响应
+message ReportArticleResponse {
+  int64 report_id = 1;
   string message = 2;
 }
