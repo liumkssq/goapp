@@ -225,7 +225,7 @@ func main() {
     conf.MustLoad(*configFile, &c)
     
     // 配置jaeger
-    tracer, closer, err := trace.NewJaegerTracer("user-api", c.Jaeger.Endpoint)
+    tracer, closer, err := trace.NewJaegerTracer("user-apis", c.Jaeger.Endpoint)
     if err != nil {
         panic(err)
     }

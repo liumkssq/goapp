@@ -8,16 +8,16 @@ info (
 )
 
 import (
-	"user/user.api"
-	"im/im.api"
-	"im/websocket.api"
-	"lostfound/lostfound.api"
-	"product/product.api"
-	"article/article.api"
-	"search/search.api"
-	"ai/ai.api"
-	"map/map.api"
-	"upload/upload.api"
+	"user/user.apis"
+	"im/im.apis"
+	"im/websocket.apis"
+	"lostfound/lostfound.apis"
+	"product/product.apis"
+	"article/article.apis"
+	"search/search.apis"
+	"ai/ai.apis"
+	"map/map.apis"
+	"upload/upload.apis"
 )
 
 @server(

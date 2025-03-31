@@ -141,13 +141,13 @@ API 网关服务作为所有微服务的统一入口，提供：
 使用 goctl 工具生成 API 服务代码：
 
 ```bash
-goctl api go -api <path-to-api-file> -dir <output-directory>
+goctl apis go -apis <path-to-apis-file> -dir <output-directory>
 ```
 
 例如：
 
 ```bash
-goctl api go -api user/user.api -dir ./gen/user
+goctl apis go -apis user/user.apis -dir ./gen/user
 ```
 
 ### 生成 RPC 服务代码

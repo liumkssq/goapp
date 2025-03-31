@@ -1,0 +1,174 @@
+syntax = "v1"
+
+info (
+	title:   "用户服务API"
+	desc:    "用户认证、信息管理相关接口"
+	author:  "开发团队"
+	version: "1.0"
+)
+
+type (
+	// 账号密码登录请求
+	LoginByPasswordReq {
+		Username string `json:"username"` // 用户名/邮箱
+		Password string `json:"password"` // 密码
+	}
+	// 验证码登录请求
+	LoginByVerificationCodeReq {
+		Phone            string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+	}
+	// 登录响应
+	LoginResp {
+		UserId       int64  `json:"userId"` // 用户ID
+		Username     string `json:"username"` // 用户名
+		Nickname     string `json:"nickname"` // 昵称
+		Avatar       string `json:"avatar"` // 头像URL
+		Phone        string `json:"phone"` // 手机号
+		AccessToken  string `json:"accessToken"` // 访问令牌
+		AccessExpire int64  `json:"accessExpire"` // 令牌过期时间
+		RefreshAfter int64  `json:"refreshAfter"` // 刷新令牌时间
+	}
+	// 注册请求
+	RegisterReq {
+		Username         string `json:"username"` // 用户名
+		Password         string `json:"password"` // 密码
+		Phone            string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+	}
+	// 注册响应
+	RegisterResp {
+		UserId       int64  `json:"userId"` // 用户ID
+		Username     string `json:"username"` // 用户名
+		AccessToken  string `json:"accessToken"` // 访问令牌
+		AccessExpire int64  `json:"accessExpire"` // 令牌过期时间
+		RefreshAfter int64  `json:"refreshAfter"` // 刷新令牌时间
+	}
+	// 获取用户信息响应
+	UserInfoResp {
+		UserId         int64  `json:"userId"` // 用户ID
+		Username       string `json:"username"` // 用户名
+		Nickname       string `json:"nickname"` // 昵称
+		Avatar         string `json:"avatar"` // 头像URL
+		Phone          string `json:"phone"` // 手机号
+		Gender         string `json:"gender,optional"` // 性别
+		Bio            string `json:"bio,optional"` // 个人简介
+		FollowingCount int    `json:"followingCount"` // 关注数
+		FollowersCount int    `json:"followersCount"` // 粉丝数
+		ProductCount   int    `json:"productCount"` // 发布的商品数
+		ArticleCount   int    `json:"articleCount"` // 发布的文章数
+		LostFoundCount int    `json:"lostFoundCount"` // 发布的失物招领数
+		CreatedAt      string `json:"createdAt"` // 创建时间
+	}
+	// 获取用户详细资料请求
+	UserProfileReq {
+		Id int64 `path:"id"` // 用户ID
+	}
+	// 获取用户详细资料响应
+	UserProfileResp {
+		UserId         int64  `json:"userId"` // 用户ID
+		Username       string `json:"username"` // 用户名
+		Nickname       string `json:"nickname"` // 昵称
+		Avatar         string `json:"avatar"` // 头像URL
+		Gender         string `json:"gender,optional"` // 性别
+		Bio            string `json:"bio,optional"` // 个人简介
+		FollowingCount int    `json:"followingCount"` // 关注数
+		FollowersCount int    `json:"followersCount"` // 粉丝数
+		IsFollowing    bool   `json:"isFollowing"` // 当前用户是否关注了该用户
+		ProductCount   int    `json:"productCount"` // 发布的商品数
+		ArticleCount   int    `json:"articleCount"` // 发布的文章数
+		LostFoundCount int    `json:"lostFoundCount"` // 发布的失物招领数
+		CreatedAt      string `json:"createdAt"` // 创建时间
+	}
+	// 更新用户信息请求
+	UpdateUserInfoReq {
+		Nickname string `json:"nickname,optional"` // 昵称
+		Gender   string `json:"gender,optional"` // 性别
+		Bio      string `json:"bio,optional"` // 个人简介
+	}
+	// 更新用户信息响应
+	UpdateUserInfoResp {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 修改密码请求
+	ChangePasswordReq {
+		OldPassword string `json:"oldPassword"` // 旧密码
+		NewPassword string `json:"newPassword"` // 新密码
+	}
+	// 修改密码响应
+	ChangePasswordResp {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 发送验证码请求
+	SendVerificationCodeReq {
+		Phone string `json:"phone"` // 手机号
+		Type  string `json:"type"` // 验证码类型: login, register, reset_password
+	}
+	// 发送验证码响应
+	SendVerificationCodeResp {
+			Success bool `json:"success"`  // 是否成功
+	}
+	// 验证码验证请求
+	VerifyCodeReq {
+		Phone            string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+		Type             string `json:"type"` // 验证类型
+	}
+	// 验证码验证响应
+	VerifyCodeResp {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message,optional"` // 消息
+	}
+	// 图形验证码相关功能已移除
+	// 重置密码请求
+	ResetPasswordReq {
+		Phone            string `json:"phone"` // 手机号
+		VerificationCode string `json:"verificationCode"` // 验证码
+		NewPassword      string `json:"newPassword"` // 新密码
+	}
+	// 重置密码响应
+	ResetPasswordResp {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 关注用户请求
+	FollowUserReq {
+		Id int64 `path:"id"` // 要关注的用户ID
+	}
+	// 关注用户响应
+	FollowUserResp {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 取消关注用户请求
+	UnfollowUserReq {
+		Id int64 `path:"id"` // 要取消关注的用户ID
+	}
+	// 取消关注用户响应
+	UnfollowUserResp {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 通知项
+	Notification {
+		Id                 int64  `json:"id"` // 通知ID
+		Type               string `json:"type"` // 通知类型
+		Content            string `json:"content"` // 通知内容
+		IsRead             bool   `json:"isRead"` // 是否已读
+		CreatedAt          string `json:"createdAt"` // 创建时间
+		RelatedUserId      int64  `json:"relatedUserId,optional"` // 相关用户ID
+		RelatedContentId   int64  `json:"relatedContentId,optional"` // 相关内容ID
+		RelatedContentType string `json:"relatedContentType,optional"` // 相关内容类型
+	}
+	// 获取通知响应
+	NotificationListResp {
+		Total int            `json:"total"` // 总数
+		List  []Notification `json:"list"` // 通知列表
+	}
+	// 标记通知为已读请求
+	MarkNotificationAsReadReq {
+		Id int64 `path:"id"` // 通知ID
+	}
+	// 标记通知为已读响应
+	MarkNotificationAsReadResp {
+		Success bool `json:"success"` // 是否成功
+	}
+)
+

@@ -6,7 +6,9 @@ package handler
 import (
 	"net/http"
 
-	"github.com/liumkssq/goapp/app/user/api/internal/svc"
+	user "github.com/liumkssq/goapp/app/bff/internal/handler/user"
+	userOp "github.com/liumkssq/goapp/app/bff/internal/handler/userOp"
+	"github.com/liumkssq/goapp/app/bff/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -18,46 +20,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// 自动登录（仅用于开发环境测试）
 				Method:  http.MethodPost,
 				Path:    "/login/auto",
-				Handler: AutoLoginHandler(serverCtx),
+				Handler: user.AutoLoginHandler(serverCtx),
 			},
 			{
 				// 账号密码登录
 				Method:  http.MethodPost,
 				Path:    "/login/password",
-				Handler: LoginByPasswordHandler(serverCtx),
+				Handler: user.LoginByPasswordHandler(serverCtx),
 			},
 			{
 				// 验证码登录
 				Method:  http.MethodPost,
 				Path:    "/login/sms-code",
-				Handler: LoginByVerificationCodeHandler(serverCtx),
+				Handler: user.LoginByVerificationCodeHandler(serverCtx),
 			},
 			{
 				// 用户注册
 				Method:  http.MethodPost,
 				Path:    "/register",
-				Handler: RegisterHandler(serverCtx),
+				Handler: user.RegisterHandler(serverCtx),
 			},
 			{
 				// 重置密码
 				Method:  http.MethodPost,
 				Path:    "/reset-password",
-				Handler: ResetPasswordHandler(serverCtx),
+				Handler: user.ResetPasswordHandler(serverCtx),
 			},
 			{
 				// 发送验证码
 				Method:  http.MethodPost,
 				Path:    "/send-code",
-				Handler: SendVerificationCodeHandler(serverCtx),
+				Handler: user.SendVerificationCodeHandler(serverCtx),
 			},
 			{
 				// 验证验证码
 				Method:  http.MethodPost,
 				Path:    "/verify-code",
-				Handler: VerifyCodeHandler(serverCtx),
+				Handler: user.VerifyCodeHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/apis/user"),
+		rest.WithPrefix("/api/user"),
 	)
 
 	server.AddRoutes(
@@ -66,58 +68,58 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// 关注用户
 				Method:  http.MethodPost,
 				Path:    "/follow/:id",
-				Handler: FollowUserHandler(serverCtx),
+				Handler: userOp.FollowUserHandler(serverCtx),
 			},
 			{
 				// 获取当前用户信息
 				Method:  http.MethodGet,
 				Path:    "/info",
-				Handler: GetUserInfoHandler(serverCtx),
+				Handler: userOp.GetUserInfoHandler(serverCtx),
 			},
 			{
 				// 更新用户信息
 				Method:  http.MethodPut,
 				Path:    "/info",
-				Handler: UpdateUserInfoHandler(serverCtx),
+				Handler: userOp.UpdateUserInfoHandler(serverCtx),
 			},
 			{
 				// 退出登录
 				Method:  http.MethodPost,
 				Path:    "/logout",
-				Handler: LogoutHandler(serverCtx),
+				Handler: userOp.LogoutHandler(serverCtx),
 			},
 			{
 				// 获取通知
 				Method:  http.MethodGet,
 				Path:    "/notifications",
-				Handler: GetNotificationsHandler(serverCtx),
+				Handler: userOp.GetNotificationsHandler(serverCtx),
 			},
 			{
 				// 标记通知为已读
 				Method:  http.MethodPut,
 				Path:    "/notifications/:id/read",
-				Handler: MarkNotificationAsReadHandler(serverCtx),
+				Handler: userOp.MarkNotificationAsReadHandler(serverCtx),
 			},
 			{
 				// 修改密码
 				Method:  http.MethodPut,
 				Path:    "/password",
-				Handler: ChangePasswordHandler(serverCtx),
+				Handler: userOp.ChangePasswordHandler(serverCtx),
 			},
 			{
 				// 获取用户详细资料
 				Method:  http.MethodGet,
 				Path:    "/profile/:id",
-				Handler: GetUserProfileHandler(serverCtx),
+				Handler: userOp.GetUserProfileHandler(serverCtx),
 			},
 			{
 				// 取消关注用户
 				Method:  http.MethodPost,
 				Path:    "/unfollow/:id",
-				Handler: UnfollowUserHandler(serverCtx),
+				Handler: userOp.UnfollowUserHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/apis/user"),
+		rest.WithPrefix("/api/user"),
 	)
 }

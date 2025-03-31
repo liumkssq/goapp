@@ -74,7 +74,7 @@ docker run --rm -p 8080:8080 -e SWAGGER_JSON=/foo/swagger.json -v $(pwd)/user:/f
 go install github.com/zeromicro/goctl-swagger@latest
 
 # 生成Swagger文档
-goctl api plugin -plugin goctl-swagger="swagger -filename swagger.json" -api <api-file-path> -dir <output-directory>
+goctl apis plugin -plugin goctl-swagger="swagger -filename swagger.json" -apis <apis-file-path> -dir <output-directory>
 ```
 
 ## 使用Swagger UI测试API

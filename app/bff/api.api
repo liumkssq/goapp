@@ -1,0 +1,83 @@
+syntax = "v1"
+
+import "apis/user.api"
+
+//user ==
+@server (
+	prefix: /api/user
+	group:  user
+)
+service api-api {
+	@doc "账号密码登录"
+	@handler LoginByPassword
+	post /login/password (LoginByPasswordReq) returns (LoginResp)
+
+	@doc "验证码登录"
+	@handler LoginByVerificationCode
+	post /login/sms-code (LoginByVerificationCodeReq) returns (LoginResp)
+
+	@doc "自动登录（仅用于开发环境测试）"
+	@handler AutoLogin
+	post /login/auto returns (LoginResp)
+
+	@doc "用户注册"
+	@handler Register
+	post /register (RegisterReq) returns (RegisterResp)
+
+	@doc "发送验证码"
+	@handler SendVerificationCode
+	post /send-code (SendVerificationCodeReq) returns (SendVerificationCodeResp)
+
+	@doc "验证验证码"
+	@handler VerifyCode
+	post /verify-code (VerifyCodeReq) returns (VerifyCodeResp)
+
+	@doc "重置密码"
+	@handler ResetPassword
+	post /reset-password (ResetPasswordReq) returns (ResetPasswordResp)
+}
+
+// 图形验证码服务已移除
+@server (
+	prefix: /api/user
+	group:  userOp
+	jwt:    Auth
+)
+service api-api {
+	@doc "获取当前用户信息"
+	@handler GetUserInfo
+	get /info returns (UserInfoResp)
+
+	@doc "获取用户详细资料"
+	@handler GetUserProfile
+	get /profile/:id (UserProfileReq) returns (UserProfileResp)
+
+	@doc "更新用户信息"
+	@handler UpdateUserInfo
+	put /info (UpdateUserInfoReq) returns (UpdateUserInfoResp)
+
+	@doc "修改密码"
+	@handler ChangePassword
+	put /password (ChangePasswordReq) returns (ChangePasswordResp)
+
+	@doc "退出登录"
+	@handler Logout
+	post /logout returns (UpdateUserInfoResp)
+
+	@doc "关注用户"
+	@handler FollowUser
+	post /follow/:id (FollowUserReq) returns (FollowUserResp)
+
+	@doc "取消关注用户"
+	@handler UnfollowUser
+	post /unfollow/:id (UnfollowUserReq) returns (UnfollowUserResp)
+
+	@doc "获取通知"
+	@handler GetNotifications
+	get /notifications returns (NotificationListResp)
+
+	@doc "标记通知为已读"
+	@handler MarkNotificationAsRead
+	put /notifications/:id/read (MarkNotificationAsReadReq) returns (MarkNotificationAsReadResp)
+}
+
