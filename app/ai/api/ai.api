@@ -134,7 +134,7 @@ type (
     // 图像识别请求
     ImageRecognitionReq {
         ImageUrl string `json:"imageUrl"` // 图片URL
-        Type string `json:"type,optional,default=general"` // 识别类型: general, product, scene, text
+        Type string `json:"type,optional,default=general"` // 识别类型: general, product.sql, scene, text
     }
     
     // 图像识别响应

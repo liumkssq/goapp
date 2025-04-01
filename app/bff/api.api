@@ -1,6 +1,7 @@
 syntax = "v1"
 
 import "apis/user.api"
+import "apis/product.api"
 
 //user ==
 @server (
@@ -79,5 +80,66 @@ service api-api {
 	@doc "标记通知为已读"
 	@handler MarkNotificationAsRead
 	put /notifications/:id/read (MarkNotificationAsReadReq) returns (MarkNotificationAsReadResp)
+}
+
+@server (
+	prefix: /api/product
+	group:  product
+)
+service api-api {
+	// 获取商品列表
+	@handler GetProductList
+	get /list (ProductListReq) returns (ProductListResp)
+
+	// 获取商品详情
+	@handler GetProductDetail
+	get /detail/:id (ProductDetailReq) returns (ProductDetailResp)
+
+	// 获取商品分类
+	@handler GetProductCategories
+	get /categories returns (ProductCategoriesResp)
+}
+
+@server (
+	prefix: /api/product
+	group:  ProductOp
+	jwt:    Auth
+)
+service api-api {
+	// 发布商品
+	@handler PublishProduct
+	post /publish (PublishProductReq) returns (PublishProductResp)
+
+	// 更新商品
+	@handler UpdateProduct
+	put /update/:id (UpdateProductReq) returns (UpdateProductResp)
+
+	// 删除商品
+	@handler DeleteProduct
+	delete /delete/:id (DeleteProductReq) returns (DeleteProductResp)
+
+	// 获取用户的商品
+	@handler GetUserProducts
+	get /user/:userId (UserProductsReq) returns (UserProductsResp)
+
+	// 收藏/取消收藏商品
+	@handler FavoriteProduct
+	post /favorite/:id (FavoriteProductReq) returns (FavoriteProductResp)
+
+	// 获取收藏的商品
+	@handler GetFavoriteProducts
+	get /favorites (FavoriteProductsReq) returns (FavoriteProductsResp)
+
+	// 举报商品
+	@handler ReportProduct
+	post /report/:id (ReportProductReq) returns (ReportProductResp)
+
+	// 评论商品
+	@handler CommentProduct
+	post /comment/:id (CommentProductReq) returns (CommentProductResp)
+
+	// 获取商品评论
+	@handler GetProductComments
+	get /comments/:id (ProductCommentsReq) returns (ProductCommentsResp)
 }
 

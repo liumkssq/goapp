@@ -45,14 +45,16 @@ message LostFoundItem {
   int64 id = 1;
   string title = 2;
   string description = 3;
-  string type = 4; // lost 或 found
+//  string type = 4; // lost 或 found
+    LostFoundType type = 4; // lost 或 found
   string category = 5;
   string location = 6;
   map<string, string> location_detail = 7; // 详细位置信息
   string contact_info = 8;
   string contact_way = 9;
   repeated string images = 10;
-  string status = 11; // pending, found, claimed, closed
+//  string status = 11; // pending, found, claimed, closed
+  LostFoundStatus status = 11;
   repeated string tags = 12;
   string reward_info = 13;
   string lost_found_time = 14;
@@ -129,7 +131,8 @@ message PublishLostFoundRequest {
   int64 user_id = 1;
   string title = 2;
   string description = 3;
-  string type = 4; // lost 或 found
+//  string type = 4; // lost 或 found
+    LostFoundType type = 4; // lost 或 found
   string category = 5;
   string location = 6;
   map<string, string> location_detail = 7;
@@ -190,6 +193,18 @@ message UpdateLostFoundStatusRequest {
 // 更新失物招领状态响应
 message UpdateLostFoundStatusResponse {
   string message = 1;
+}
+
+enum LostFoundType {
+  LOSTT = 0; // 丢失
+  FOUNDT = 1; // 招领
+}
+
+enum LostFoundStatus {
+  PENDING = 0;  // 待处理
+  FOUND = 1;    // 已找到
+  CLAIMED = 2;  // 已认领
+  CLOSED = 3;   // 已关闭
 }
 
 // 评论失物招领请求

@@ -108,6 +108,17 @@ type (
         LostFoundTime string `json:"lostFoundTime,optional"` // 丢失或拾取时间
     }
 
+    PageReq {
+        Page int64 `form:"page,optional,default=1"`
+        Limit int64 `form:"limit,optional,default=10"`
+    }
+
+    LocationDetail {
+        Latitude float64 `json:"latitude"`
+        Longitude float64 `json:"longitude"`
+        Address   string  `json:"address,optional"`
+    }
+
     // 发布失物招领响应
     PublishLostFoundResp {
         Id int64 `json:"id"`
@@ -211,6 +222,7 @@ type (
 
 @server(
     prefix: /api/lost-found
+    group: lostfound
 )
 service LostFound {
     // 获取失物招领列表
@@ -224,6 +236,7 @@ service LostFound {
 
 @server(
     prefix: /api/lost-found
+    group: lostfoundOp
     jwt: Auth
 )
 service LostFound {

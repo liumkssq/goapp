@@ -40,13 +40,13 @@ services:
   # 商品服务Swagger UI
   swagger-product:
     image: swaggerapi/swagger-ui
-    container_name: swagger-product
+    container_name: swagger-product.sql
     ports:
       - "8904:8080"
     environment:
       - SWAGGER_JSON=/app/swagger.json
     volumes:
-      - ../../doc/swagger/product:/app
+      - ../../doc/swagger/product.sql:/app
     restart: always
 
   # 文章服务Swagger UI

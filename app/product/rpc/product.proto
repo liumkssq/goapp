@@ -59,7 +59,8 @@ message Product {
   string location = 12;
   map<string, string> location_detail = 13;
   repeated string tags = 14;
-  string status = 15;
+//  string status = 15;
+  ProductStatus status = 15;
   int64 seller_id = 16;
   string seller_name = 17;
   string seller_avatar = 18;
@@ -67,8 +68,14 @@ message Product {
   int64 like_count = 20;
   int64 comment_count = 21;
   bool is_favorite = 22;
-  string created_at = 23;
-  string updated_at = 24;
+  int64 created_at = 23;
+  int64 updated_at = 24;
+}
+
+enum ProductStatus {
+  ACTIVE = 0;  // 正在出售
+  SOLD = 1;    // 已出售
+  HIDDEN = 2;  // 隐藏
 }
 
 // 商品分类
@@ -79,6 +86,7 @@ message Category {
   int64 parent_id = 4;
   int32 level = 5;
   int32 sort = 6;
+  string description = 7; // 可选的分类描述
 }
 
 // 商品评论
@@ -87,8 +95,8 @@ message Comment {
   string content = 2;
   int64 user_id = 3;
   string user_name = 4;
-  string user_avatar = 5;
-  string created_at = 6;
+  int64 user_avatar = 5;
+  int64 created_at = 6;
 }
 
 // 获取商品列表请求
@@ -182,7 +190,7 @@ message UpdateProductResponse {
 
 // 删除商品请求
 message DeleteProductRequest {
-  int64 id = 1;
+  repeated int64 id = 1;
   int64 user_id = 2; // 操作用户ID，用于权限验证
 }
 
@@ -210,7 +218,7 @@ message GetUserProductsResponse {
 
 // 收藏商品请求
 message FavoriteProductRequest {
-  int64 id = 1;
+  repeated int64 id = 1;
   int64 user_id = 2;
   bool favorite = 3;
 }

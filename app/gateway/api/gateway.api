@@ -12,7 +12,7 @@ import (
 	"im/im.apis"
 	"im/websocket.apis"
 	"lostfound/lostfound.apis"
-	"product/product.apis"
+	"product.sql/product.sql.apis"
 	"article/article.apis"
 	"search/search.apis"
 	"ai/ai.apis"

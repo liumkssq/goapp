@@ -1,0 +1,20 @@
+CREATE TABLE `article` (
+                           `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文章ID',
+                           `title` VARCHAR(255) NOT NULL COMMENT '文章标题',
+                           `content` TEXT NOT NULL COMMENT '文章内容',
+                           `summary` VARCHAR(500) DEFAULT NULL COMMENT '文章摘要',
+                           `cover_image` VARCHAR(255) DEFAULT NULL COMMENT '封面图片URL',
+                           `category_id` BIGINT UNSIGNED NOT NULL COMMENT '文章分类ID',
+                           `tags` JSON DEFAULT NULL COMMENT '标签列表，JSON数组存储',
+                           `status` ENUM('draft', 'published', 'deleted') NOT NULL DEFAULT 'draft' COMMENT '文章状态',
+                           `author_id` BIGINT UNSIGNED NOT NULL COMMENT '作者ID',
+                           `view_count` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览数',
+                           `like_count` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '点赞数',
+                           `comment_count` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '评论数',
+                           `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                           `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                           PRIMARY KEY (`id`),
+                           KEY `idx_category_id` (`category_id`),
+                           KEY `idx_status` (`status`),
+                           KEY `idx_author_id` (`author_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';

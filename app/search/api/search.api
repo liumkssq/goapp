@@ -11,7 +11,7 @@ info (
 type (
     // 搜索结果基础类型
     SearchResult {
-        Type string `json:"type"` // 搜索结果类型: product, article, lostfound, user
+        Type string `json:"type"` // 搜索结果类型: product.sql, article, lostfound, user
         Id int64 `json:"id"`
         Title string `json:"title"` // 标题或名称
         Content string `json:"content,optional"` // 内容或描述摘要
@@ -77,7 +77,7 @@ type (
     // 全局搜索请求
     GlobalSearchReq {
         Keyword string `form:"keyword"`
-        Type string `form:"type,optional,default=all"` // all, product, article, lostfound, user
+        Type string `form:"type,optional,default=all"` // all, product.sql, article, lostfound, user
         Page int64 `form:"page,optional,default=1"`
         Limit int64 `form:"limit,optional,default=10"`
     }

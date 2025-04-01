@@ -6,6 +6,8 @@ package handler
 import (
 	"net/http"
 
+	ProductOp "github.com/liumkssq/goapp/app/bff/internal/handler/ProductOp"
+	product "github.com/liumkssq/goapp/app/bff/internal/handler/product"
 	user "github.com/liumkssq/goapp/app/bff/internal/handler/user"
 	userOp "github.com/liumkssq/goapp/app/bff/internal/handler/userOp"
 	"github.com/liumkssq/goapp/app/bff/internal/svc"
@@ -14,6 +16,79 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/comment/:id",
+				Handler: ProductOp.CommentProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/comments/:id",
+				Handler: ProductOp.GetProductCommentsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: ProductOp.DeleteProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/favorite/:id",
+				Handler: ProductOp.FavoriteProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/favorites",
+				Handler: ProductOp.GetFavoriteProductsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/publish",
+				Handler: ProductOp.PublishProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/report/:id",
+				Handler: ProductOp.ReportProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/update/:id",
+				Handler: ProductOp.UpdateProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/:userId",
+				Handler: ProductOp.GetUserProductsHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/product"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/categories",
+				Handler: product.GetProductCategoriesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/detail/:id",
+				Handler: product.GetProductDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: product.GetProductListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/product"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

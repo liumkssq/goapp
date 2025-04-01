@@ -3,6 +3,15 @@
 
 package types
 
+type Category struct {
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Icon     string `json:"icon,optional"`
+	ParentId int64  `json:"parentId,optional"`
+	Level    int    `json:"level"`
+	Sort     int    `json:"sort,optional"`
+}
+
 type ChangePasswordReq struct {
 	OldPassword string `json:"oldPassword"` // 旧密码
 	NewPassword string `json:"newPassword"` // 新密码
@@ -10,6 +19,58 @@ type ChangePasswordReq struct {
 
 type ChangePasswordResp struct {
 	Success bool `json:"success"` // 是否成功
+}
+
+type Comment struct {
+	Id         int64  `json:"id"`
+	Content    string `json:"content"`
+	UserId     int64  `json:"userId"`
+	UserName   string `json:"userName"`
+	UserAvatar string `json:"userAvatar,optional"`
+	CreatedAt  string `json:"createdAt"`
+}
+
+type CommentProductReq struct {
+	Id      int64  `path:"id"`
+	Content string `json:"content"`
+}
+
+type CommentProductResp struct {
+	CommentId int64  `json:"commentId"`
+	Message   string `json:"message"`
+}
+
+type CommonResp struct {
+	Message string `json:"message"`
+}
+
+type DeleteProductReq struct {
+	Id int64 `path:"id"`
+}
+
+type DeleteProductResp struct {
+	Message string `json:"message"`
+}
+
+type FavoriteProductReq struct {
+	Id       int64 `path:"id"`
+	Favorite bool  `json:"favorite"`
+}
+
+type FavoriteProductResp struct {
+	Message string `json:"message"`
+}
+
+type FavoriteProductsReq struct {
+	Page  int64 `form:"page,optional,default=1"`
+	Limit int64 `form:"limit,optional,default=10"`
+}
+
+type FavoriteProductsResp struct {
+	List  []Product `json:"list"`
+	Total int64     `json:"total"`
+	Page  int64     `json:"page"`
+	Limit int64     `json:"limit"`
 }
 
 type FollowUserReq struct {
@@ -65,6 +126,98 @@ type NotificationListResp struct {
 	List  []Notification `json:"list"`  // 通知列表
 }
 
+type Product struct {
+	Id             int64                  `json:"id"`
+	Title          string                 `json:"title"`
+	Description    string                 `json:"description"`
+	Price          float64                `json:"price"`
+	OriginalPrice  float64                `json:"originalPrice,optional"`
+	CategoryId     int64                  `json:"categoryId"`
+	CategoryName   string                 `json:"categoryName"`
+	Images         []string               `json:"images"`
+	Condition      string                 `json:"condition,optional"` // 商品成色: 全新, 9成新, 8成新, etc.
+	ContactInfo    string                 `json:"contactInfo,optional"`
+	ContactWay     string                 `json:"contactWay,optional"` // 联系方式: 电话, 微信, QQ等
+	Location       string                 `json:"location,optional"`
+	LocationDetail map[string]interface{} `json:"locationDetail,optional"` // 详细位置, 如坐标
+	Tags           []string               `json:"tags,optional"`
+	Status         string                 `json:"status"` // 状态: 在售, 已售出, 已下架
+	SellerId       int64                  `json:"sellerId"`
+	SellerName     string                 `json:"sellerName"`
+	SellerAvatar   string                 `json:"sellerAvatar,optional"`
+	ViewCount      int64                  `json:"viewCount"`
+	LikeCount      int64                  `json:"likeCount"`
+	CommentCount   int64                  `json:"commentCount"`
+	IsFavorite     bool                   `json:"isFavorite,optional"` // 当前用户是否收藏
+	CreatedAt      string                 `json:"createdAt"`
+	UpdatedAt      string                 `json:"updatedAt"`
+}
+
+type ProductCategoriesResp struct {
+	Categories []Category `json:"categories"`
+}
+
+type ProductCommentsReq struct {
+	Id    int64 `path:"id"`
+	Page  int64 `form:"page,optional,default=1"`
+	Limit int64 `form:"limit,optional,default=10"`
+}
+
+type ProductCommentsResp struct {
+	Comments []Comment `json:"comments"`
+	Total    int64     `json:"total"`
+	Page     int64     `json:"page"`
+	Limit    int64     `json:"limit"`
+}
+
+type ProductDetailReq struct {
+	Id int64 `path:"id"`
+}
+
+type ProductDetailResp struct {
+	Product         Product   `json:"product.sql"`
+	Comments        []Comment `json:"comments,optional"`
+	RelatedProducts []Product `json:"relatedProducts,optional"`
+}
+
+type ProductListReq struct {
+	Page       int64   `form:"page,optional,default=1"`
+	Limit      int64   `form:"limit,optional,default=10"`
+	CategoryId int64   `form:"category,optional"`
+	Keyword    string  `form:"keyword,optional"`
+	Sort       string  `form:"sort,optional,default=latest"` // latest, priceAsc, priceDesc, popular
+	MinPrice   float64 `form:"minPrice,optional"`
+	MaxPrice   float64 `form:"maxPrice,optional"`
+	Status     string  `form:"status,optional,default=active"` // active, sold, all
+}
+
+type ProductListResp struct {
+	List  []Product `json:"list"`
+	Total int64     `json:"total"`
+	Page  int64     `json:"page"`
+	Limit int64     `json:"limit"`
+}
+
+type PublishProductReq struct {
+	Title          string                 `json:"title"`
+	Description    string                 `json:"description"`
+	Price          float64                `json:"price"`
+	OriginalPrice  float64                `json:"originalPrice,optional"`
+	CategoryId     int64                  `json:"categoryId"`
+	Images         []string               `json:"images"`
+	Condition      string                 `json:"condition,optional"`
+	ContactInfo    string                 `json:"contactInfo,optional"`
+	ContactWay     string                 `json:"contactWay,optional"`
+	Location       string                 `json:"location,optional"`
+	LocationDetail map[string]interface{} `json:"locationDetail,optional"`
+	Tags           []string               `json:"tags,optional"`
+}
+
+type PublishProductResp struct {
+	Id      int64  `json:"id"`
+	Message string `json:"message"`
+}
+
 type RegisterReq struct {
 	Username         string `json:"username"`         // 用户名
 	Password         string `json:"password"`         // 密码
@@ -78,6 +231,18 @@ type RegisterResp struct {
 	AccessToken  string `json:"accessToken"`  // 访问令牌
 	AccessExpire int64  `json:"accessExpire"` // 令牌过期时间
 	RefreshAfter int64  `json:"refreshAfter"` // 刷新令牌时间
+}
+
+type ReportProductReq struct {
+	Id          int64    `path:"id"`
+	Reason      string   `json:"reason"`               // 举报原因
+	Description string   `json:"description,optional"` // 举报详情
+	Images      []string `json:"images,optional"`      // 举报证据图片
+}
+
+type ReportProductResp struct {
+	ReportId int64  `json:"reportId"`
+	Message  string `json:"message"`
 }
 
 type ResetPasswordReq struct {
@@ -107,6 +272,27 @@ type UnfollowUserResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type UpdateProductReq struct {
+	Id             int64                  `path:"id"`
+	Title          string                 `json:"title,optional"`
+	Description    string                 `json:"description,optional"`
+	Price          float64                `json:"price,optional"`
+	OriginalPrice  float64                `json:"originalPrice,optional"`
+	CategoryId     int64                  `json:"categoryId,optional"`
+	Images         []string               `json:"images,optional"`
+	Condition      string                 `json:"condition,optional"`
+	ContactInfo    string                 `json:"contactInfo,optional"`
+	ContactWay     string                 `json:"contactWay,optional"`
+	Location       string                 `json:"location,optional"`
+	LocationDetail map[string]interface{} `json:"locationDetail,optional"`
+	Tags           []string               `json:"tags,optional"`
+	Status         string                 `json:"status,optional"`
+}
+
+type UpdateProductResp struct {
+	Message string `json:"message"`
+}
+
 type UpdateUserInfoReq struct {
 	Nickname string `json:"nickname,optional"` // 昵称
 	Gender   string `json:"gender,optional"`   // 性别
@@ -131,6 +317,20 @@ type UserInfoResp struct {
 	ArticleCount   int    `json:"articleCount"`    // 发布的文章数
 	LostFoundCount int    `json:"lostFoundCount"`  // 发布的失物招领数
 	CreatedAt      string `json:"createdAt"`       // 创建时间
+}
+
+type UserProductsReq struct {
+	UserId int64  `path:"userId"`
+	Page   int64  `form:"page,optional,default=1"`
+	Limit  int64  `form:"limit,optional,default=10"`
+	Status string `form:"status,optional"`
+}
+
+type UserProductsResp struct {
+	List  []Product `json:"list"`
+	Total int64     `json:"total"`
+	Page  int64     `json:"page"`
+	Limit int64     `json:"limit"`
 }
 
 type UserProfileReq struct {

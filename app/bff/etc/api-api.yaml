@@ -11,3 +11,7 @@ UserRpc:
     - 127.0.0.1:8080
   NonBlock: true
 
+ProductRpc:
+  Endpoints:
+    - 127.0.0.1:8081
+  NonBlock: true
