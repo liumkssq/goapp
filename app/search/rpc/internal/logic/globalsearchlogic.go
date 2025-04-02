@@ -35,30 +35,11 @@ func (l *GlobalSearchLogic) GlobalSearch(in *search.GlobalSearchRequest) (*searc
 	} else {
 		searchType = "all"
 	}
-	var eg errgroup.Group
-	eg.Go(func() error {
-		// 2. 调用对应的 repo
-		//switch searchType {
-		//case "user":
-		//	// 3. 调用 user repo
-		//	users, err := l.svcCtx.UserRepo.SearchUser(l.ctx, keywords)
-		//	if err != nil {
-		//		return err
-		//	}
-		//	l.Logger.Infof("users: %v", users)
-		//case "article":
-		//	// 4. 调用 article repo
-		//	articles, err := l.svcCtx.ArticleRepo.SearchArticle(l.ctx, in.Uid, keywords)
-		//	if err != nil {
-		//		return err
-		//	}
-		//	l.Logger.Infof("articles: %v", articles)
-		//default:
-		//	l.Logger.Infof("searchType: %s", searchType)
-		//}
-		//return nil
-		return nil
-	})
+	//
+	//var eg errgroup.Group
+	//eg.Go(func() error {
+	//	l.svcCtx.
+	//})
 
 	return &search.GlobalSearchResponse{}, nil
 }

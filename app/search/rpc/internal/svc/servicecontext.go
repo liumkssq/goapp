@@ -12,7 +12,6 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:       c,
-		ProductModel: model.NewProductModel(c.Mysql),
+		Config: c,
 	}
 }
