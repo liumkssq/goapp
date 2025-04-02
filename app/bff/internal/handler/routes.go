@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	ProductOp "github.com/liumkssq/goapp/app/bff/internal/handler/ProductOp"
+	lostfound "github.com/liumkssq/goapp/app/bff/internal/handler/lostfound"
+	lostfoundOp "github.com/liumkssq/goapp/app/bff/internal/handler/lostfoundOp"
 	product "github.com/liumkssq/goapp/app/bff/internal/handler/product"
 	user "github.com/liumkssq/goapp/app/bff/internal/handler/user"
 	userOp "github.com/liumkssq/goapp/app/bff/internal/handler/userOp"
@@ -60,12 +62,80 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/user/:userId",
+				Path:    "/userProduct/:userId",
 				Handler: ProductOp.GetUserProductsHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/product"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/detail/:id",
+				Handler: lostfound.GetLostFoundDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: lostfound.GetLostFoundListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/lost-found"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/",
+				Handler: lostfoundOp.PublishLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/:id",
+				Handler: lostfoundOp.UpdateLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/:id",
+				Handler: lostfoundOp.DeleteLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/:id/comment",
+				Handler: lostfoundOp.CommentLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/:id/comments",
+				Handler: lostfoundOp.GetLostFoundCommentsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/:id/like",
+				Handler: lostfoundOp.LikeLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/:id/status",
+				Handler: lostfoundOp.UpdateLostFoundStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/:id/unlike",
+				Handler: lostfoundOp.UnlikeLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/userLostFound/:userId",
+				Handler: lostfoundOp.GetUserLostFoundHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/lost-found"),
 	)
 
 	server.AddRoutes(

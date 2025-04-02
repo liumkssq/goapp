@@ -2,6 +2,7 @@ syntax = "v1"
 
 import "apis/user.api"
 import "apis/product.api"
+import "apis/lostfound.api"
 
 //user ==
 @server (
@@ -120,7 +121,7 @@ service api-api {
 
 	// 获取用户的商品
 	@handler GetUserProducts
-	get /user/:userId (UserProductsReq) returns (UserProductsResp)
+	get /userProduct/:userId (UserProductsReq) returns (UserProductsResp)
 
 	// 收藏/取消收藏商品
 	@handler FavoriteProduct
@@ -141,5 +142,62 @@ service api-api {
 	// 获取商品评论
 	@handler GetProductComments
 	get /comments/:id (ProductCommentsReq) returns (ProductCommentsResp)
+}
+
+@server (
+	prefix: /api/lost-found
+	group:  lostfound
+)
+service api-api {
+	// 获取失物招领列表
+	@handler GetLostFoundList
+	get /list (LostFoundListReq) returns (LostFoundListResp)
+
+	// 获取失物招领详情
+	@handler GetLostFoundDetail
+	get /detail/:id (LostFoundDetailReq) returns (LostFoundDetailResp)
+}
+
+@server (
+	prefix: /api/lost-found
+	group:  lostfoundOp
+	jwt:    Auth
+)
+service api-api {
+	// 获取用户发布的失物招领
+	@handler GetUserLostFound
+	get /userLostFound/:userId (UserLostFoundReq) returns (UserLostFoundResp)
+
+	// 发布失物招领
+	@handler PublishLostFound
+	post / (PublishLostFoundReq) returns (PublishLostFoundResp)
+
+	// 更新失物招领
+	@handler UpdateLostFound
+	put /:id (UpdateLostFoundReq) returns (UpdateLostFoundResp)
+
+	// 删除失物招领
+	@handler DeleteLostFound
+	delete /:id (DeleteLostFoundReq) returns (DeleteLostFoundResp)
+
+	// 更新失物招领状态
+	@handler UpdateLostFoundStatus
+	put /:id/status (UpdateLostFoundStatusReq) returns (UpdateLostFoundStatusResp)
+
+	// 评论失物招领
+	@handler CommentLostFound
+	post /:id/comment (CommentLostFoundReq) returns (CommentLostFoundResp)
+
+	// 获取失物招领评论
+	@handler GetLostFoundComments
+	get /:id/comments (LostFoundCommentsReq) returns (LostFoundCommentsResp)
+
+	// 点赞失物招领
+	@handler LikeLostFound
+	post /:id/like (LikeLostFoundReq) returns (LikeLostFoundResp)
+
+	// 取消点赞失物招领
+	@handler UnlikeLostFound
+	post /:id/unlike (UnlikeLostFoundReq) returns (UnlikeLostFoundResp)
 }
 

@@ -30,6 +30,16 @@ type Comment struct {
 	CreatedAt  string `json:"createdAt"`
 }
 
+type CommentLostFoundReq struct {
+	Id      int64  `path:"id"`
+	Content string `json:"content"`
+}
+
+type CommentLostFoundResp struct {
+	CommentId int64  `json:"commentId"`
+	Message   string `json:"message"`
+}
+
 type CommentProductReq struct {
 	Id      int64  `path:"id"`
 	Content string `json:"content"`
@@ -41,6 +51,14 @@ type CommentProductResp struct {
 }
 
 type CommonResp struct {
+	Message string `json:"message"`
+}
+
+type DeleteLostFoundReq struct {
+	Id int64 `path:"id"`
+}
+
+type DeleteLostFoundResp struct {
 	Message string `json:"message"`
 }
 
@@ -81,6 +99,20 @@ type FollowUserResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type LikeLostFoundReq struct {
+	Id int64 `path:"id"`
+}
+
+type LikeLostFoundResp struct {
+	Message string `json:"message"`
+}
+
+type LocationDetail struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Address   string  `json:"address,optional"`
+}
+
 type LoginByPasswordReq struct {
 	Username string `json:"username"` // 用户名/邮箱
 	Password string `json:"password"` // 密码
@@ -100,6 +132,81 @@ type LoginResp struct {
 	AccessToken  string `json:"accessToken"`  // 访问令牌
 	AccessExpire int64  `json:"accessExpire"` // 令牌过期时间
 	RefreshAfter int64  `json:"refreshAfter"` // 刷新令牌时间
+}
+
+type LostFoundComment struct {
+	Id         int64  `json:"id"`
+	Content    string `json:"content"`
+	UserId     int64  `json:"userId"`
+	UserName   string `json:"userName"`
+	UserAvatar string `json:"userAvatar,optional"`
+	CreatedAt  string `json:"createdAt"`
+}
+
+type LostFoundCommentsReq struct {
+	Id    int64 `path:"id"`
+	Page  int64 `form:"page,optional,default=1"`
+	Limit int64 `form:"limit,optional,default=10"`
+}
+
+type LostFoundCommentsResp struct {
+	Comments []LostFoundComment `json:"comments"`
+	Total    int64              `json:"total"`
+	Page     int64              `json:"page"`
+	Limit    int64              `json:"limit"`
+}
+
+type LostFoundDetailReq struct {
+	Id int64 `path:"id"`
+}
+
+type LostFoundDetailResp struct {
+	Item     LostFoundItem      `json:"item"`
+	Comments []LostFoundComment `json:"comments,optional"`
+}
+
+type LostFoundItem struct {
+	Id              int64                  `json:"id"`
+	Title           string                 `json:"title"`
+	Description     string                 `json:"description"`
+	Type            string                 `json:"type"` // lost 或 found
+	Category        string                 `json:"category,optional"`
+	Location        string                 `json:"location,optional"`
+	LocationDetail  map[string]interface{} `json:"locationDetail,optional"` // 详细位置信息，如经纬度等
+	ContactInfo     string                 `json:"contactInfo,optional"`
+	ContactWay      string                 `json:"contactWay,optional"` // 联系方式，如电话、微信等
+	Images          []string               `json:"images,optional"`
+	Status          string                 `json:"status"` // pending, found, claimed, closed
+	Tags            []string               `json:"tags,optional"`
+	RewardInfo      string                 `json:"rewardInfo,optional"`
+	LostFoundTime   string                 `json:"lostFoundTime,optional"` // 丢失或拾取时间
+	PublisherId     int64                  `json:"publisherId"`
+	PublisherName   string                 `json:"publisherName"`
+	PublisherAvatar string                 `json:"publisherAvatar,optional"`
+	ViewCount       int64                  `json:"viewCount"`
+	LikeCount       int64                  `json:"likeCount"`
+	CommentCount    int64                  `json:"commentCount"`
+	IsLiked         bool                   `json:"isLiked,optional"`
+	CreatedAt       string                 `json:"createdAt"`
+	UpdatedAt       string                 `json:"updatedAt"`
+}
+
+type LostFoundListReq struct {
+	Page       int64  `form:"page,optional,default=1"`
+	Limit      int64  `form:"limit,optional,default=10"`
+	Type       string `form:"type,optional,default=all"`    // lost/found/all
+	Status     string `form:"status,optional,default=all"`  // pending/found/claimed/closed/all
+	Sort       string `form:"sort,optional,default=latest"` // latest/hot
+	Keywords   string `form:"keywords,optional"`
+	CategoryId int64  `form:"categoryId,optional"`
+	UserId     int64  `form:"userId,optional"` // 查询特定用户的发布
+}
+
+type LostFoundListResp struct {
+	List  []LostFoundItem `json:"list"`
+	Total int64           `json:"total"`
+	Page  int64           `json:"page"`
+	Limit int64           `json:"limit"`
 }
 
 type MarkNotificationAsReadReq struct {
@@ -124,6 +231,11 @@ type Notification struct {
 type NotificationListResp struct {
 	Total int            `json:"total"` // 总数
 	List  []Notification `json:"list"`  // 通知列表
+}
+
+type PageReq struct {
+	Page  int64 `form:"page,optional,default=1"`
+	Limit int64 `form:"limit,optional,default=10"`
 }
 
 type Product struct {
@@ -196,6 +308,26 @@ type ProductListResp struct {
 	Total int64     `json:"total"`
 	Page  int64     `json:"page"`
 	Limit int64     `json:"limit"`
+}
+
+type PublishLostFoundReq struct {
+	Title          string                 `json:"title"`
+	Description    string                 `json:"description"`
+	Type           string                 `json:"type"` // lost 或 found
+	Category       string                 `json:"category,optional"`
+	Location       string                 `json:"location,optional"`
+	LocationDetail map[string]interface{} `json:"locationDetail,optional"` // 详细位置信息
+	ContactInfo    string                 `json:"contactInfo,optional"`
+	ContactWay     string                 `json:"contactWay,optional"`
+	Images         []string               `json:"images,optional"`
+	Tags           []string               `json:"tags,optional"`
+	RewardInfo     string                 `json:"rewardInfo,optional"`
+	LostFoundTime  string                 `json:"lostFoundTime,optional"` // 丢失或拾取时间
+}
+
+type PublishLostFoundResp struct {
+	Id      int64  `json:"id"`
+	Message string `json:"message"`
 }
 
 type PublishProductReq struct {
@@ -272,6 +404,42 @@ type UnfollowUserResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type UnlikeLostFoundReq struct {
+	Id int64 `path:"id"`
+}
+
+type UnlikeLostFoundResp struct {
+	Message string `json:"message"`
+}
+
+type UpdateLostFoundReq struct {
+	Id             int64                  `path:"id"`
+	Title          string                 `json:"title,optional"`
+	Description    string                 `json:"description,optional"`
+	Category       string                 `json:"category,optional"`
+	Location       string                 `json:"location,optional"`
+	LocationDetail map[string]interface{} `json:"locationDetail,optional"`
+	ContactInfo    string                 `json:"contactInfo,optional"`
+	ContactWay     string                 `json:"contactWay,optional"`
+	Images         []string               `json:"images,optional"`
+	Tags           []string               `json:"tags,optional"`
+	RewardInfo     string                 `json:"rewardInfo,optional"`
+	LostFoundTime  string                 `json:"lostFoundTime,optional"`
+}
+
+type UpdateLostFoundResp struct {
+	Message string `json:"message"`
+}
+
+type UpdateLostFoundStatusReq struct {
+	Id     int64  `path:"id"`
+	Status string `json:"status"` // pending, found, claimed, closed
+}
+
+type UpdateLostFoundStatusResp struct {
+	Message string `json:"message"`
+}
+
 type UpdateProductReq struct {
 	Id             int64                  `path:"id"`
 	Title          string                 `json:"title,optional"`
@@ -317,6 +485,19 @@ type UserInfoResp struct {
 	ArticleCount   int    `json:"articleCount"`    // 发布的文章数
 	LostFoundCount int    `json:"lostFoundCount"`  // 发布的失物招领数
 	CreatedAt      string `json:"createdAt"`       // 创建时间
+}
+
+type UserLostFoundReq struct {
+	UserId int64 `path:"userId"`
+	Page   int64 `form:"page,optional,default=1"`
+	Limit  int64 `form:"limit,optional,default=10"`
+}
+
+type UserLostFoundResp struct {
+	List  []LostFoundItem `json:"list"`
+	Total int64           `json:"total"`
+	Page  int64           `json:"page"`
+	Limit int64           `json:"limit"`
 }
 
 type UserProductsReq struct {
