@@ -82,12 +82,44 @@ type (
 
 func (m *defaultLostFoundItemModel) SearchLostFound(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*LostFoundItem, error) {
 	// 构建查询条件
-	selectBuilder := m.SelectBuilder().Where("`id` > 1")
+	//	var resp []*Product
+	//	// 处理搜索条件
+	//	var whereClause string
+	//	if searchType == "title" {
+	//		whereClause = fmt.Sprintf("title LIKE '%%%s%%'", keyword)
+	//	} else if searchType == "description" {
+	//		whereClause = fmt.Sprintf("description LIKE '%%%s%%'", keyword)
+	//	} else if searchType == "tags" {
+	//		whereClause = fmt.Sprintf("tags LIKE '%%%s%%'", keyword)
+	//	} else {
+	//		//find all case
+	//		whereClause = fmt.Sprintf("title LIKE '%%%s%%' OR description LIKE '%%%s%%' OR tags LIKE '%%%s%%'", keyword, keyword, keyword)
+	//	}
+	//	// 处理分页
+	//	if page < 1 {
+	//		page = 1
+	//	}
+	//
+	//	if limit < 1 {
+	//		limit = 10
+	//	}
+	//	// 计算偏移量 = (当前页码 - 1) * 每页数量
+	//	offset := (page - 1) * limit
+	//	// 构建 SQL 查询
+	//	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT %d OFFSET %d", productRows, m.table, whereClause, limit, offset)
+	//	// 执行查询
+	//	err := m.QueryRowsNoCache(&resp, query)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	return resp, nil
+	selectBuilder := squirrel.Select(lostFoundItemRows).From(m.table)
 	if keyword != "" {
-		selectBuilder = selectBuilder.Where("title LIKE ? OR description LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
-	}
-	if searchType != "" {
-		selectBuilder = selectBuilder.Where("type = ?", searchType)
+		selectBuilder = selectBuilder.Where(squirrel.Or{
+			squirrel.Like{"title": "%" + keyword + "%"},
+			squirrel.Like{"description": "%" + keyword + "%"},
+			squirrel.Like{"tags": "%" + keyword + "%"},
+		})
 	}
 
 	// 设置排序

@@ -7,11 +7,13 @@ import (
 	"net/http"
 
 	ProductOp "github.com/liumkssq/goapp/app/bff/internal/handler/ProductOp"
+	allsearch "github.com/liumkssq/goapp/app/bff/internal/handler/allsearch"
 	lostfound "github.com/liumkssq/goapp/app/bff/internal/handler/lostfound"
 	lostfoundOp "github.com/liumkssq/goapp/app/bff/internal/handler/lostfoundOp"
 	product "github.com/liumkssq/goapp/app/bff/internal/handler/product"
 	user "github.com/liumkssq/goapp/app/bff/internal/handler/user"
 	userOp "github.com/liumkssq/goapp/app/bff/internal/handler/userOp"
+	userSearch "github.com/liumkssq/goapp/app/bff/internal/handler/userSearch"
 	"github.com/liumkssq/goapp/app/bff/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -68,6 +70,42 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/product"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/",
+				Handler: allsearch.GlobalSearchHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/articles",
+				Handler: allsearch.SearchArticlesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/hot-keywords",
+				Handler: allsearch.GetHotSearchKeywordsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/lostfound",
+				Handler: allsearch.SearchLostFoundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/products",
+				Handler: allsearch.SearchProductsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users",
+				Handler: allsearch.SearchUsersHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/search"),
 	)
 
 	server.AddRoutes(
@@ -266,5 +304,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/user"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/history",
+				Handler: userSearch.GetSearchHistoryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/history",
+				Handler: userSearch.ClearSearchHistoryHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/search"),
 	)
 }

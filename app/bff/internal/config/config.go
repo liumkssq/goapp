@@ -14,4 +14,5 @@ type Config struct {
 	UserRpc      zrpc.RpcClientConf
 	ProductRpc   zrpc.RpcClientConf
 	LostFoundRpc zrpc.RpcClientConf
+	SearchRpc    zrpc.RpcClientConf
 }

@@ -3,6 +3,20 @@
 
 package types
 
+type ArticleSearchResult struct {
+	Id           int64  `json:"id"`
+	Title        string `json:"title"`
+	Summary      string `json:"summary,optional"`
+	CoverImage   string `json:"coverImage,optional"`
+	CategoryName string `json:"categoryName,optional"`
+	AuthorId     int64  `json:"authorId"`
+	AuthorName   string `json:"authorName"`
+	AuthorAvatar string `json:"authorAvatar,optional"`
+	ViewCount    int64  `json:"viewCount"`
+	CommentCount int64  `json:"commentCount"`
+	CreatedAt    string `json:"createdAt"`
+}
+
 type Category struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
@@ -97,6 +111,29 @@ type FollowUserReq struct {
 
 type FollowUserResp struct {
 	Success bool `json:"success"` // 是否成功
+}
+
+type GlobalSearchReq struct {
+	Keyword string `form:"keyword"`
+	Type    string `form:"type,optional,default=all"` // all, product.sql, article, lostfound, user
+	Page    int64  `form:"page,optional,default=1"`
+	Limit   int64  `form:"limit,optional,default=10"`
+}
+
+type GlobalSearchResp struct {
+	List  []SearchResult `json:"list"`
+	Total int64          `json:"total"`
+	Page  int64          `json:"page"`
+	Limit int64          `json:"limit"`
+}
+
+type HotKeyword struct {
+	Keyword string `json:"keyword"`
+	Count   int64  `json:"count"`
+}
+
+type HotSearchKeywordsResp struct {
+	List []HotKeyword `json:"list"`
 }
 
 type LikeLostFoundReq struct {
@@ -209,6 +246,20 @@ type LostFoundListResp struct {
 	Limit int64           `json:"limit"`
 }
 
+type LostFoundSearchResult struct {
+	Id              int64    `json:"id"`
+	Title           string   `json:"title"`
+	Description     string   `json:"description,optional"`
+	Type            string   `json:"type"` // lost 或 found
+	Location        string   `json:"location,optional"`
+	Images          []string `json:"images,optional"`
+	Status          string   `json:"status"`
+	PublisherId     int64    `json:"publisherId"`
+	PublisherName   string   `json:"publisherName"`
+	PublisherAvatar string   `json:"publisherAvatar,optional"`
+	CreatedAt       string   `json:"createdAt"`
+}
+
 type MarkNotificationAsReadReq struct {
 	Id int64 `path:"id"` // 通知ID
 }
@@ -310,6 +361,21 @@ type ProductListResp struct {
 	Limit int64     `json:"limit"`
 }
 
+type ProductSearchResult struct {
+	Id            int64    `json:"id"`
+	Title         string   `json:"title"`
+	Description   string   `json:"description,optional"`
+	Price         float64  `json:"price"`
+	OriginalPrice float64  `json:"originalPrice,optional"`
+	CategoryName  string   `json:"categoryName,optional"`
+	Images        []string `json:"images,optional"`
+	Status        string   `json:"status"`
+	SellerId      int64    `json:"sellerId"`
+	SellerName    string   `json:"sellerName"`
+	SellerAvatar  string   `json:"sellerAvatar,optional"`
+	CreatedAt     string   `json:"createdAt"`
+}
+
 type PublishLostFoundReq struct {
 	Title          string                 `json:"title"`
 	Description    string                 `json:"description"`
@@ -385,6 +451,88 @@ type ResetPasswordReq struct {
 
 type ResetPasswordResp struct {
 	Success bool `json:"success"` // 是否成功
+}
+
+type SearchArticlesReq struct {
+	Keyword  string `form:"keyword"`
+	Category string `form:"category,optional"`
+	Sort     string `form:"sort,optional,default=latest"` // latest, popular, hottest
+	Page     int64  `form:"page,optional,default=1"`
+	Limit    int64  `form:"limit,optional,default=10"`
+}
+
+type SearchArticlesResp struct {
+	List  []ArticleSearchResult `json:"list"`
+	Total int64                 `json:"total"`
+	Page  int64                 `json:"page"`
+	Limit int64                 `json:"limit"`
+}
+
+type SearchHistoryItem struct {
+	Id        int64  `json:"id"`
+	Keyword   string `json:"keyword"`
+	Type      string `json:"type"` // 搜索类型
+	CreatedAt string `json:"createdAt"`
+}
+
+type SearchHistoryResp struct {
+	List  []SearchHistoryItem `json:"list"`
+	Total int64               `json:"total"`
+}
+
+type SearchLostFoundReq struct {
+	Keyword string `form:"keyword"`
+	Type    string `form:"type,optional"`                // lost, found
+	Sort    string `form:"sort,optional,default=latest"` // latest, popular
+	Page    int64  `form:"page,optional,default=1"`
+	Limit   int64  `form:"limit,optional,default=10"`
+}
+
+type SearchLostFoundResp struct {
+	List  []LostFoundSearchResult `json:"list"`
+	Total int64                   `json:"total"`
+	Page  int64                   `json:"page"`
+	Limit int64                   `json:"limit"`
+}
+
+type SearchProductsReq struct {
+	Keyword  string  `form:"keyword"`
+	Category string  `form:"category,optional"`
+	Sort     string  `form:"sort,optional,default=latest"` // latest, priceAsc, priceDesc, popular
+	MinPrice float64 `form:"minPrice,optional"`
+	MaxPrice float64 `form:"maxPrice,optional"`
+	Page     int64   `form:"page,optional,default=1"`
+	Limit    int64   `form:"limit,optional,default=10"`
+}
+
+type SearchProductsResp struct {
+	List  []ProductSearchResult `json:"list"`
+	Total int64                 `json:"total"`
+	Page  int64                 `json:"page"`
+	Limit int64                 `json:"limit"`
+}
+
+type SearchResult struct {
+	Type      string                 `json:"type"` // 搜索结果类型: product.sql, article, lostfound, user
+	Id        int64                  `json:"id"`
+	Title     string                 `json:"title"`            // 标题或名称
+	Content   string                 `json:"content,optional"` // 内容或描述摘要
+	Image     string                 `json:"image,optional"`   // 封面图片
+	CreatedAt string                 `json:"createdAt"`
+	Extra     map[string]interface{} `json:"extra,optional"` // 额外信息
+}
+
+type SearchUsersReq struct {
+	Keyword string `form:"keyword"`
+	Page    int64  `form:"page,optional,default=1"`
+	Limit   int64  `form:"limit,optional,default=10"`
+}
+
+type SearchUsersResp struct {
+	List  []UserSearchResult `json:"list"`
+	Total int64              `json:"total"`
+	Page  int64              `json:"page"`
+	Limit int64              `json:"limit"`
 }
 
 type SendVerificationCodeReq struct {
@@ -532,6 +680,13 @@ type UserProfileResp struct {
 	ArticleCount   int    `json:"articleCount"`    // 发布的文章数
 	LostFoundCount int    `json:"lostFoundCount"`  // 发布的失物招领数
 	CreatedAt      string `json:"createdAt"`       // 创建时间
+}
+
+type UserSearchResult struct {
+	Id       int64  `json:"id"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar,optional"`
+	Bio      string `json:"bio,optional"`
 }
 
 type VerifyCodeReq struct {

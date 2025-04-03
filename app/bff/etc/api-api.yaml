@@ -20,3 +20,8 @@ LostFoundRpc:
   Endpoints:
     - 127.0.0.1:8082
   NonBlock: true
+
+SearchRpc:
+  Endpoints:
+    - 127.0.0.1:8083
+  NonBlock: true

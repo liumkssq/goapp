@@ -4,10 +4,9 @@ import (
 	"context"
 	"github.com/liumkssq/goapp/app/search/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/search/rpc/search"
+	"github.com/zeromicro/go-zero/core/logx"
 	"strconv"
 	"strings"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GlobalSearchLogic struct {
@@ -28,14 +27,14 @@ func NewGlobalSearchLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Glob
 func (l *GlobalSearchLogic) GlobalSearch(in *search.GlobalSearchRequest) (*search.GlobalSearchResponse, error) {
 	// todo: add your logic here and delete this line
 	// 1. 解析参数 split " " 空格 todo 其他后续优化先简单用空格
-	keywords := strings.Split(in.Keyword, " ")
-	var searchType string
-	if len(keywords) > 0 {
-		searchType = keywords[0]
-	} else {
-		searchType = "all"
-	}
+	searchType := in.Type
 	var resp search.GlobalSearchResponse
+	keywords := strings.Split(in.Keyword, " ")
+	if len(keywords) != 0 {
+		in.Keyword = keywords[0]
+	} else {
+		in.Keyword = ""
+	}
 	if searchType == "all" || searchType == "product" {
 		searchProduct, err := l.svcCtx.ProductModel.SearchProduct(l.ctx, in.Keyword, searchType, in.Page, in.Limit)
 		if err != nil {
@@ -103,5 +102,6 @@ func (l *GlobalSearchLogic) GlobalSearch(in *search.GlobalSearchRequest) (*searc
 			resp.List = append(resp.List, UserSearchResp)
 		}
 	}
+	resp.Total = int64(len(resp.List))
 	return &resp, nil
 }

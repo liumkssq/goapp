@@ -123,12 +123,12 @@ func (m *defaultProductModel) SearchProduct(ctx context.Context, keyword string,
 	// 处理分页
 	if page < 1 {
 		page = 1
-	} else {
-		page = page - 1
 	}
+
 	if limit < 1 {
 		limit = 10
 	}
+	// 计算偏移量 = (当前页码 - 1) * 每页数量
 	offset := (page - 1) * limit
 	// 构建 SQL 查询
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT %d OFFSET %d", productRows, m.table, whereClause, limit, offset)
