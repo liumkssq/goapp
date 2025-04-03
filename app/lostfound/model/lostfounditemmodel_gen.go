@@ -115,14 +115,76 @@ func (m *defaultLostFoundItemModel) SelectBuilder() squirrel.SelectBuilder {
 	return squirrel.Select().From(m.table)
 }
 func (m *defaultLostFoundItemModel) Insert(ctx context.Context, session sqlx.Session, data *LostFoundItem) (sql.Result, error) {
-	lostFoundCacheKey := fmt.Sprintf("%s%v", cacheGoappLostFoundItemIdPrefix, data.Id)
-	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?,)", m.table, lostFoundItemRowsExpectAutoSet)
+	//		Title:       in.Title,
+	//		Description: in.Description,
+	//		Type:        LostType,
+	//		Category: sql.NullString{
+	//			String: in.Category,
+	//			Valid:  true,
+	//		},
+	//		Location: sql.NullString{
+	//			String: in.Location,
+	//			Valid:  true,
+	//		},
+	//		LocationDetail: sql.NullString{},
+	//		ContactInfo: sql.NullString{
+	//			String: in.ContactInfo,
+	//			Valid:  true,
+	//		},
+	//		ContactWay: sql.NullString{
+	//			String: in.ContactWay,
+	//			Valid:  true,
+	//		},
+	//		Images: sql.NullString{
+	//			String: string(imagesJSON),
+	//			Valid:  true,
+	//		},
+	//		Status: "published",
+	//		Tags: sql.NullString{
+	//			String: tagsJSON,
+	//			Valid:  true,
+	//		},
+	//		RewardInfo: sql.NullString{
+	//			String: in.RewardInfo,
+	//			Valid:  true,
+	//		},
+	//		LostFoundTime: sql.NullTime{
+	//			Time:  lostFoundTime,
+	//			Valid: true,
+	//		},
+	//		PublisherId:     userItem.Id,
+	//		PublisherName:   userName,
+	//		PublisherAvatar: sql.NullString{
+	//			String: userItem.AvatarUrl.String,
+	//			Valid: true,
+	//		},
+	//	data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail,
+	//				data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo,
+	//				data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar,
+	CacheKey := fmt.Sprintf("%s%v", cacheGoappLostFoundItemIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+
+		query := fmt.Sprintf("insert into %s (%s) values (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ", m.table, lostFoundItemRowsExpectAutoSet)
 		if session != nil {
-			return session.ExecCtx(ctx, query, data.Id, data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail, data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo, data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar, data.ViewCount, data.LikeCount, data.CommentCount, data.CreatedAt, data)
+			return session.ExecCtx(ctx,
+				query,
+				data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail,
+				data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo,
+				data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar, data.ViewCount, data.LikeCount, data.CommentCount,
+			)
 		}
-		return conn.ExecCtx(ctx, query, data.Id, data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail, data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo, data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar, data.ViewCount, data.LikeCount, data.CommentCount, data.CreatedAt, data)
-	}, lostFoundCacheKey)
+		return conn.ExecCtx(ctx,
+			query,
+			data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail,
+			data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo,
+			data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar, data.ViewCount, data.LikeCount, data.CommentCount,
+		)
+	}, CacheKey)
+	if err != nil {
+		return nil, err
+	}
+	// 缓存失物招领记录
+	return ret, nil
 }
 
 func (m *defaultLostFoundItemModel) FindOne(ctx context.Context, id int64) (*LostFoundItem, error) {

@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"github.com/liumkssq/goapp/app/lostfound/model"
 	"time"
 
@@ -37,17 +39,48 @@ func (l *PublishLostFoundLogic) PublishLostFound(
 	} else {
 		LostType = "found"
 	}
-	var images string
-	for _, image := range in.Images {
-		images += image + ","
+	imagesJSON, err := json.Marshal(in.Images)
+	if err != nil {
+		l.Logger.Error("Marshal images error: ", err)
+		return nil, err
 	}
-	var tags string
-	for _, tag := range in.Tags {
-		tags += tag + ","
+	var tagsJSON string
+	if len(in.Tags) > 0 {
+		tagsData, err := json.Marshal(in.Tags)
+		if err != nil {
+			l.Logger.Error("Marshal tags error: ", err)
+			return nil, err
+		}
+		tagsJSON = string(tagsData)
+	} else {
+		tagsJSON = "[]" // 空数组的JSON表示
 	}
 	//convert string to time
 	//var lostFoundTime time.Time
-	lostFoundTime, _ := time.Parse("2006-01-02 15:04:05", in.LostFoundTime)
+
+	fmt.Printf("in: %v", in.UserId)
+	userItem, err := l.svcCtx.UserModel.FindOne(l.ctx, uint64(in.UserId))
+	if err != nil {
+		l.Logger.Error("PublishProduct error: ", err)
+		return nil, err
+	}
+	logx.Infof("userItem: %v", userItem)
+	userName := userItem.Username
+	var lostFoundTime time.Time
+	var valid bool
+
+	// 有时间值且格式正确时才设置为有效
+	if in.LostFoundTime != "" {
+		parsedTime, err := time.Parse("2006-01-02 15:04:05", in.LostFoundTime)
+		if err == nil {
+			lostFoundTime = parsedTime
+			valid = true
+		} else {
+			// 记录错误但不中断
+			l.Logger.Error("Parse lost_found_time error:", err)
+		}
+	}
+
 	lostfoundItem := &model.LostFoundItem{
 		Title:       in.Title,
 		Description: in.Description,
@@ -70,12 +103,12 @@ func (l *PublishLostFoundLogic) PublishLostFound(
 			Valid:  true,
 		},
 		Images: sql.NullString{
-			String: images,
+			String: string(imagesJSON),
 			Valid:  true,
 		},
-		Status: "published",
+		Status: "pending",
 		Tags: sql.NullString{
-			String: tags,
+			String: tagsJSON,
 			Valid:  true,
 		},
 		RewardInfo: sql.NullString{
@@ -84,17 +117,22 @@ func (l *PublishLostFoundLogic) PublishLostFound(
 		},
 		LostFoundTime: sql.NullTime{
 			Time:  lostFoundTime,
-			Valid: true,
+			Valid: valid,
 		},
-		//PublisherId: uint64(in.UserId),
-		//PublisherAvatar: sql.NullString{
-		//	String: in.im,
-		//	Valid:  true,
-		//},
+		PublisherId:   userItem.Id,
+		PublisherName: userName,
+		PublisherAvatar: sql.NullString{
+			String: userItem.AvatarUrl.String,
+			Valid:  true,
+		},
+		ViewCount:    0,
+		LikeCount:    0,
+		CommentCount: 0,
 	}
 
 	result, err := l.svcCtx.LostFoundItemModel.Insert(l.ctx, nil, lostfoundItem)
 	if err != nil {
+		logx.Error("PublishLostFound error: ", err)
 		return nil, err
 	}
 	resultId, err := result.LastInsertId()

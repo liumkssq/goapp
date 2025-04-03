@@ -117,6 +117,8 @@ type (
 
 @server(
     prefix: /api/im
+    jwt: Auth
+    group: im
 )
 service WebSocket {
     // WebSocket连接

@@ -3,6 +3,7 @@ syntax = "v1"
 import "apis/user.api"
 import "apis/product.api"
 import "apis/lostfound.api"
+import "apis/im.api"
 
 //user ==
 @server (
@@ -201,3 +202,174 @@ service api-api {
 	post /:id/unlike (UnlikeLostFoundReq) returns (UnlikeLostFoundResp)
 }
 
+@server(
+	prefix: /api/im
+)
+service IM {
+	// 搜索用户
+	@handler SearchUsers
+	get /search-users (SearchUsersReq) returns (SearchUsersResp)
+
+	// 搜索群组
+	@handler SearchGroups
+	get /search-groups (SearchGroupsReq) returns (SearchGroupsResp)
+}
+
+@server(
+	prefix: /api/im
+	jwt: Auth
+	group: social
+)
+service IM {
+	// 获取联系人列表
+	@handler GetContactList
+	get /contacts returns (ContactListResp)
+
+	// 获取好友请求列表
+	@handler GetFriendRequests
+	get /friend-requests returns (FriendRequestsResp)
+
+	// 发送好友申请
+	@handler SendFriendRequest
+	post /friend-request (SendFriendRequestReq) returns (SendFriendRequestResp)
+
+	// 处理好友申请
+	@handler HandleFriendRequest
+	put /friend-request/:requestId (HandleFriendRequestReq) returns (HandleFriendRequestResp)
+
+	// 获取用户信息
+	@handler GetCurrentUserInfo
+	get /user/:id/info (UserInfoReq) returns (UserInfoResp)
+
+	// 获取用户详情
+	@handler GetUserDetail
+	get /user/:id (UserDetailReq) returns (UserDetailResp)
+
+	// 设置好友备注
+	@handler SetFriendNote
+	put /friend/note (SetFriendNoteReq) returns (SetFriendNoteResp)
+
+	// 删除好友
+	@handler DeleteFriend
+	delete /friend/:id (DeleteFriendReq) returns (DeleteFriendResp)
+
+	// 获取群聊列表
+	@handler GetGroupList
+	get /groups returns (GroupListResp)
+
+	// 创建群聊
+	@handler CreateGroup
+	post /group (CreateGroupReq) returns (CreateGroupResp)
+
+	// 获取群聊详情
+	@handler GetGroupInfo
+	get /group/:id (GroupInfoReq) returns (GroupInfoResp)
+
+	// 获取群成员列表
+	@handler GetGroupMembers
+	get /group/:id/members (GroupMembersReq) returns (GroupMembersResp)
+
+	// 邀请好友加入群聊
+	@handler InviteToGroup
+	post /group/invite (InviteToGroupReq) returns (InviteToGroupResp)
+
+	// 申请加入群聊
+	@handler ApplyToJoinGroup
+	post /group/apply (ApplyToJoinGroupReq) returns (ApplyToJoinGroupResp)
+
+	// 处理入群申请
+	@handler HandleGroupApplication
+	put /group/application/:applicationId (HandleGroupApplicationReq) returns (HandleGroupApplicationResp)
+
+	// 获取入群申请列表
+	@handler GetGroupApplications
+	get /group/:id/applications (GroupApplicationsReq) returns (GroupApplicationsResp)
+
+	// 设置群成员角色
+	@handler SetGroupMemberRole
+	put /group/member/role (SetGroupMemberRoleReq) returns (SetGroupMemberRoleResp)
+
+	// 移除群成员
+	@handler RemoveGroupMember
+	delete /group/member (RemoveGroupMemberReq) returns (RemoveGroupMemberResp)
+
+	// 退出群聊
+	@handler LeaveGroup
+	post /group/:id/leave (LeaveGroupReq) returns (LeaveGroupResp)
+
+	// 解散群聊
+	@handler DismissGroup
+	post /group/:id/dismiss (DismissGroupReq) returns (DismissGroupResp)
+
+	// 更新群聊信息
+	@handler UpdateGroupInfo
+	put /group/:id (UpdateGroupInfoReq) returns (UpdateGroupInfoResp)
+
+	// 获取会话列表
+	@handler GetConversationList
+	get /conversations returns (ConversationListResp)
+
+	// 获取会话详情
+	@handler GetConversationDetail
+	get /conversation/:id (ConversationDetailReq) returns (ConversationDetailResp)
+
+	// 创建会话
+	@handler CreateConversation
+	post /conversation (CreateConversationReq) returns (CreateConversationResp)
+
+	// 删除会话
+	@handler DeleteConversation
+	delete /conversation/:id (DeleteConversationReq) returns (DeleteConversationResp)
+
+	// 标记会话已读
+	@handler MarkConversationRead
+	put /conversation/:id/read (MarkConversationReadReq) returns (MarkConversationReadResp)
+
+	// 获取聊天记录
+	@handler GetMessages
+	get /messages (GetMessagesReq) returns (GetMessagesResp)
+
+	// HTTP发送消息
+	@handler SendMessage
+	post /message (SendMessageReq) returns (SendMessageResp)
+
+	// 删除消息
+	@handler DeleteMessage
+	delete /message/:id (DeleteMessageReq) returns (DeleteMessageResp)
+
+	// 撤回消息
+	@handler RecallMessage
+	put /message/:id/recall (RecallMessageReq) returns (RecallMessageResp)
+
+	// 清空会话消息
+	@handler ClearMessages
+	delete /conversation/:id/messages (ClearMessagesReq) returns (ClearMessagesResp)
+
+	// 获取未读消息数
+	@handler GetUnreadCount
+	get /unread-count returns (UnreadCountResp)
+
+	// 搜索联系人
+	@handler SearchContacts
+	get /search-contacts (SearchContactsReq) returns (SearchContactsResp)
+
+	// 获取好友列表
+	@handler GetFriendList
+	get /friends returns (FriendListResp)
+
+	// 获取用户在线状态
+	@handler GetUserOnlineStatus
+	post /user/online-status (UserOnlineStatusReq) returns (UserOnlineStatusResp)
+
+	// 设置用户状态
+	@handler SetUserStatus
+	put /user/status (SetUserStatusReq) returns (SetUserStatusResp)
+
+	// 获取群公告
+	@handler GetGroupAnnouncements
+	get /group/:id/announcements (GroupAnnouncementsReq) returns (GroupAnnouncementsResp)
+
+	// 发布群公告
+	@handler PublishGroupAnnouncement
+	post /group/:id/announcement (PublishGroupAnnouncementReq) returns (PublishGroupAnnouncementResp)
+}

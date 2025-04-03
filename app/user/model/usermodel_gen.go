@@ -195,7 +195,6 @@ func (m *defaultUserModel) FindOneByUsername(ctx context.Context, username strin
 
 func (m *defaultUserModel) Insert(
 	ctx context.Context, session sqlx.Session, data *User) (sql.Result, error) {
-	data.DelState = globalkey.DelStateNo
 	goappUserIdKey := fmt.Sprintf("%s%v", cacheGoappUserIdPrefix, data.Id)
 	goappUserPhoneKey := fmt.Sprintf("%s%v", cacheGoappUserPhonePrefix, data.Phone)
 	goappUserUsernameKey := fmt.Sprintf("%s%v", cacheGoappUserUsernamePrefix, data.Username)

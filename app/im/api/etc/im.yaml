@@ -1,0 +1,12 @@
+Name: im
+Host: 0.0.0.0
+Port: 8998
+
+ImRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: im.rpc
+
+Auth:
+  AccessSecret: liumkssq
