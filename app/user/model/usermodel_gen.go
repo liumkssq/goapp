@@ -40,6 +40,7 @@ type (
 		Update(ctx context.Context, data *User) error
 		Delete(ctx context.Context, id uint64) error
 		Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
+		SearchUser(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*User, error)
 	}
 
 	defaultUserModel struct {
@@ -66,6 +67,41 @@ type (
 		DelState     int64          `db:"del_state"`     // 删除状态: 0-正常, 1-已删除
 	}
 )
+
+func (m *defaultUserModel) SearchUser(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*User, error) {
+	rowBuilder := squirrel.Select().From(m.table)
+	// 添加过滤条件
+	if len(keyword) > 0 {
+		rowBuilder = rowBuilder.Where("`username` LIKE ? or `phone` LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	if searchType == "phone" {
+		rowBuilder = rowBuilder.Where("`phone` LIKE ?", "%"+keyword+"%")
+	} else if searchType == "username" {
+		rowBuilder = rowBuilder.Where("`username` LIKE ?", "%"+keyword+"%")
+	} else {
+		rowBuilder = rowBuilder.Where("`username` LIKE ? or `phone` LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	// 设置分页参数
+	pageSize := limit
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10
+	}
+	offset := (page - 1) * pageSize
+
+	query, args, err := rowBuilder.OrderBy("id desc").Limit(uint64(pageSize)).Offset(uint64(offset)).ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var resp []*User
+	err = m.QueryRowsNoCacheCtx(ctx, &resp, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
 
 func newUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultUserModel {
 	return &defaultUserModel{

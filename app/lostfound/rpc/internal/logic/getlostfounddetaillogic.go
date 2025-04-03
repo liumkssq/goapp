@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/liumkssq/goapp/app/lostfound/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/lostfound/rpc/lostfound"
@@ -26,12 +27,14 @@ func NewGetLostFoundDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 获取失物招领详情
 func (l *GetLostFoundDetailLogic) GetLostFoundDetail(in *lostfound.GetLostFoundDetailRequest) (*lostfound.GetLostFoundDetailResponse, error) {
 	lostFoundItem, err := l.svcCtx.LostFoundItemModel.FindOne(l.ctx, in.Id)
+	logx.Infof("lostFoundItem: %v", lostFoundItem)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("lostFoundItem: %v", lostFoundItem.PublisherId)
 	userItem, err := l.svcCtx.UserModel.FindOne(l.ctx, lostFoundItem.PublisherId)
 	if err != nil {
+		logx.Errorf("GetLostFoundDetail FindOne userItem err: %v", err)
 		return nil, err
 	}
 	var lostfoundType lostfound.LostFoundType
@@ -79,6 +82,7 @@ func (l *GetLostFoundDetailLogic) GetLostFoundDetail(in *lostfound.GetLostFoundD
 		},
 		Comments: nil,
 	}
+	logx.Infof("GetLostFoundDetail resp: %v", resp)
 
 	return resp, nil
 }

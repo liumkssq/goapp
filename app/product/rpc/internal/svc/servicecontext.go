@@ -11,6 +11,7 @@ type ServiceContext struct {
 	Config       config.Config
 	ProductModel model.ProductModel
 	UserModel    model2.UserModel
+	// 这里可以添加其他的模型
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

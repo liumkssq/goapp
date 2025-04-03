@@ -1,0 +1,18 @@
+package svc
+
+import (
+	"github.com/liumkssq/goapp/app/product/event/internal/config"
+	"github.com/zeromicro/go-queue/kq"
+)
+
+type ServiceContext struct {
+	Config         config.Config
+	KqPusherClient *kq.Pusher
+}
+
+func NewServiceContext(c config.Config) *ServiceContext {
+	return &ServiceContext{
+		Config:         c,
+		KqPusherClient: kq.NewPusher(c.KqConsumerConf.Brokers, c.KqConsumerConf.Topic),
+	}
+}

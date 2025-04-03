@@ -1,0 +1,27 @@
+Name: task.mq
+ListenOn: 0.0.0.0:10091
+
+MsgChatTransfer:
+  Name: MsgChatTransfer
+  Brokers:
+    - 127.0.0.1:9094
+  Group: kafka
+  Topic: msgChatTransfer
+  Offset: first
+  Consumers: 1
+
+Cache:
+    Host: 127.0.0.1:26379
+    Type: node
+    Pass:
+
+Auth:
+  AccessSecret: liumkssq
+  AccessExpire: 86400
+
+Mongo:
+  Url: "mongodb://root:root@127.0.0.1:27017"
+  Db: easy-chat
+
+Ws:
+  Host: 127.0.0.1:10090

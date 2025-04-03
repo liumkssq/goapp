@@ -15,6 +15,7 @@ import (
 type PublishProductLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	// 这里可以添加其他需要的依赖，比如数据库连接、缓存等 kafka
 	logx.Logger
 }
 
@@ -113,6 +114,12 @@ func (l *PublishProductLogic) PublishProduct(in *product.PublishProductRequest) 
 		l.Logger.Error("PublishProduct error: ", err)
 		return nil, err
 	}
+
+	// 发送kafka消息，异步
+	//var eg errgroup.Group
+	//eg.Go(func() error {
+	//
+	//}
 	return &product.PublishProductResponse{
 		Id: int64(productId),
 	}, nil

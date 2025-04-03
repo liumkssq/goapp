@@ -1,0 +1,712 @@
+syntax = "v1"
+
+info (
+    title: "即时通讯服务API"
+    desc: "提供即时通讯相关功能，包括好友管理、群聊、消息等"
+    author: "Campus Team"
+    version: "1.0"
+)
+
+// 数据类型定义
+type (
+    // 联系人
+    Contact {
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Nickname string `json:"nickname,optional"`
+        Note string `json:"note,optional"`
+        Status string `json:"status,optional"`
+        LastActiveTime string `json:"lastActiveTime,optional"`
+    }
+
+    // 联系人列表响应
+    ContactListResp {
+        Contacts []Contact `json:"contacts"`
+        Total int64 `json:"total"`
+    }
+
+    // 好友请求
+    FriendRequest {
+        RequestId int64 `json:"requestId"`
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Message string `json:"message,optional"`
+        Status string `json:"status"`
+        CreatedAt string `json:"createdAt"`
+    }
+
+    // 好友请求列表响应
+    FriendRequestsResp {
+        FriendRequests []FriendRequest `json:"friendRequests"`
+        Total int64 `json:"total"`
+    }
+
+    // 发送好友请求请求
+    SendFriendRequestReq {
+        TargetUserId int64 `json:"targetUserId"`
+        Message string `json:"message,optional"`
+    }
+
+    // 发送好友请求响应
+    SendFriendRequestResp {
+        RequestId int64 `json:"requestId"`
+        Message string `json:"message"`
+    }
+
+    // 处理好友请求请求
+    HandleFriendRequestReq {
+        RequestId int64 `path:"requestId"`
+        Action string `json:"action"` // accept 或 reject
+    }
+
+    // 处理好友请求响应
+    HandleFriendRequestResp {
+        Message string `json:"message"`
+    }
+
+    // 用户信息
+    UserInfo {
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Status string `json:"status,optional"`
+        Bio string `json:"bio,optional"`
+        Email string `json:"email,optional"`
+        Phone string `json:"phone,optional"`
+        Gender string `json:"gender,optional"`
+        IsFriend bool `json:"isFriend"`
+    }
+
+    // 用户信息请求
+    UserInfoReq {
+        UserId int64 `path:"id"`
+    }
+
+    // 用户信息响应
+    UserInfoResp {
+        UserInfo UserInfo `json:"userInfo"`
+    }
+
+    // 用户详情请求
+    UserDetailReq {
+        UserId int64 `path:"id"`
+    }
+
+    // 用户详情响应
+    UserDetailResp {
+        User UserInfo `json:"user"`
+    }
+
+    // 设置好友备注请求
+    SetFriendNoteReq {
+        FriendId int64 `json:"friendId"`
+        Note string `json:"note"`
+    }
+
+    // 设置好友备注响应
+    SetFriendNoteResp {
+        Message string `json:"message"`
+    }
+
+    // 删除好友请求
+    DeleteFriendReq {
+        FriendId int64 `path:"id"`
+    }
+
+    // 删除好友响应
+    DeleteFriendResp {
+        Message string `json:"message"`
+    }
+
+    // 群组信息
+    Group {
+        GroupId int64 `json:"groupId"`
+        Name string `json:"name"`
+        Avatar string `json:"avatar,optional"`
+        Owner int64 `json:"owner"`
+        OwnerName string `json:"ownerName,optional"`
+        MemberCount int64 `json:"memberCount"`
+        Introduction string `json:"introduction,optional"`
+        CreatedAt string `json:"createdAt"`
+    }
+
+    // 群组列表响应
+    GroupListResp {
+        Groups []Group `json:"groups"`
+        Total int64 `json:"total"`
+    }
+
+    // 创建群组请求
+    CreateGroupReq {
+        Name string `json:"name"`
+        Avatar string `json:"avatar,optional"`
+        Introduction string `json:"introduction,optional"`
+        MemberIds []int64 `json:"memberIds,optional"`
+    }
+
+    // 创建群组响应
+    CreateGroupResp {
+        GroupId int64 `json:"groupId"`
+        Message string `json:"message"`
+    }
+
+    // 群组详情请求
+    GroupInfoReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 群组详情响应
+    GroupInfoResp {
+        Group Group `json:"group"`
+        IsMember bool `json:"isMember"`
+        Role string `json:"role,optional"` // owner, admin, member
+    }
+
+    // 群组成员
+    GroupMember {
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Nickname string `json:"nickname,optional"`
+        Role string `json:"role"`
+        JoinTime string `json:"joinTime"`
+    }
+
+    // 群组成员列表请求
+    GroupMembersReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 群组成员列表响应
+    GroupMembersResp {
+        Members []GroupMember `json:"members"`
+        Total int64 `json:"total"`
+    }
+
+    // 邀请入群请求
+    InviteToGroupReq {
+        GroupId int64 `json:"groupId"`
+        UserIds []int64 `json:"userIds"`
+    }
+
+    // 邀请入群响应
+    InviteToGroupResp {
+        Message string `json:"message"`
+    }
+
+    // 申请加入群组请求
+    ApplyToJoinGroupReq {
+        GroupId int64 `json:"groupId"`
+        Message string `json:"message,optional"`
+    }
+
+    // 申请加入群组响应
+    ApplyToJoinGroupResp {
+        ApplicationId int64 `json:"applicationId"`
+        Message string `json:"message"`
+    }
+
+    // 群组申请
+    GroupApplication {
+        ApplicationId int64 `json:"applicationId"`
+        UserId int64 `json:"userId"`
+        Username string `json:"username"`
+        Avatar string `json:"avatar,optional"`
+        Message string `json:"message,optional"`
+        Status string `json:"status"`
+        CreatedAt string `json:"createdAt"`
+    }
+
+    // 群组申请列表请求
+    GroupApplicationsReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 群组申请列表响应
+    GroupApplicationsResp {
+        Applications []GroupApplication `json:"applications"`
+        Total int64 `json:"total"`
+    }
+
+    // 处理群组申请请求
+    HandleGroupApplicationReq {
+        ApplicationId int64 `path:"applicationId"`
+        Action string `json:"action"` // accept 或 reject
+    }
+
+    // 处理群组申请响应
+    HandleGroupApplicationResp {
+        Message string `json:"message"`
+    }
+
+    // 设置群组成员角色请求
+    SetGroupMemberRoleReq {
+        GroupId int64 `json:"groupId"`
+        UserId int64 `json:"userId"`
+        Role string `json:"role"` // admin 或 member
+    }
+
+    // 设置群组成员角色响应
+    SetGroupMemberRoleResp {
+        Message string `json:"message"`
+    }
+
+    // 移除群组成员请求
+    RemoveGroupMemberReq {
+        GroupId int64 `json:"groupId"`
+        UserId int64 `json:"userId"`
+    }
+
+    // 移除群组成员响应
+    RemoveGroupMemberResp {
+        Message string `json:"message"`
+    }
+
+    // 退出群组请求
+    LeaveGroupReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 退出群组响应
+    LeaveGroupResp {
+        Message string `json:"message"`
+    }
+
+    // 解散群组请求
+    DismissGroupReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 解散群组响应
+    DismissGroupResp {
+        Message string `json:"message"`
+    }
+
+    // 更新群组信息请求
+    UpdateGroupInfoReq {
+        GroupId int64 `path:"id"`
+        Name string `json:"name,optional"`
+        Avatar string `json:"avatar,optional"`
+        Introduction string `json:"introduction,optional"`
+    }
+
+    // 更新群组信息响应
+    UpdateGroupInfoResp {
+        Message string `json:"message"`
+    }
+
+    // 会话信息
+    Conversation {
+        ConversationId string `json:"conversationId"`
+        Type string `json:"type"` // private 或 group
+        TargetId int64 `json:"targetId"`
+        Name string `json:"name"`
+        Avatar string `json:"avatar,optional"`
+        LastMessage string `json:"lastMessage,optional"`
+        LastMessageType string `json:"lastMessageType,optional"`
+        LastMessageTime string `json:"lastMessageTime,optional"`
+        UnreadCount int64 `json:"unreadCount"`
+    }
+
+    // 会话列表响应
+    ConversationListResp {
+        Conversations []Conversation `json:"conversations"`
+        Total int64 `json:"total"`
+    }
+
+    // 会话详情请求
+    ConversationDetailReq {
+        ConversationId string `path:"id"`
+    }
+
+    // 会话详情响应
+    ConversationDetailResp {
+        Conversation Conversation `json:"conversation"`
+    }
+
+    // 创建会话请求
+    CreateConversationReq {
+        Type string `json:"type"` // private 或 group
+        TargetId int64 `json:"targetId"`
+    }
+
+    // 创建会话响应
+    CreateConversationResp {
+        ConversationId string `json:"conversationId"`
+        Message string `json:"message"`
+    }
+
+    // 删除会话请求
+    DeleteConversationReq {
+        ConversationId string `path:"id"`
+    }
+
+    // 删除会话响应
+    DeleteConversationResp {
+        Message string `json:"message"`
+    }
+
+    // 标记会话已读请求
+    MarkConversationReadReq {
+        ConversationId string `path:"id"`
+    }
+
+    // 标记会话已读响应
+    MarkConversationReadResp {
+        Message string `json:"message"`
+    }
+
+    // 消息内容
+    Message {
+        MessageId string `json:"messageId"`
+        ConversationId string `json:"conversationId"`
+        SenderId int64 `json:"senderId"`
+        SenderName string `json:"senderName"`
+        SenderAvatar string `json:"senderAvatar,optional"`
+        Type string `json:"type"` // text, image, audio, video, file, location
+        Content string `json:"content"`
+        Status string `json:"status"`
+        Timestamp string `json:"timestamp"`
+        IsRead bool `json:"isRead"`
+        Extra map[string]string `json:"extra,optional"`
+    }
+
+    // 获取消息请求
+    GetMessagesReq {
+        ConversationId string `form:"conversationId"`
+        Page int64 `form:"page,optional"`
+        Limit int64 `form:"limit,optional"`
+    }
+
+    // 获取消息响应
+    GetMessagesResp {
+        Messages []Message `json:"messages"`
+        Total int64 `json:"total"`
+        HasMore bool `json:"hasMore"`
+    }
+
+    // 发送消息请求
+    SendMessageReq {
+        ConversationId string `json:"conversationId"`
+        Type string `json:"type"` // text, image, audio, video, file, location
+        Content string `json:"content"`
+        Extra map[string]string `json:"extra,optional"`
+    }
+
+    // 发送消息响应
+    SendMessageResp {
+        MessageId string `json:"messageId"`
+        ConversationId string `json:"conversationId"`
+        Content string `json:"content"`
+        Type string `json:"type"`
+        Timestamp string `json:"timestamp"`
+        Status string `json:"status"`
+    }
+
+    // 删除消息请求
+    DeleteMessageReq {
+        MessageId string `path:"id"`
+    }
+
+    // 删除消息响应
+    DeleteMessageResp {
+        Message string `json:"message"`
+    }
+
+    // 撤回消息请求
+    RecallMessageReq {
+        MessageId string `path:"id"`
+        ConversationId string `json:"conversationId"`
+    }
+
+    // 撤回消息响应
+    RecallMessageResp {
+        Message string `json:"message"`
+    }
+
+    // 清空会话消息请求
+    ClearMessagesReq {
+        ConversationId string `path:"id"`
+    }
+
+    // 清空会话消息响应
+    ClearMessagesResp {
+        Message string `json:"message"`
+    }
+
+    // 获取未读消息数响应
+    UnreadCountResp {
+        Total int64 `json:"total"`
+        Conversations map[string]int64 `json:"conversations"`
+    }
+
+    // 搜索联系人请求
+    SearchContactsReq {
+        Keyword string `form:"keyword"`
+    }
+
+    // 搜索联系人响应
+    SearchContactsResp {
+        Contacts []Contact `json:"contacts"`
+        Total int64 `json:"total"`
+    }
+
+    // 搜索用户请求
+    SearchUsersReq {
+        Keyword string `form:"keyword"`
+    }
+
+    // 搜索用户响应
+    SearchUsersResp {
+        Users []UserInfo `json:"users"`
+        Total int64 `json:"total"`
+    }
+
+    // 好友列表响应
+    FriendListResp {
+        Friends []Contact `json:"friends"`
+        Total int64 `json:"total"`
+    }
+
+    // 用户在线状态请求
+    UserOnlineStatusReq {
+        UserIds []int64 `json:"userIds"`
+    }
+
+    // 用户在线状态响应
+    UserOnlineStatusResp {
+        Statuses map[string]string `json:"statuses"` // 用户ID到状态的映射
+    }
+
+    // 设置用户状态请求
+    SetUserStatusReq {
+        Status string `json:"status"` // online, offline, away, busy
+    }
+
+    // 设置用户状态响应
+    SetUserStatusResp {
+        Message string `json:"message"`
+    }
+
+    // 搜索群组请求
+    SearchGroupsReq {
+        Keyword string `form:"keyword"`
+    }
+
+    // 搜索群组响应
+    SearchGroupsResp {
+        Groups []Group `json:"groups"`
+        Total int64 `json:"total"`
+    }
+
+    // 群组公告
+    GroupAnnouncement {
+        Id int64 `json:"id"`
+        GroupId int64 `json:"groupId"`
+        Content string `json:"content"`
+        CreatorId int64 `json:"creatorId"`
+        CreatorName string `json:"creatorName"`
+        CreatedAt string `json:"createdAt"`
+    }
+
+    // 获取群组公告请求
+    GroupAnnouncementsReq {
+        GroupId int64 `path:"id"`
+    }
+
+    // 获取群组公告响应
+    GroupAnnouncementsResp {
+        Announcements []GroupAnnouncement `json:"announcements"`
+        Total int64 `json:"total"`
+    }
+
+    // 发布群组公告请求
+    PublishGroupAnnouncementReq {
+        GroupId int64 `path:"id"`
+        Content string `json:"content"`
+    }
+
+    // 发布群组公告响应
+    PublishGroupAnnouncementResp {
+        AnnouncementId int64 `json:"announcementId"`
+        Message string `json:"message"`
+    }
+
+    // 通用响应
+    CommonResp {
+        Message string `json:"message"`
+    }
+)
+
+@server(
+    prefix: /api/im
+)
+service IM {
+    // 搜索用户
+    @handler SearchUsers
+    get /search-users (SearchUsersReq) returns (SearchUsersResp)
+
+    // 搜索群组
+    @handler SearchGroups
+    get /search-groups (SearchGroupsReq) returns (SearchGroupsResp)
+}
+
+@server(
+    prefix: /api/im
+    jwt: Auth
+)
+service IM {
+    // 获取联系人列表
+    @handler GetContactList
+    get /contacts returns (ContactListResp)
+
+    // 获取好友请求列表
+    @handler GetFriendRequests
+    get /friend-requests returns (FriendRequestsResp)
+
+    // 发送好友申请
+    @handler SendFriendRequest
+    post /friend-request (SendFriendRequestReq) returns (SendFriendRequestResp)
+
+    // 处理好友申请
+    @handler HandleFriendRequest
+    put /friend-request/:requestId (HandleFriendRequestReq) returns (HandleFriendRequestResp)
+
+    // 获取用户信息
+    @handler GetUserInfo
+    get /user/:id/info (UserInfoReq) returns (UserInfoResp)
+
+    // 获取用户详情
+    @handler GetUserDetail
+    get /user/:id (UserDetailReq) returns (UserDetailResp)
+
+    // 设置好友备注
+    @handler SetFriendNote
+    put /friend/note (SetFriendNoteReq) returns (SetFriendNoteResp)
+
+    // 删除好友
+    @handler DeleteFriend
+    delete /friend/:id (DeleteFriendReq) returns (DeleteFriendResp)
+
+    // 获取群聊列表
+    @handler GetGroupList
+    get /groups returns (GroupListResp)
+
+    // 创建群聊
+    @handler CreateGroup
+    post /group (CreateGroupReq) returns (CreateGroupResp)
+
+    // 获取群聊详情
+    @handler GetGroupInfo
+    get /group/:id (GroupInfoReq) returns (GroupInfoResp)
+
+    // 获取群成员列表
+    @handler GetGroupMembers
+    get /group/:id/members (GroupMembersReq) returns (GroupMembersResp)
+
+    // 邀请好友加入群聊
+    @handler InviteToGroup
+    post /group/invite (InviteToGroupReq) returns (InviteToGroupResp)
+
+    // 申请加入群聊
+    @handler ApplyToJoinGroup
+    post /group/apply (ApplyToJoinGroupReq) returns (ApplyToJoinGroupResp)
+
+    // 处理入群申请
+    @handler HandleGroupApplication
+    put /group/application/:applicationId (HandleGroupApplicationReq) returns (HandleGroupApplicationResp)
+
+    // 获取入群申请列表
+    @handler GetGroupApplications
+    get /group/:id/applications (GroupApplicationsReq) returns (GroupApplicationsResp)
+
+    // 设置群成员角色
+    @handler SetGroupMemberRole
+    put /group/member/role (SetGroupMemberRoleReq) returns (SetGroupMemberRoleResp)
+
+    // 移除群成员
+    @handler RemoveGroupMember
+    delete /group/member (RemoveGroupMemberReq) returns (RemoveGroupMemberResp)
+
+    // 退出群聊
+    @handler LeaveGroup
+    post /group/:id/leave (LeaveGroupReq) returns (LeaveGroupResp)
+
+    // 解散群聊
+    @handler DismissGroup
+    post /group/:id/dismiss (DismissGroupReq) returns (DismissGroupResp)
+
+    // 更新群聊信息
+    @handler UpdateGroupInfo
+    put /group/:id (UpdateGroupInfoReq) returns (UpdateGroupInfoResp)
+
+    // 获取会话列表
+    @handler GetConversationList
+    get /conversations returns (ConversationListResp)
+
+    // 获取会话详情
+    @handler GetConversationDetail
+    get /conversation/:id (ConversationDetailReq) returns (ConversationDetailResp)
+
+    // 创建会话
+    @handler CreateConversation
+    post /conversation (CreateConversationReq) returns (CreateConversationResp)
+
+    // 删除会话
+    @handler DeleteConversation
+    delete /conversation/:id (DeleteConversationReq) returns (DeleteConversationResp)
+
+    // 标记会话已读
+    @handler MarkConversationRead
+    put /conversation/:id/read (MarkConversationReadReq) returns (MarkConversationReadResp)
+
+    // 获取聊天记录
+    @handler GetMessages
+    get /messages (GetMessagesReq) returns (GetMessagesResp)
+
+    // HTTP发送消息
+    @handler SendMessage
+    post /message (SendMessageReq) returns (SendMessageResp)
+
+    // 删除消息
+    @handler DeleteMessage
+    delete /message/:id (DeleteMessageReq) returns (DeleteMessageResp)
+
+    // 撤回消息
+    @handler RecallMessage
+    put /message/:id/recall (RecallMessageReq) returns (RecallMessageResp)
+
+    // 清空会话消息
+    @handler ClearMessages
+    delete /conversation/:id/messages (ClearMessagesReq) returns (ClearMessagesResp)
+
+    // 获取未读消息数
+    @handler GetUnreadCount
+    get /unread-count returns (UnreadCountResp)
+
+    // 搜索联系人
+    @handler SearchContacts
+    get /search-contacts (SearchContactsReq) returns (SearchContactsResp)
+
+    // 获取好友列表
+    @handler GetFriendList
+    get /friends returns (FriendListResp)
+
+    // 获取用户在线状态
+    @handler GetUserOnlineStatus
+    post /user/online-status (UserOnlineStatusReq) returns (UserOnlineStatusResp)
+
+    // 设置用户状态
+    @handler SetUserStatus
+    put /user/status (SetUserStatusReq) returns (SetUserStatusResp)
+
+    // 获取群公告
+    @handler GetGroupAnnouncements
+    get /group/:id/announcements (GroupAnnouncementsReq) returns (GroupAnnouncementsResp)
+
+    // 发布群公告
+    @handler PublishGroupAnnouncement
+    post /group/:id/announcement (PublishGroupAnnouncementReq) returns (PublishGroupAnnouncementResp)
+}

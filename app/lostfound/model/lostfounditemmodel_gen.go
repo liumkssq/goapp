@@ -46,6 +46,7 @@ type (
 		FindPageListByIdDESC(ctx context.Context, rowBuilder squirrel.SelectBuilder, preMinId, pageSize int64) ([]*LostFoundItem, error)
 		FindPageListByIdASC(ctx context.Context, rowBuilder squirrel.SelectBuilder, preMaxId, pageSize int64) ([]*LostFoundItem, error)
 		Delete(ctx context.Context, session sqlx.Session, id int64) error
+		SearchLostFound(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*LostFoundItem, error)
 	}
 
 	defaultLostFoundItemModel struct {
@@ -79,6 +80,37 @@ type (
 	}
 )
 
+func (m *defaultLostFoundItemModel) SearchLostFound(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*LostFoundItem, error) {
+	// 构建查询条件
+	selectBuilder := m.SelectBuilder().Where("`id` > 1")
+	if keyword != "" {
+		selectBuilder = selectBuilder.Where("title LIKE ? OR description LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
+	}
+	if searchType != "" {
+		selectBuilder = selectBuilder.Where("type = ?", searchType)
+	}
+
+	// 设置排序
+	selectBuilder = selectBuilder.OrderBy("`id` DESC")
+
+	// 设置分页
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * limit
+	query, values, err := selectBuilder.Offset(uint64(offset)).Limit(uint64(limit)).ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var resp []*LostFoundItem
+	err = m.QueryRowsNoCache(&resp, query, values...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (m *defaultLostFoundItemModel) SelectBuilder() squirrel.SelectBuilder {
 	return squirrel.Select().From(m.table)
 }
@@ -94,22 +126,51 @@ func (m *defaultLostFoundItemModel) Insert(ctx context.Context, session sqlx.Ses
 }
 
 func (m *defaultLostFoundItemModel) FindOne(ctx context.Context, id int64) (*LostFoundItem, error) {
-	//TODO implement me
-	panic("implement me")
+	lostFoundCacheKey := fmt.Sprintf("%s%v", cacheGoappLostFoundItemIdPrefix, id)
+	var resp LostFoundItem
+	err := m.QueryRowCtx(ctx, &resp, lostFoundCacheKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", lostFoundItemRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultLostFoundItemModel) FindOneBySn(ctx context.Context, sn string) (*LostFoundItem, error) {
-	//TODO implement me
-	panic("implement me")
+	lostFoundCacheKey := fmt.Sprintf("%s%v", cacheGoappLostFoundItemIdPrefix, sn)
+	var resp LostFoundItem
+	err := m.QueryRowCtx(ctx, &resp, lostFoundCacheKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `sn` = ? limit 1", lostFoundItemRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, sn)
+	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultLostFoundItemModel) Update(ctx context.Context, session sqlx.Session, data *LostFoundItem) (sql.Result, error) {
-	//TODO implement me
-	panic("implement me")
+	lostFoundCacheKey := fmt.Sprintf("%s%v", cacheGoappLostFoundItemIdPrefix, data.Id)
+	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, lostFoundItemRowsWithPlaceHolder)
+		if session != nil {
+			return session.ExecCtx(ctx, query, data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail, data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo, data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar, data.ViewCount, data.LikeCount, data.CommentCount)
+		}
+		return conn.ExecCtx(ctx, query, data.Title, data.Description, data.Type, data.Category, data.Location, data.LocationDetail, data.ContactInfo, data.ContactWay, data.Images, data.Status, data.Tags, data.RewardInfo, data.LostFoundTime, data.PublisherId, data.PublisherName, data.PublisherAvatar)
+	}, lostFoundCacheKey)
 }
 
 func (m *defaultLostFoundItemModel) UpdateWithVersion(ctx context.Context, session sqlx.Session, data *LostFoundItem) error {
-	//TODO implement me
 	panic("implement me")
 }
 

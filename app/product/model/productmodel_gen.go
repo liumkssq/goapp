@@ -46,6 +46,7 @@ type (
 		FindPageListByIdDESC(ctx context.Context, rowBuilder squirrel.SelectBuilder, preMinId, pageSize int64) ([]*Product, error)
 		FindPageListByIdASC(ctx context.Context, rowBuilder squirrel.SelectBuilder, preMaxId, pageSize int64) ([]*Product, error)
 		Delete(ctx context.Context, session sqlx.Session, id uint64) error
+		SearchProduct(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*Product, error)
 	}
 
 	defaultProductModel struct {
@@ -105,6 +106,40 @@ func (m *defaultProductModel) Insert(ctx context.Context, session sqlx.Session, 
 	return ret, nil
 }
 
+func (m *defaultProductModel) SearchProduct(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*Product, error) {
+	var resp []*Product
+	// 处理搜索条件
+	var whereClause string
+	if searchType == "title" {
+		whereClause = fmt.Sprintf("title LIKE '%%%s%%'", keyword)
+	} else if searchType == "description" {
+		whereClause = fmt.Sprintf("description LIKE '%%%s%%'", keyword)
+	} else if searchType == "tags" {
+		whereClause = fmt.Sprintf("tags LIKE '%%%s%%'", keyword)
+	} else {
+		//find all case
+		whereClause = fmt.Sprintf("title LIKE '%%%s%%' OR description LIKE '%%%s%%' OR tags LIKE '%%%s%%'", keyword, keyword, keyword)
+	}
+	// 处理分页
+	if page < 1 {
+		page = 1
+	} else {
+		page = page - 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+	// 构建 SQL 查询
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT %d OFFSET %d", productRows, m.table, whereClause, limit, offset)
+	// 执行查询
+	err := m.QueryRowsNoCache(&resp, query)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (m *defaultProductModel) Update(ctx context.Context, session sqlx.Session, data *Product) error {
 	//TODO implement me
 	panic("implement me")
@@ -131,18 +166,52 @@ func (m *defaultProductModel) SelectBuilder() squirrel.SelectBuilder {
 }
 
 func (m *defaultProductModel) FindSum(ctx context.Context, sumBuilder squirrel.SelectBuilder, field string) (float64, error) {
-	//TODO implement me
-	panic("implement me")
+	sumBuilder = sumBuilder.Columns("sum(" + field + ")")
+	query, values, err := sumBuilder.ToSql()
+	if err != nil {
+		return 0, err
+	}
+	var sum float64
+	err = m.QueryRowNoCache(&sum, query, values...)
+	if err != nil {
+		return 0, err
+	}
+	return sum, nil
 }
 
 func (m *defaultProductModel) FindCount(ctx context.Context, countBuilder squirrel.SelectBuilder, field string) (int64, error) {
-	//TODO implement me
-	panic("implement me")
+	countBuilder = countBuilder.Columns("count(*)")
+	query, values, err := countBuilder.ToSql()
+	if err != nil {
+		return 0, err
+	}
+	var count int64
+	err = m.QueryRowNoCache(&count, query, values...)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultProductModel) FindAll(ctx context.Context, rowBuilder squirrel.SelectBuilder, orderBy string) ([]*Product, error) {
-	//TODO implement me
-	panic("implement me")
+	// order by
+	selectBuilder := rowBuilder.Columns(productRows)
+	if orderBy == "" {
+		selectBuilder = selectBuilder.OrderBy("`id` desc")
+	} else {
+		selectBuilder = selectBuilder.OrderBy(orderBy)
+	}
+	query, values, err := selectBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	// 执行查询
+	var resp []*Product
+	err = m.QueryRowsNoCache(&resp, query, values...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (m *defaultProductModel) FindPageListByPage(ctx context.Context, rowBuilder squirrel.SelectBuilder, page, pageSize int64, orderBy string) ([]*Product, error) {
@@ -171,8 +240,37 @@ func (m *defaultProductModel) FindPageListByPage(ctx context.Context, rowBuilder
 }
 
 func (m *defaultProductModel) FindPageListByPageWithTotal(ctx context.Context, rowBuilder squirrel.SelectBuilder, page, pageSize int64, orderBy string) ([]*Product, int64, error) {
-	//TODO implement me
-	panic("implement me")
+	// order by
+	selectBuilder := rowBuilder.Columns(productRows)
+	if orderBy == "" {
+		selectBuilder = selectBuilder.OrderBy("`id` desc")
+	} else {
+		selectBuilder = selectBuilder.OrderBy(orderBy)
+	}
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	query, values, err := selectBuilder.Where("`id` > 1").Offset(uint64(offset)).Limit(uint64(pageSize)).ToSql()
+	if err != nil {
+		return nil, 0, err
+	}
+	// 执行查询
+	var resp []*Product
+	err = m.QueryRowsNoCache(&resp, query, values...)
+	if err != nil {
+		return nil, 0, err
+	}
+	countQuery, countValues, err := rowBuilder.ToSql()
+	if err != nil {
+		return nil, 0, err
+	}
+	var total int64
+	err = m.QueryRowNoCache(&total, countQuery, countValues...)
+	if err != nil {
+		return nil, 0, err
+	}
+	return resp, total, nil
 }
 
 func (m *defaultProductModel) FindPageListByIdDESC(ctx context.Context, rowBuilder squirrel.SelectBuilder, preMinId, pageSize int64) ([]*Product, error) {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/liumkssq/goapp/app/search/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/search/rpc/search"
-	"golang.org/x/sync/errgroup"
+	"strconv"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,25 +35,73 @@ func (l *GlobalSearchLogic) GlobalSearch(in *search.GlobalSearchRequest) (*searc
 	} else {
 		searchType = "all"
 	}
-	//
-	//var eg errgroup.Group
-	//eg.Go(func() error {
-	//	l.svcCtx.
-	//})
+	var resp search.GlobalSearchResponse
+	if searchType == "all" || searchType == "product" {
+		searchProduct, err := l.svcCtx.ProductModel.SearchProduct(l.ctx, in.Keyword, searchType, in.Page, in.Limit)
+		if err != nil {
+			return nil, err
+		}
+		for _, item := range searchProduct {
+			ProductSearchResp := &search.SearchResult{
+				Type:    searchType,
+				Id:      int64(item.Id),
+				Title:   item.Title,
+				Content: item.Description,
+				Image:   item.Images,
+				Extra: map[string]string{
+					"price": strconv.Itoa(int(item.Price)),
+				},
+			}
+			resp.List = append(resp.List, ProductSearchResp)
+		}
+	}
+	if searchType == "all" || searchType == "lostfound" {
+		// 2. 调用 lostfound rpc
+		// 3. 调用 user rpc
+		searchLostFound, err := l.svcCtx.LostFoundModel.SearchLostFound(l.ctx, in.Keyword, searchType, in.Page, in.Limit)
+		if err != nil {
+			return nil, err
+		}
+		for _, item := range searchLostFound {
+			LostFoundSearchResp := &search.SearchResult{
+				Type:    searchType,
+				Id:      int64(item.Id),
+				Title:   item.Title,
+				Content: item.Description,
+				Image:   item.Images.String,
+				Extra: map[string]string{
+					"status": item.Status,
+				},
+			}
+			resp.List = append(resp.List, LostFoundSearchResp)
+			//
+			//var eg errgroup.Group
+			//eg.Go(func() error {
+			//	l.svcCtx.
+			//})
 
-	return &search.GlobalSearchResponse{}, nil
+		}
+	}
+	if searchType == "all" || searchType == "user" {
+
+		searchUser, err := l.svcCtx.UserModel.SearchUser(l.ctx, in.Keyword, searchType, in.Page, in.Limit)
+		if err != nil {
+			return nil, err
+		}
+		for _, item := range searchUser {
+			UserSearchResp := &search.SearchResult{
+				Type:    searchType,
+				Id:      int64(item.Id),
+				Title:   item.Username,
+				Content: item.Nickname.String,
+				Image:   item.AvatarUrl.String,
+				Extra: map[string]string{
+					"phone": item.Phone,
+					"bio":   item.Bio.String,
+				},
+			}
+			resp.List = append(resp.List, UserSearchResp)
+		}
+	}
+	return &resp, nil
 }
-
-//func (l *GlobalSearchLogic) parseExpr(expr string) (string, []domain.QueryMeta, error) {
-//	searchParams := strings.SplitN(expr, ":", 3)
-//	if len(searchParams) == 3 {
-//		typ := searchParams[0]
-//		if typ != "biz" {
-//			return "", nil, errors.New("参数错误")
-//		}
-//		biz := searchParams[1]
-//		keywords := searchParams[2]
-//		return biz, s.getQueryMeta(keywords), nil
-//	}
-//	return "", nil, errors.New("参数错误")
-//}

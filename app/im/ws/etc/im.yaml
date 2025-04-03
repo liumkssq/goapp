@@ -1,0 +1,15 @@
+Name: im.ws
+ListenOn: 0.0.0.0:10090
+
+Auth:
+  AccessSecret: liumkssq
+  AccessExpire: 86400
+
+Mongo:
+  Url: "mongodb://root:root@127.0.0.1:27017"
+  Db: easy-chat
+
+MsgChatTransfer:
+  Topic: msgChatTransfer
+  Addrs:
+    - 127.0.0.1:9094
