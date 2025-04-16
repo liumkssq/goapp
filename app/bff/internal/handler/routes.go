@@ -8,6 +8,9 @@ import (
 
 	ProductOp "github.com/liumkssq/goapp/app/bff/internal/handler/ProductOp"
 	allsearch "github.com/liumkssq/goapp/app/bff/internal/handler/allsearch"
+	friend "github.com/liumkssq/goapp/app/bff/internal/handler/friend"
+	group "github.com/liumkssq/goapp/app/bff/internal/handler/group"
+	im "github.com/liumkssq/goapp/app/bff/internal/handler/im"
 	lostfound "github.com/liumkssq/goapp/app/bff/internal/handler/lostfound"
 	lostfoundOp "github.com/liumkssq/goapp/app/bff/internal/handler/lostfoundOp"
 	product "github.com/liumkssq/goapp/app/bff/internal/handler/product"
@@ -68,7 +71,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: ProductOp.GetUserProductsHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/product"),
 	)
 
@@ -106,6 +109,131 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/search"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 好友申请
+				Method:  http.MethodPost,
+				Path:    "/friend/putIn",
+				Handler: friend.FriendPutInHandler(serverCtx),
+			},
+			{
+				// 好友申请处理
+				Method:  http.MethodPut,
+				Path:    "/friend/putIn",
+				Handler: friend.FriendPutInHandleHandler(serverCtx),
+			},
+			{
+				// 好友申请列表
+				Method:  http.MethodGet,
+				Path:    "/friend/putIns",
+				Handler: friend.FriendPutInListHandler(serverCtx),
+			},
+			{
+				// 好友列表
+				Method:  http.MethodGet,
+				Path:    "/friends",
+				Handler: friend.FriendListHandler(serverCtx),
+			},
+			{
+				// 好友在线情况
+				Method:  http.MethodGet,
+				Path:    "/friends/online",
+				Handler: friend.FriendsOnlineHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
+		rest.WithPrefix("/api/social"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.IdempotenceMiddleware, serverCtx.LimitMiddleware},
+			[]rest.Route{
+				{
+					// 创群
+					Method:  http.MethodPost,
+					Path:    "/group",
+					Handler: group.CreateGroupHandler(serverCtx),
+				},
+				{
+					// 申请进群
+					Method:  http.MethodPost,
+					Path:    "/group/putIn",
+					Handler: group.GroupPutInHandler(serverCtx),
+				},
+				{
+					// 申请进群处理
+					Method:  http.MethodPut,
+					Path:    "/group/putIn",
+					Handler: group.GroupPutInHandleHandler(serverCtx),
+				},
+				{
+					// 申请进群列表
+					Method:  http.MethodGet,
+					Path:    "/group/putIns",
+					Handler: group.GroupPutInListHandler(serverCtx),
+				},
+				{
+					// 成员列表列表
+					Method:  http.MethodGet,
+					Path:    "/group/users",
+					Handler: group.GroupUserListHandler(serverCtx),
+				},
+				{
+					// 群在线用户
+					Method:  http.MethodGet,
+					Path:    "/group/users/online",
+					Handler: group.GroupUserOnlineHandler(serverCtx),
+				},
+				{
+					// 用户申群列表
+					Method:  http.MethodGet,
+					Path:    "/groups",
+					Handler: group.GroupListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
+		rest.WithPrefix("/api/social"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 根据用户获取聊天记录
+				Method:  http.MethodGet,
+				Path:    "/chatlog",
+				Handler: im.GetChatLogHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/chatlog/readRecords",
+				Handler: im.GetChatLogReadRecordsHandler(serverCtx),
+			},
+			{
+				// 获取会话
+				Method:  http.MethodGet,
+				Path:    "/conversation",
+				Handler: im.GetConversationsHandler(serverCtx),
+			},
+			{
+				// 更新会话
+				Method:  http.MethodPut,
+				Path:    "/conversation",
+				Handler: im.PutConversationsHandler(serverCtx),
+			},
+			{
+				// 建立会话
+				Method:  http.MethodPost,
+				Path:    "/setup/conversation",
+				Handler: im.SetUpUserConversationHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
+		rest.WithPrefix("/api/im"),
 	)
 
 	server.AddRoutes(
@@ -172,7 +300,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: lostfoundOp.GetUserLostFoundHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/lost-found"),
 	)
 
@@ -302,7 +430,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: userOp.UnfollowUserHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/user"),
 	)
 
@@ -319,7 +447,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: userSearch.ClearSearchHistoryHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/search"),
 	)
 }

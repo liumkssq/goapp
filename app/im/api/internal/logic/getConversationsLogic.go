@@ -2,13 +2,7 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/jinzhu/copier"
-	"github.com/liumkssq/goapp/app/im/api/internal/svc"
-	"github.com/liumkssq/goapp/app/im/api/internal/types"
-	"github.com/liumkssq/goapp/app/im/rpc/imclient"
-	"github.com/liumkssq/goapp/pkg/ctxdata"
-	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,10 +23,9 @@ func NewGetConversationsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetConversationsLogic) GetConversations(req *types.GetConversationsReq) (resp *types.GetConversationsResp, err error) {
-	uid := ctxdata.GetUidFromCtx(l.ctx)
-	fmt.Println("uid", uid)
+	uid := ctxdata.GetUId(l.ctx)
 	data, err := l.svcCtx.GetConversations(l.ctx, &imclient.GetConversationsReq{
-		UserId: strconv.FormatInt(uid, 10),
+		UserId: uid,
 	})
 	if err != nil {
 		return nil, err

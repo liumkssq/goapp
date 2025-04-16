@@ -6,6 +6,7 @@ import (
 	"github.com/liumkssq/goapp/app/bff/internal/svc"
 	"github.com/liumkssq/goapp/app/bff/internal/types"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
+	"strconv"
 
 	"github.com/liumkssq/goapp/app/user/rpc/userservice"
 
@@ -28,9 +29,10 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo() (*types.UserInfoResp, error) {
-	uid := ctxdata.GetUidFromCtx(l.ctx)
+	uid := ctxdata.GetUId(l.ctx)
+	uidInt, _ := strconv.ParseInt(uid, 10, 64)
 	userInfo, err := l.svcCtx.UserRpc.GetUserInfo(l.ctx, &userservice.GetUserInfoRequest{
-		Id: uid,
+		Id: uidInt,
 	})
 	if err != nil {
 		return nil, err

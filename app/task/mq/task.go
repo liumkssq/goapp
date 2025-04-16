@@ -14,10 +14,8 @@ var configFile = flag.String("f", "etc/dev/task.yaml", "the config file")
 
 func main() {
 	flag.Parse()
-
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-
 	if err := c.SetUp(); err != nil {
 		panic(err)
 	}

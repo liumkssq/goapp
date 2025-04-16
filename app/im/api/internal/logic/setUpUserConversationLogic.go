@@ -2,9 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/liumkssq/goapp/app/im/api/internal/svc"
-	"github.com/liumkssq/goapp/app/im/api/internal/types"
-	"github.com/liumkssq/goapp/app/im/rpc/imclient"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/Masterminds/squirrel"
-	"github.com/liumkssq/goapp/pkg/xerr"
-	"github.com/pkg/errors"
 	"strconv"
 
 	"github.com/liumkssq/goapp/app/product/rpc/internal/svc"
@@ -77,7 +75,7 @@ func (l *GetProductListLogic) GetProductList(in *product.GetProductListRequest) 
 	// 查询产品列表
 	products, err := l.svcCtx.ProductModel.FindPageListByPage(l.ctx, rowBuilder, page, pageSize, orderBy)
 	if err != nil {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "获取产品列表失败: %v", err)
+		return nil, err
 	}
 	productList := make([]*product.Product, 0, len(products))
 	for _, p := range products {

@@ -7,9 +7,6 @@ import (
 	"strings"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/liumkssq/goapp/pkg/xerr"
-	"github.com/pkg/errors"
-
 	"github.com/liumkssq/goapp/app/lostfound/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/lostfound/rpc/lostfound"
 
@@ -82,7 +79,7 @@ func (l *GetLostFoundListLogic) GetLostFoundList(in *lostfound.GetLostFoundListR
 	// 查询失物招领列表
 	lostfounds, err := l.svcCtx.LostFoundItemModel.FindPageListByPage(l.ctx, rowBuilder, page, pageSize, orderBy)
 	if err != nil {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "获取失物招领列表失败: %v", err)
+		return nil, err
 	}
 
 	fmt.Printf("lostfounds: %v", lostfounds)

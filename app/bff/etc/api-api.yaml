@@ -2,26 +2,46 @@ Name: api-api
 Host: 0.0.0.0
 Port: 8888
 
-Auth:
-  AccessSecret: liumkssq
+JwtAuth:
+  AccessSecret: imooc.com
   AccessExpire: 86400
 
-UserRpc:
-  Endpoints:
-    - 127.0.0.1:8080
-  NonBlock: true
+Redisx:
+  Host: 127.0.0.1:26379
+  Pass: easy-chat
 
 ProductRpc:
-  Endpoints:
-    - 127.0.0.1:8081
-  NonBlock: true
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: product.rpc
 
 LostFoundRpc:
-  Endpoints:
-    - 127.0.0.1:8082
-  NonBlock: true
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: lostfound.rpc
 
 SearchRpc:
-  Endpoints:
-    - 127.0.0.1:8083
-  NonBlock: true
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: search.rpc
+
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: social.rpc
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: user.rpc
+
+ImRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:22379
+    Key: im.rpc

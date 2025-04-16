@@ -9,6 +9,12 @@ CREATE TABLE `user` (
      `version` int unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
      `sex` tinyint DEFAULT '0' COMMENT '性别: 0-未知, 1-男, 2-女',
      `bio` varchar(256) DEFAULT NULL COMMENT '个人简介',
+     `campus` varchar(32) DEFAULT NULL COMMENT '校区',
+     `college` varchar(64) DEFAULT NULL COMMENT '学院/部门',
+     `major` varchar(64) DEFAULT NULL COMMENT '专业',
+     `enrollment_year` int DEFAULT NULL COMMENT '入学年份',
+     `user_role` varchar(20) DEFAULT 'student' COMMENT '用户角色: student-学生, faculty-教职工, staff-职员, alumni-校友, other-其他',
+     `student_id` varchar(32) DEFAULT NULL COMMENT '学号',
      `last_login_at` datetime DEFAULT NULL COMMENT '最后登录时间',
      `last_login_ip` varchar(45) DEFAULT NULL COMMENT '最后登录IP',
      `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -18,8 +24,7 @@ CREATE TABLE `user` (
      PRIMARY KEY (`id`),
      UNIQUE KEY `idx_username` (`username`),
      UNIQUE KEY `idx_phone` (`phone`),
-     KEY `idx_create_time` (`create_time`),
-     KEY `idx_user_status` (`user_status`)
+     KEY `idx_student_id` (`student_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 CREATE TABLE `user_follows` (
@@ -52,3 +57,4 @@ CREATE TABLE `user_notifications` (
       KEY `idx_is_read` (`is_read`),
       KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户通知表';
+

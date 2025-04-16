@@ -8,9 +8,11 @@ package svc
 import (
 	"github.com/liumkssq/goapp/app/im/immodels"
 	"github.com/liumkssq/goapp/app/im/ws/websocket"
+	"github.com/liumkssq/goapp/app/social/rpc/socialclient"
 	"github.com/liumkssq/goapp/app/task/mq/internal/config"
 	"github.com/liumkssq/goapp/pkg/constants"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/zrpc"
 	"net/http"
 )
 
@@ -20,6 +22,7 @@ type ServiceContext struct {
 	WsClient websocket.Client
 	*redis.Redis
 
+	socialclient.Social
 	immodels.ChatLogModel
 	immodels.ConversationModel
 }
@@ -27,9 +30,11 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	svc := &ServiceContext{
 		Config:            c,
-		Redis:             redis.MustNewRedis(c.Cache),
+		Redis:             redis.MustNewRedis(c.Redisx),
 		ChatLogModel:      immodels.MustChatLogModel(c.Mongo.Url, c.Mongo.Db),
 		ConversationModel: immodels.MustConversationModel(c.Mongo.Url, c.Mongo.Db),
+
+		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc)),
 	}
 
 	token, err := svc.GetSystemToken()
@@ -39,7 +44,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	header := http.Header{}
 	header.Set("Authorization", token)
-	svc.WsClient = websocket.NewClient(c.Ws.Host, websocket.WithClientHeader(header))
+	svc.WsClient = websocket.NewClient(c.Ws.Host,
+		websocket.WithClientHeader(header),
+		websocket.WithClientDiscover(websocket.NewRedisDiscover(header, constants.REDIS_DISCOVER_SRV, c.Redisx)),
+	)
 	return svc
 }
 

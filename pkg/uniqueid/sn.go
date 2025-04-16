@@ -2,7 +2,7 @@ package uniqueid
 
 import (
 	"fmt"
-	"looklook/pkg/tool"
+	"github.com/liumkssq/goapp/pkg/tool"
 	"time"
 )
 

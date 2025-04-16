@@ -8,10 +8,10 @@ import (
 	"github.com/liumkssq/goapp/pkg/constants"
 	"github.com/liumkssq/goapp/pkg/wuid"
 	"github.com/liumkssq/goapp/pkg/xerr"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type SetUpUserConversationLogic struct {
@@ -30,6 +30,8 @@ func NewSetUpUserConversationLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 建立会话: 群聊, 私聊
 func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConversationReq) (*im.SetUpUserConversationResp, error) {
+	// todo: add your logic here and delete this line
+
 	var res im.SetUpUserConversationResp
 	switch constants.ChatType(in.ChatType) {
 	case constants.SingleChatType:
@@ -46,10 +48,10 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 				})
 
 				if err != nil {
-					return nil, errors.Wrapf(xerr.NewErrMsg("更新会话记录失败"), "ConversationsModel.Insert err %v", err)
+					return nil, errors.Wrapf(xerr.NewDBErr(), "ConversationsModel.Insert err %v", err)
 				}
 			} else {
-				return nil, errors.Wrapf(xerr.NewErrMsg("查询会话记录失败"), "ConversationsModel.FindOne err %v, req %v", err, conversationId)
+				return nil, errors.Wrapf(xerr.NewDBErr(), "ConversationsModel.FindOne err %v, req %v", err, conversationId)
 			}
 		} else if conversationRes != nil {
 			return &res, nil
@@ -63,12 +65,16 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 		if err != nil {
 			return nil, err
 		}
+	case constants.GroupChatType:
+		err := l.setUpUserConversation(in.RecvId, in.SendId, in.RecvId, constants.GroupChatType, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &res, nil
 }
 
-// 建立会话 双向会话 存储
 func (l *SetUpUserConversationLogic) setUpUserConversation(conversationId, userId, recvId string,
 	chatType constants.ChatType, isShow bool) error {
 	// 用户的会话列表
@@ -81,7 +87,7 @@ func (l *SetUpUserConversationLogic) setUpUserConversation(conversationId, userI
 				ConversationList: make(map[string]*immodels.Conversation),
 			}
 		} else {
-			return errors.Wrapf(xerr.NewErrMsg("查询会话记录失败"), "ConversationsModel.FindOne err %v, req %v", err, userId)
+			return errors.Wrapf(xerr.NewDBErr(), "ConversationsModel.FindOne err %v, req %v", err, userId)
 		}
 	}
 
@@ -100,7 +106,7 @@ func (l *SetUpUserConversationLogic) setUpUserConversation(conversationId, userI
 	// 更新
 	err = l.svcCtx.ConversationsModel.Update(l.ctx, conversations)
 	if err != nil {
-		return errors.Wrapf(xerr.NewErrMsg("更新会话记录失败"), "ConversationsModel.Insert err %v, req %v", err, conversations)
+		return errors.Wrapf(xerr.NewDBErr(), "ConversationsModel.Insert err %v, req %v", err, conversations)
 	}
 	return nil
 }

@@ -7,10 +7,23 @@ import (
 	"github.com/liumkssq/goapp/app/im/api/internal/svc"
 	"net/http"
 
+
 	"github.com/zeromicro/go-zero/rest"
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/chatlog/readRecords",
+				Handler: getChatLogReadRecordsHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
+		rest.WithPrefix("/v1/im"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -38,7 +51,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: setUpUserConversationHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/v1/im"),
 	)
 }

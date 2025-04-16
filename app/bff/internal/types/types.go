@@ -35,6 +35,28 @@ type ChangePasswordResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type ChatLog struct {
+	Id             string `json:"id,omitempty"`
+	ConversationId string `json:"conversationId,omitempty"`
+	SendId         string `json:"sendId,omitempty"`
+	RecvId         string `json:"recvId,omitempty"`
+	MsgType        int32  `json:"msgType,omitempty"`
+	MsgContent     string `json:"msgContent,omitempty"`
+	ChatType       int32  `json:"chatType,omitempty"`
+	SendTime       int64  `json:"SendTime,omitempty"`
+}
+
+type ChatLogReq struct {
+	ConversationId string `json:"conversationId"`
+	StartSendTime  int64  `json:"startSendTime,omitempty"`
+	EndSendTime    int64  `json:"endSendTime,omitempty"`
+	Count          int64  `json:"count,omitempty"`
+}
+
+type ChatLogResp struct {
+	List []*ChatLog `json:"list"`
+}
+
 type Comment struct {
 	Id         int64  `json:"id"`
 	Content    string `json:"content"`
@@ -66,6 +88,17 @@ type CommentProductResp struct {
 
 type CommonResp struct {
 	Message string `json:"message"`
+}
+
+type Conversation struct {
+	ConversationId string `json:"conversationId,omitempty"`
+	ChatType       int32  `json:"ChatType,omitempty"`
+	TargetId       string `json:"targetId,omitempty"`
+	IsShow         bool   `json:"isShow,omitempty"`
+	Seq            int64  `json:"seq,omitempty"`
+	Read           int32  `json:"read,omitempty"`
+	Total          int32  `json:"total,omitempty"`
+	Unread         int32  `json:"unread,omitempty"`
 }
 
 type DeleteLostFoundReq struct {
@@ -113,6 +146,79 @@ type FollowUserResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type FriendListReq struct {
+}
+
+type FriendListResp struct {
+	List []*Friends `json:"list"`
+}
+
+type FriendPutInHandleReq struct {
+	FriendReqId  int32 `json:"friend_req_id,omitempty"`
+	HandleResult int32 `json:"handle_result,omitempty"` // 处理结果
+}
+
+type FriendPutInHandleResp struct {
+}
+
+type FriendPutInListReq struct {
+}
+
+type FriendPutInListResp struct {
+	List []*FriendRequests `json:"list"`
+}
+
+type FriendPutInReq struct {
+	ReqMsg  string `json:"req_msg,omitempty"`
+	ReqTime int64  `json:"req_time,omitempty"`
+	UserId  string `json:"user_uid"`
+}
+
+type FriendPutInResp struct {
+}
+
+type FriendRequests struct {
+	Id           int64  `json:"id,omitempty"`
+	UserId       string `json:"user_id,omitempty"`
+	ReqUid       string `json:"req_uid,omitempty"`
+	ReqMsg       string `json:"req_msg,omitempty"`
+	ReqTime      int64  `json:"req_time,omitempty"`
+	HandleResult int    `json:"handle_result,omitempty"`
+	HandleMsg    string `json:"handle_msg,omitempty"`
+}
+
+type Friends struct {
+	Id        int32  `json:"id,omitempty"`
+	FriendUid string `json:"friend_uid,omitempty"`
+	Nickname  string `json:"nickname,omitempty"`
+	Avatar    string `json:"avatar,omitempty"`
+	Remark    string `json:"remark,omitempty"`
+}
+
+type FriendsOnlineReq struct {
+}
+
+type FriendsOnlineResp struct {
+	OnlineList map[string]bool `json:"onLineList"`
+}
+
+type GetChatLogReadRecordsReq struct {
+	MsgId string `json:"msgId"`
+}
+
+type GetChatLogReadRecordsResp struct {
+	Reads   []string `json:"reads"`
+	UnReads []string `json:"unReads"`
+}
+
+type GetConversationsReq struct {
+}
+
+type GetConversationsResp struct {
+	UserId           string                   `json:"userId"`
+	ConversationList map[string]*Conversation `json:"conversationList"`
+}
+
 type GlobalSearchReq struct {
 	Keyword string `form:"keyword"`
 	Type    string `form:"type,optional,default=all"` // all, product.sql, article, lostfound, user
@@ -125,6 +231,99 @@ type GlobalSearchResp struct {
 	Total int64          `json:"total"`
 	Page  int64          `json:"page"`
 	Limit int64          `json:"limit"`
+}
+
+type GroupCreateReq struct {
+	Name string `json:"name,omitempty"`
+	Icon string `json:"icon,omitempty"`
+}
+
+type GroupCreateResp struct {
+}
+
+type GroupListRep struct {
+}
+
+type GroupListResp struct {
+	List []*Groups `json:"list,omitempty"`
+}
+
+type GroupMembers struct {
+	Id            int64  `json:"id,omitempty"`
+	GroupId       string `json:"group_id,omitempty"`
+	UserId        string `json:"user_id,omitempty"`
+	Nickname      string `json:"nickname,omitempty"`
+	UserAvatarUrl string `json:"user_avatar_url,omitempty"`
+	RoleLevel     int    `json:"role_level,omitempty"`
+	InviterUid    string `json:"inviter_uid,omitempty"`
+	OperatorUid   string `json:"operator_uid,omitempty"`
+}
+
+type GroupPutInHandleRep struct {
+	GroupReqId   int32  `json:"group_req_id,omitempty"`
+	GroupId      string `json:"group_id,omitempty"`
+	HandleResult int32  `json:"handle_result,omitempty"` // 处理结果
+}
+
+type GroupPutInHandleResp struct {
+}
+
+type GroupPutInListRep struct {
+	GroupId string `json:"group_id,omitempty"`
+}
+
+type GroupPutInListResp struct {
+	List []*GroupRequests `json:"list,omitempty"`
+}
+
+type GroupPutInRep struct {
+	GroupId    string `json:"group_id,omitempty"`
+	ReqMsg     string `json:"req_msg,omitempty"`
+	ReqTime    int64  `json:"req_time,omitempty"`
+	JoinSource int64  `json:"join_source,omitempty"`
+}
+
+type GroupPutInResp struct {
+}
+
+type GroupRequests struct {
+	Id            int64  `json:"id,omitempty"`
+	UserId        string `json:"user_id,omitempty"`
+	GroupId       string `json:"group_id,omitempty"`
+	ReqMsg        string `json:"req_msg,omitempty"`
+	ReqTime       int64  `json:"req_time,omitempty"`
+	JoinSource    int64  `json:"join_source,omitempty"`
+	InviterUserId string `json:"inviter_user_id,omitempty"`
+	HandleUserId  string `json:"handle_user_id,omitempty"`
+	HandleTime    int64  `json:"handle_time,omitempty"`
+	HandleResult  int64  `json:"handle_result,omitempty"`
+}
+
+type GroupUserListReq struct {
+	GroupId string `json:"group_id,omitempty"`
+}
+
+type GroupUserListResp struct {
+	List []*GroupMembers `json:"List,omitempty"`
+}
+
+type GroupUserOnlineReq struct {
+	GroupId string `json:"group_id,omitempty"`
+}
+
+type GroupUserOnlineResp struct {
+	OnlineList map[string]bool `json:"onLineList"`
+}
+
+type Groups struct {
+	Id              string `json:"id,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Icon            string `json:"icon,omitempty"`
+	Status          int64  `json:"status,omitempty"`
+	GroupType       int64  `json:"group_type,omitempty"`
+	IsVerify        bool   `json:"is_verify,omitempty"`
+	Notification    string `json:"notification,omitempty"`
+	NotificationUid string `json:"notification_uid,omitempty"`
 }
 
 type HotKeyword struct {
@@ -416,11 +615,24 @@ type PublishProductResp struct {
 	Message string `json:"message"`
 }
 
+type PutConversationsReq struct {
+	ConversationList map[string]*Conversation `json:"conversationList"`
+}
+
+type PutConversationsResp struct {
+}
+
 type RegisterReq struct {
-	Username         string `json:"username"`         // 用户名
-	Password         string `json:"password"`         // 密码
-	Phone            string `json:"phone"`            // 手机号
-	VerificationCode string `json:"verificationCode"` // 验证码
+	Username         string `json:"username"`                // 用户名
+	Password         string `json:"password"`                // 密码
+	Phone            string `json:"phone"`                   // 手机号
+	VerificationCode string `json:"verificationCode"`        // 验证码
+	Campus           string `json:"campus,optional"`         // 校区
+	College          string `json:"college,optional"`        // 学院/部门
+	Major            string `json:"major,optional"`          // 专业
+	EnrollmentYear   int    `json:"enrollmentYear,optional"` // 入学年份
+	UserRole         string `json:"userRole,optional"`       // 用户角色
+	StudentId        string `json:"studentId,optional"`      // 学号
 }
 
 type RegisterResp struct {
@@ -544,6 +756,12 @@ type SendVerificationCodeResp struct {
 	Success bool `json:"success"` // 是否成功
 }
 
+type SetUpUserConversationReq struct {
+	SendId   string `json:"sendId,omitempty"`
+	RecvId   string `json:"recvId,omitempty"`
+	ChatType int32  `json:"ChatType,omitempty"`
+}
+
 type UnfollowUserReq struct {
 	Id int64 `path:"id"` // 要取消关注的用户ID
 }
@@ -610,9 +828,15 @@ type UpdateProductResp struct {
 }
 
 type UpdateUserInfoReq struct {
-	Nickname string `json:"nickname,optional"` // 昵称
-	Gender   string `json:"gender,optional"`   // 性别
-	Bio      string `json:"bio,optional"`      // 个人简介
+	Nickname       string `json:"nickname,optional"`       // 昵称
+	Gender         string `json:"gender,optional"`         // 性别
+	Bio            string `json:"bio,optional"`            // 个人简介
+	Campus         string `json:"campus,optional"`         // 校区
+	College        string `json:"college,optional"`        // 学院/部门
+	Major          string `json:"major,optional"`          // 专业
+	EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+	UserRole       string `json:"userRole,optional"`       // 用户角色
+	StudentId      string `json:"studentId,optional"`      // 学号
 }
 
 type UpdateUserInfoResp struct {
@@ -620,19 +844,25 @@ type UpdateUserInfoResp struct {
 }
 
 type UserInfoResp struct {
-	UserId         int64  `json:"userId"`          // 用户ID
-	Username       string `json:"username"`        // 用户名
-	Nickname       string `json:"nickname"`        // 昵称
-	Avatar         string `json:"avatar"`          // 头像URL
-	Phone          string `json:"phone"`           // 手机号
-	Gender         string `json:"gender,optional"` // 性别
-	Bio            string `json:"bio,optional"`    // 个人简介
-	FollowingCount int    `json:"followingCount"`  // 关注数
-	FollowersCount int    `json:"followersCount"`  // 粉丝数
-	ProductCount   int    `json:"productCount"`    // 发布的商品数
-	ArticleCount   int    `json:"articleCount"`    // 发布的文章数
-	LostFoundCount int    `json:"lostFoundCount"`  // 发布的失物招领数
-	CreatedAt      string `json:"createdAt"`       // 创建时间
+	UserId         int64  `json:"userId"`                  // 用户ID
+	Username       string `json:"username"`                // 用户名
+	Nickname       string `json:"nickname"`                // 昵称
+	Avatar         string `json:"avatar"`                  // 头像URL
+	Phone          string `json:"phone"`                   // 手机号
+	Gender         string `json:"gender,optional"`         // 性别
+	Bio            string `json:"bio,optional"`            // 个人简介
+	Campus         string `json:"campus,optional"`         // 校区
+	College        string `json:"college,optional"`        // 学院/部门
+	Major          string `json:"major,optional"`          // 专业
+	EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+	UserRole       string `json:"userRole,optional"`       // 用户角色
+	StudentId      string `json:"studentId,optional"`      // 学号
+	FollowingCount int    `json:"followingCount"`          // 关注数
+	FollowersCount int    `json:"followersCount"`          // 粉丝数
+	ProductCount   int    `json:"productCount"`            // 发布的商品数
+	ArticleCount   int    `json:"articleCount"`            // 发布的文章数
+	LostFoundCount int    `json:"lostFoundCount"`          // 发布的失物招领数
+	CreatedAt      string `json:"createdAt"`               // 创建时间
 }
 
 type UserLostFoundReq struct {
@@ -667,19 +897,25 @@ type UserProfileReq struct {
 }
 
 type UserProfileResp struct {
-	UserId         int64  `json:"userId"`          // 用户ID
-	Username       string `json:"username"`        // 用户名
-	Nickname       string `json:"nickname"`        // 昵称
-	Avatar         string `json:"avatar"`          // 头像URL
-	Gender         string `json:"gender,optional"` // 性别
-	Bio            string `json:"bio,optional"`    // 个人简介
-	FollowingCount int    `json:"followingCount"`  // 关注数
-	FollowersCount int    `json:"followersCount"`  // 粉丝数
-	IsFollowing    bool   `json:"isFollowing"`     // 当前用户是否关注了该用户
-	ProductCount   int    `json:"productCount"`    // 发布的商品数
-	ArticleCount   int    `json:"articleCount"`    // 发布的文章数
-	LostFoundCount int    `json:"lostFoundCount"`  // 发布的失物招领数
-	CreatedAt      string `json:"createdAt"`       // 创建时间
+	UserId         int64  `json:"userId"`                  // 用户ID
+	Username       string `json:"username"`                // 用户名
+	Nickname       string `json:"nickname"`                // 昵称
+	Avatar         string `json:"avatar"`                  // 头像URL
+	Gender         string `json:"gender,optional"`         // 性别
+	Bio            string `json:"bio,optional"`            // 个人简介
+	Campus         string `json:"campus,optional"`         // 校区
+	College        string `json:"college,optional"`        // 学院/部门
+	Major          string `json:"major,optional"`          // 专业
+	EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+	UserRole       string `json:"userRole,optional"`       // 用户角色
+	StudentId      string `json:"studentId,optional"`      // 学号
+	FollowingCount int    `json:"followingCount"`          // 关注数
+	FollowersCount int    `json:"followersCount"`          // 粉丝数
+	IsFollowing    bool   `json:"isFollowing"`             // 当前用户是否关注了该用户
+	ProductCount   int    `json:"productCount"`            // 发布的商品数
+	ArticleCount   int    `json:"articleCount"`            // 发布的文章数
+	LostFoundCount int    `json:"lostFoundCount"`          // 发布的失物招领数
+	CreatedAt      string `json:"createdAt"`               // 创建时间
 }
 
 type UserSearchResult struct {
@@ -698,4 +934,7 @@ type VerifyCodeReq struct {
 type VerifyCodeResp struct {
 	Success bool   `json:"success"`          // 是否成功
 	Message string `json:"message,optional"` // 消息
+}
+
+type SetUpUserConversationResp struct {
 }

@@ -40,6 +40,8 @@ type (
 		Update(ctx context.Context, data *User) error
 		Delete(ctx context.Context, id uint64) error
 		Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
+		ListByName(ctx context.Context, name string) ([]*User, error)
+		ListByIds(ctx context.Context, ids []string) ([]*User, error)
 		SearchUser(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*User, error)
 	}
 
@@ -59,6 +61,12 @@ type (
 		Version      uint64         `db:"version"`       // 版本号
 		Sex          int64          `db:"sex"`           // 性别: 0-未知, 1-男, 2-女
 		Bio          sql.NullString `db:"bio"`           // 个人简介
+		Campus       sql.NullString `db:"campus"`        // 校区
+		College      sql.NullString `db:"college"`       // 学院/部门
+		Major        sql.NullString `db:"major"`         // 专业
+		EnrollmentYear sql.NullInt64  `db:"enrollment_year"` // 入学年份
+		UserRole     sql.NullString `db:"user_role"`     // 用户角色
+		StudentId    sql.NullString `db:"student_id"`    // 学号
 		LastLoginAt  sql.NullTime   `db:"last_login_at"` // 最后登录时间
 		LastLoginIp  sql.NullString `db:"last_login_ip"` // 最后登录IP
 		CreateTime   time.Time      `db:"create_time"`   // 创建时间
@@ -68,29 +76,14 @@ type (
 	}
 )
 
-func (m *defaultUserModel) SearchUser(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*User, error) {
+func (m *defaultUserModel) ListByName(ctx context.Context, name string) ([]*User, error) {
 	rowBuilder := squirrel.Select().From(m.table)
 	// 添加过滤条件
-	if len(keyword) > 0 {
-		rowBuilder = rowBuilder.Where("`username` LIKE ? or `phone` LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
+	if len(name) > 0 {
+		rowBuilder = rowBuilder.Where("`username` LIKE ?", "%"+name+"%")
 	}
 
-	if searchType == "phone" {
-		rowBuilder = rowBuilder.Where("`phone` LIKE ?", "%"+keyword+"%")
-	} else if searchType == "username" {
-		rowBuilder = rowBuilder.Where("`username` LIKE ?", "%"+keyword+"%")
-	} else {
-		rowBuilder = rowBuilder.Where("`username` LIKE ? or `phone` LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
-	}
-
-	// 设置分页参数
-	pageSize := limit
-	if pageSize < 1 || pageSize > 100 {
-		pageSize = 10
-	}
-	offset := (page - 1) * pageSize
-
-	query, args, err := rowBuilder.OrderBy("id desc").Limit(uint64(pageSize)).Offset(uint64(offset)).ToSql()
+	query, args, err := rowBuilder.ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +94,142 @@ func (m *defaultUserModel) SearchUser(ctx context.Context, keyword string, searc
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (m *defaultUserModel) ListByIds(ctx context.Context, ids []string) ([]*User, error) {
+	rowBuilder := squirrel.Select("*").From(m.table)
+	// 添加过滤条件
+	if len(ids) > 0 {
+		rowBuilder = rowBuilder.Where(squirrel.Eq{"id": ids})
+	}
+
+	query, args, err := rowBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var resp []*User
+	err = m.QueryRowsNoCacheCtx(ctx, &resp, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *defaultUserModel) SearchUser(ctx context.Context, keyword string, searchType string, page int64, limit int64) ([]*User, error) {
+	rowBuilder := squirrel.Select(userRows).From(m.table)
+	
+	if len(keyword) > 0 {
+		switch searchType {
+		case "phone":
+			rowBuilder = rowBuilder.Where("`phone` LIKE ?", "%"+keyword+"%")
+		case "username":
+			rowBuilder = rowBuilder.Where("`username` LIKE ?", "%"+keyword+"%")
+		default:
+			rowBuilder = rowBuilder.Where("(`username` LIKE ? OR `phone` LIKE ?)", 
+				"%"+keyword+"%", "%"+keyword+"%")
+		}
+	}
+	
+	// 参数验证
+	if page < 1 {
+		page = 1
+	}
+	
+	pageSize := limit
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10
+	}
+	
+	offset := (page - 1) * pageSize
+	
+	query, args, err := rowBuilder.OrderBy("id DESC").
+		Limit(uint64(pageSize)).
+		Offset(uint64(offset)).
+		ToSql()
+		
+	if err != nil {
+		return nil, fmt.Errorf("构建搜索SQL失败: %w", err)
+	}
+	
+	var resp []*User
+	err = m.QueryRowsNoCacheCtx(ctx, &resp, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("搜索用户失败: %w", err)
+	}
+	
+	return resp, nil
+}
+
+func (m *defaultUserModel) ListByIdsBatch(ctx context.Context, ids []string) ([]*User, error) {
+	if len(ids) == 0 {
+		return []*User{}, nil
+	}
+	
+	const batchSize = 500 // MySQL 推荐的批处理大小
+	var allUsers []*User
+	
+	// 批量处理
+	for i := 0; i < len(ids); i += batchSize {
+		end := i + batchSize
+		if end > len(ids) {
+			end = len(ids)
+		}
+		
+		batchIds := ids[i:end]
+		rowBuilder := squirrel.Select(userRows).From(m.table)
+		rowBuilder = rowBuilder.Where(squirrel.Eq{"id": batchIds})
+		
+		query, args, err := rowBuilder.ToSql()
+		if err != nil {
+			return nil, fmt.Errorf("构建SQL失败: %w", err)
+		}
+		
+		var batchUsers []*User
+		err = m.QueryRowsNoCacheCtx(ctx, &batchUsers, query, args...)
+		if err != nil {
+			return nil, fmt.Errorf("查询批次 %d-%d 失败: %w", i, end, err)
+		}
+		
+		allUsers = append(allUsers, batchUsers...)
+	}
+	
+	return allUsers, nil
+}
+
+func (m *defaultUserModel) ListByIdsWithCache(ctx context.Context, ids []string) ([]*User, error) {
+	if len(ids) == 0 {
+		return []*User{}, nil
+	}
+	
+	// 尝试从缓存获取
+	cachedUsers := make([]*User, 0, len(ids))
+	pendingIds := make([]string, 0, len(ids))
+	
+	for _, id := range ids {
+		goappUserIdKey := fmt.Sprintf("%s%v", cacheGoappUserIdPrefix, id)
+		var user User
+		err := m.QueryRowCtx(ctx, &user, goappUserIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+			return nil // 缓存未命中时不执行查询
+		})
+		
+		if err == nil {
+			cachedUsers = append(cachedUsers, &user)
+		} else {
+			pendingIds = append(pendingIds, id)
+		}
+	}
+	
+	// 查询剩余未缓存的ID
+	if len(pendingIds) > 0 {
+		users, err := m.ListByIdsBatch(ctx, pendingIds)
+		if err != nil {
+			return nil, err
+		}
+		cachedUsers = append(cachedUsers, users...)
+	}
+	
+	return cachedUsers, nil
 }
 
 func newUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultUserModel {
@@ -199,7 +328,7 @@ func (m *defaultUserModel) Insert(
 	goappUserPhoneKey := fmt.Sprintf("%s%v", cacheGoappUserPhonePrefix, data.Phone)
 	goappUserUsernameKey := fmt.Sprintf("%s%v", cacheGoappUserUsernamePrefix, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
 		//
 		if session != nil {
 			return session.ExecCtx(
@@ -214,13 +343,19 @@ func (m *defaultUserModel) Insert(
 				data.Version,
 				data.Sex,
 				data.Bio,
+				data.Campus,
+				data.College,
+				data.Major,
+				data.EnrollmentYear,
+				data.UserRole,
+				data.StudentId,
 				data.LastLoginAt,
 				data.LastLoginIp,
 				data.DeleteTime,
 				data.DelState,
 			)
 		}
-		return conn.ExecCtx(ctx, query, data.Username, data.Phone, data.PasswordHash, data.Nickname, data.AvatarUrl, data.UserStatus, data.Version, data.Sex, data.Bio, data.LastLoginAt, data.LastLoginIp, data.DeleteTime, data.DelState)
+		return conn.ExecCtx(ctx, query, data.Username, data.Phone, data.PasswordHash, data.Nickname, data.AvatarUrl, data.UserStatus, data.Version, data.Sex, data.Bio, data.Campus, data.College, data.Major, data.EnrollmentYear, data.UserRole, data.StudentId, data.LastLoginAt, data.LastLoginIp, data.DeleteTime, data.DelState)
 	}, goappUserIdKey, goappUserPhoneKey, goappUserUsernameKey)
 	return ret, err
 }
@@ -236,7 +371,7 @@ func (m *defaultUserModel) Update(ctx context.Context, newData *User) error {
 	goappUserUsernameKey := fmt.Sprintf("%s%v", cacheGoappUserUsernamePrefix, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Username, newData.Phone, newData.PasswordHash, newData.Nickname, newData.AvatarUrl, newData.UserStatus, newData.Version, newData.Sex, newData.Bio, newData.LastLoginAt, newData.LastLoginIp, newData.DeleteTime, newData.DelState, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Username, newData.Phone, newData.PasswordHash, newData.Nickname, newData.AvatarUrl, newData.UserStatus, newData.Version, newData.Sex, newData.Bio, newData.Campus, newData.College, newData.Major, newData.EnrollmentYear, newData.UserRole, newData.StudentId, newData.LastLoginAt, newData.LastLoginIp, newData.DeleteTime, newData.DelState, newData.Id)
 	}, goappUserIdKey, goappUserPhoneKey, goappUserUsernameKey)
 	return err
 }

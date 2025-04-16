@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "im消息服务",
-    "version": "1.0.0"
+    "version": ""
   },
   "schemes": [
     "http",
@@ -54,6 +54,35 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          }
+        ],
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/im/chatlog/readRecords": {
+      "get": {
+        "operationId": "getChatLogReadRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetChatLogReadRecordsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "msgId",
+            "in": "query",
+            "required": true,
+            "type": "string"
           }
         ],
         "tags": [
@@ -178,7 +207,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "sendTime": {
+        "SendTime": {
           "type": "integer",
           "format": "int64"
         }
@@ -230,7 +259,7 @@
         "conversationId": {
           "type": "string"
         },
-        "chatType": {
+        "ChatType": {
           "type": "integer",
           "format": "int32"
         },
@@ -238,7 +267,8 @@
           "type": "string"
         },
         "isShow": {
-          "type": "boolean"
+          "type": "boolean",
+          "format": "boolean"
         },
         "seq": {
           "type": "integer",
@@ -259,6 +289,40 @@
       },
       "title": "Conversation"
     },
+    "GetChatLogReadRecordsReq": {
+      "type": "object",
+      "properties": {
+        "msgId": {
+          "type": "string"
+        }
+      },
+      "title": "GetChatLogReadRecordsReq",
+      "required": [
+        "msgId"
+      ]
+    },
+    "GetChatLogReadRecordsResp": {
+      "type": "object",
+      "properties": {
+        "reads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unReads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "GetChatLogReadRecordsResp",
+      "required": [
+        "reads",
+        "unReads"
+      ]
+    },
     "GetConversationsReq": {
       "type": "object",
       "title": "GetConversationsReq"
@@ -270,10 +334,7 @@
           "type": "string"
         },
         "conversationList": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Conversation"
-          }
+          "$ref": "#/definitions/mapstringConversation"
         }
       },
       "title": "GetConversationsResp",
@@ -286,10 +347,7 @@
       "type": "object",
       "properties": {
         "conversationList": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Conversation"
-          }
+          "$ref": "#/definitions/mapstringConversation"
         }
       },
       "title": "PutConversationsReq",
@@ -310,7 +368,7 @@
         "recvId": {
           "type": "string"
         },
-        "chatType": {
+        "ChatType": {
           "type": "integer",
           "format": "int32"
         }

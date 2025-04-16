@@ -21,11 +21,10 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 聊天记录
 type ChatLog struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ConversationId string                 `protobuf:"bytes,2,opt,name=conversationId,proto3" json:"conversationId,omitempty"` // 会话id sendId and revcId caculate id
+	ConversationId string                 `protobuf:"bytes,2,opt,name=conversationId,proto3" json:"conversationId,omitempty"`
 	SendId         string                 `protobuf:"bytes,3,opt,name=sendId,proto3" json:"sendId,omitempty"`
 	RecvId         string                 `protobuf:"bytes,4,opt,name=recvId,proto3" json:"recvId,omitempty"`
 	MsgType        int32                  `protobuf:"varint,5,opt,name=msgType,proto3" json:"msgType,omitempty"`
@@ -130,10 +129,9 @@ func (x *ChatLog) GetReadRecords() []byte {
 	return nil
 }
 
-// 会话
 type Conversation struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	ConversationId string                 `protobuf:"bytes,1,opt,name=conversationId,proto3" json:"conversationId,omitempty"` // 会话id sendId and revcId caculate id
+	ConversationId string                 `protobuf:"bytes,1,opt,name=conversationId,proto3" json:"conversationId,omitempty"`
 	ChatType       int32                  `protobuf:"varint,2,opt,name=chatType,proto3" json:"chatType,omitempty"`
 	TargetId       string                 `protobuf:"bytes,3,opt,name=targetId,proto3" json:"targetId,omitempty"`
 	IsShow         bool                   `protobuf:"varint,4,opt,name=isShow,proto3" json:"isShow,omitempty"`

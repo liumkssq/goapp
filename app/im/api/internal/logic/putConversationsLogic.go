@@ -3,11 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
-	"github.com/liumkssq/goapp/app/im/api/internal/svc"
-	"github.com/liumkssq/goapp/app/im/api/internal/types"
-	"github.com/liumkssq/goapp/app/im/rpc/imclient"
-	"github.com/liumkssq/goapp/pkg/ctxdata"
-	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,11 +23,11 @@ func NewPutConversationsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PutConversationsLogic) PutConversations(req *types.PutConversationsReq) (resp *types.PutConversationsResp, err error) {
-	uId := ctxdata.GetUidFromCtx(l.ctx)
+	uId := ctxdata.GetUId(l.ctx)
 	var conversationList map[string]*imclient.Conversation
 	copier.Copy(&conversationList, req.ConversationList)
 	_, err = l.svcCtx.PutConversations(l.ctx, &imclient.PutConversationsReq{
-		UserId:           strconv.FormatInt(uId, 10),
+		UserId:           uId,
 		ConversationList: conversationList,
 	})
 	return

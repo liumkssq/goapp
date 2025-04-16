@@ -118,3 +118,9 @@ func (s *UserServiceServer) MarkNotificationAsRead(ctx context.Context, in *user
 	l := logic.NewMarkNotificationAsReadLogic(ctx, s.svcCtx)
 	return l.MarkNotificationAsRead(in)
 }
+
+// 查找用户
+func (s *UserServiceServer) FindUser(ctx context.Context, in *user.FindUserReq) (*user.FindUserResp, error) {
+	l := logic.NewFindUserLogic(ctx, s.svcCtx)
+	return l.FindUser(in)
+}

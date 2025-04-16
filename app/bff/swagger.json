@@ -1,0 +1,5470 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/im/chatlog": {
+      "get": {
+        "summary": "根据用户获取聊天记录",
+        "operationId": "getChatLog",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ChatLogResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "startSendTime",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "endSendTime",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/im/chatlog/readRecords": {
+      "get": {
+        "operationId": "getChatLogReadRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetChatLogReadRecordsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "msgId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/im/conversation": {
+      "get": {
+        "summary": "获取会话",
+        "operationId": "getConversations",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetConversationsResp"
+            }
+          }
+        },
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "更新会话",
+        "operationId": "putConversations",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/PutConversationsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PutConversationsReq"
+            }
+          }
+        ],
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/im/setup/conversation": {
+      "post": {
+        "summary": "建立会话",
+        "operationId": "setUpUserConversation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setUpUserConversationResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SetUpUserConversationReq"
+            }
+          }
+        ],
+        "tags": [
+          "im"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/": {
+      "post": {
+        "operationId": "PublishLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/PublishLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 发布失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PublishLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/detail/{id}": {
+      "get": {
+        "operationId": "GetLostFoundDetail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LostFoundDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "lostfound"
+        ]
+      }
+    },
+    "/api/lost-found/list": {
+      "get": {
+        "operationId": "GetLostFoundList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LostFoundListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          },
+          {
+            "name": "type",
+            "description": " lost/found/all",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "all"
+          },
+          {
+            "name": "status",
+            "description": " pending/found/claimed/closed/all",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "all"
+          },
+          {
+            "name": "sort",
+            "description": " latest/hot",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "latest"
+          },
+          {
+            "name": "keywords",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "userId",
+            "description": " 查询特定用户的发布",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "lostfound"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/lost-found/userLostFound/{userId}": {
+      "get": {
+        "operationId": "GetUserLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}": {
+      "delete": {
+        "operationId": "DeleteLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/DeleteLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 删除失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "UpdateLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 更新失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}/comment": {
+      "post": {
+        "operationId": "CommentLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CommentLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 评论失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}/comments": {
+      "get": {
+        "operationId": "GetLostFoundComments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LostFoundCommentsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}/like": {
+      "post": {
+        "operationId": "LikeLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LikeLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 点赞失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikeLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}/status": {
+      "put": {
+        "operationId": "UpdateLostFoundStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateLostFoundStatusResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 更新失物招领状态请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateLostFoundStatusReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/lost-found/{id}/unlike": {
+      "post": {
+        "operationId": "UnlikeLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UnlikeLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 取消点赞失物招领请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UnlikeLostFoundReq"
+            }
+          }
+        ],
+        "tags": [
+          "lostfoundOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/categories": {
+      "get": {
+        "operationId": "GetProductCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ProductCategoriesResp"
+            }
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      }
+    },
+    "/api/product/comment/{id}": {
+      "post": {
+        "operationId": "CommentProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CommentProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 商品评论请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/comments/{id}": {
+      "get": {
+        "operationId": "GetProductComments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ProductCommentsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/delete/{id}": {
+      "delete": {
+        "operationId": "DeleteProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/DeleteProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 删除商品请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/detail/{id}": {
+      "get": {
+        "operationId": "GetProductDetail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ProductDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "product"
+        ]
+      }
+    },
+    "/api/product/favorite/{id}": {
+      "post": {
+        "operationId": "FavoriteProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FavoriteProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 收藏商品请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FavoriteProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/favorites": {
+      "get": {
+        "operationId": "GetFavoriteProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FavoriteProductsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/list": {
+      "get": {
+        "operationId": "GetProductList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ProductListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "description": " latest, priceAsc, priceDesc, popular",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "latest"
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "status",
+            "description": " active, sold, all",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "active"
+          }
+        ],
+        "tags": [
+          "product"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/product/publish": {
+      "post": {
+        "operationId": "PublishProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/PublishProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 发布商品请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PublishProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/report/{id}": {
+      "post": {
+        "operationId": "ReportProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ReportProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 举报商品请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReportProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/update/{id}": {
+      "put": {
+        "operationId": "UpdateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateProductResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 更新商品请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateProductReq"
+            }
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/product/userProduct/{userId}": {
+      "get": {
+        "operationId": "GetUserProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserProductsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductOp"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/search/": {
+      "get": {
+        "operationId": "GlobalSearch",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GlobalSearchResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "description": " all, product.sql, article, lostfound, user",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "all"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "allsearch"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/search/articles": {
+      "get": {
+        "operationId": "SearchArticles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SearchArticlesResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "description": " latest, popular, hottest",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "latest"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "allsearch"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/search/history": {
+      "get": {
+        "operationId": "GetSearchHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SearchHistoryResp"
+            }
+          }
+        },
+        "tags": [
+          "userSearch"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ClearSearchHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CommonResp"
+            }
+          }
+        },
+        "tags": [
+          "userSearch"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/search/hot-keywords": {
+      "get": {
+        "operationId": "GetHotSearchKeywords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/HotSearchKeywordsResp"
+            }
+          }
+        },
+        "tags": [
+          "allsearch"
+        ]
+      }
+    },
+    "/api/search/lostfound": {
+      "get": {
+        "operationId": "SearchLostFound",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SearchLostFoundResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "description": " lost, found",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "description": " latest, popular",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "latest"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "allsearch"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/search/products": {
+      "get": {
+        "operationId": "SearchProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SearchProductsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "description": " latest, priceAsc, priceDesc, popular",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "latest"
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "allsearch"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/search/users": {
+      "get": {
+        "operationId": "SearchUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SearchUsersResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "allsearch"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
+    },
+    "/api/social/friend/putIn": {
+      "post": {
+        "summary": "好友申请",
+        "operationId": "friendPutIn",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendPutInResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendPutInReq"
+            }
+          }
+        ],
+        "tags": [
+          "friend"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "好友申请处理",
+        "operationId": "friendPutInHandle",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendPutInHandleResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendPutInHandleReq"
+            }
+          }
+        ],
+        "tags": [
+          "friend"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/friend/putIns": {
+      "get": {
+        "summary": "好友申请列表",
+        "operationId": "friendPutInList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendPutInListResp"
+            }
+          }
+        },
+        "tags": [
+          "friend"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/friends": {
+      "get": {
+        "summary": "好友列表",
+        "operationId": "friendList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendListResp"
+            }
+          }
+        },
+        "tags": [
+          "friend"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/friends/online": {
+      "get": {
+        "summary": "好友在线情况",
+        "operationId": "friendsOnline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FriendsOnlineResp"
+            }
+          }
+        },
+        "tags": [
+          "friend"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/group": {
+      "post": {
+        "summary": "创群",
+        "operationId": "createGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupCreateResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreateReq"
+            }
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/group/putIn": {
+      "post": {
+        "summary": "申请进群",
+        "operationId": "groupPutIn",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupPutInResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupPutInRep"
+            }
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "申请进群处理",
+        "operationId": "groupPutInHandle",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupPutInHandleResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupPutInHandleRep"
+            }
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/group/putIns": {
+      "get": {
+        "summary": "申请进群列表",
+        "operationId": "groupPutInList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupPutInListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/group/users": {
+      "get": {
+        "summary": "成员列表列表",
+        "operationId": "groupUserList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupUserListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/group/users/online": {
+      "get": {
+        "summary": "群在线用户",
+        "operationId": "groupUserOnline",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupUserOnlineResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/social/groups": {
+      "get": {
+        "summary": "用户申群列表",
+        "operationId": "groupList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GroupListResp"
+            }
+          }
+        },
+        "tags": [
+          "group"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/follow/{id}": {
+      "post": {
+        "summary": "关注用户",
+        "operationId": "FollowUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FollowUserResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 关注用户请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FollowUserReq"
+            }
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/info": {
+      "get": {
+        "summary": "获取当前用户信息",
+        "operationId": "GetUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserInfoResp"
+            }
+          }
+        },
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "更新用户信息",
+        "operationId": "UpdateUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 更新用户信息请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoReq"
+            }
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/login/auto": {
+      "post": {
+        "summary": "自动登录（仅用于开发环境测试）",
+        "operationId": "AutoLogin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/login/password": {
+      "post": {
+        "summary": "账号密码登录",
+        "operationId": "LoginByPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 账号密码登录请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginByPasswordReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/login/sms-code": {
+      "post": {
+        "summary": "验证码登录",
+        "operationId": "LoginByVerificationCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 验证码登录请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginByVerificationCodeReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/logout": {
+      "post": {
+        "summary": "退出登录",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoResp"
+            }
+          }
+        },
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/notifications": {
+      "get": {
+        "summary": "获取通知",
+        "operationId": "GetNotifications",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/NotificationListResp"
+            }
+          }
+        },
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/notifications/{id}/read": {
+      "put": {
+        "summary": "标记通知为已读",
+        "operationId": "MarkNotificationAsRead",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/MarkNotificationAsReadResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 标记通知为已读请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MarkNotificationAsReadReq"
+            }
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/password": {
+      "put": {
+        "summary": "修改密码",
+        "operationId": "ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ChangePasswordResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 修改密码请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChangePasswordReq"
+            }
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/profile/{id}": {
+      "get": {
+        "summary": "获取用户详细资料",
+        "operationId": "GetUserProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserProfileResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "summary": "用户注册",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RegisterResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 注册请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/reset-password": {
+      "post": {
+        "summary": "重置密码",
+        "operationId": "ResetPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ResetPasswordResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 图形验证码相关功能已移除, 重置密码请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ResetPasswordReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/send-code": {
+      "post": {
+        "summary": "发送验证码",
+        "operationId": "SendVerificationCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/SendVerificationCodeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 发送验证码请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendVerificationCodeReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/unfollow/{id}": {
+      "post": {
+        "summary": "取消关注用户",
+        "operationId": "UnfollowUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UnfollowUserResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": " 取消关注用户请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UnfollowUserReq"
+            }
+          }
+        ],
+        "tags": [
+          "userOp"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/api/user/verify-code": {
+      "post": {
+        "summary": "验证验证码",
+        "operationId": "VerifyCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/VerifyCodeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 验证码验证请求",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VerifyCodeReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ArticleSearchResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "coverImage": {
+          "type": "string"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "authorId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "authorName": {
+          "type": "string"
+        },
+        "authorAvatar": {
+          "type": "string"
+        },
+        "viewCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "commentCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "ArticleSearchResult",
+      "required": [
+        "id",
+        "title",
+        "authorId",
+        "authorName",
+        "viewCount",
+        "commentCount",
+        "createdAt"
+      ]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "parentId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "Category",
+      "required": [
+        "id",
+        "name",
+        "level"
+      ]
+    },
+    "ChangePasswordReq": {
+      "type": "object",
+      "properties": {
+        "oldPassword": {
+          "type": "string",
+          "description": " 旧密码"
+        },
+        "newPassword": {
+          "type": "string",
+          "description": " 新密码"
+        }
+      },
+      "title": "ChangePasswordReq",
+      "required": [
+        "oldPassword",
+        "newPassword"
+      ]
+    },
+    "ChangePasswordResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "ChangePasswordResp",
+      "required": [
+        "success"
+      ]
+    },
+    "ChatLog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "sendId": {
+          "type": "string"
+        },
+        "recvId": {
+          "type": "string"
+        },
+        "msgType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "msgContent": {
+          "type": "string"
+        },
+        "chatType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "SendTime": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ChatLog"
+    },
+    "ChatLogReq": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "startSendTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endSendTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ChatLogReq",
+      "required": [
+        "conversationId"
+      ]
+    },
+    "ChatLogResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ChatLog"
+          }
+        }
+      },
+      "title": "ChatLogResp",
+      "required": [
+        "list"
+      ]
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "content": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "userAvatar": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "Comment",
+      "required": [
+        "id",
+        "content",
+        "userId",
+        "userName",
+        "createdAt"
+      ]
+    },
+    "CommentLostFoundReq": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        }
+      },
+      "title": "CommentLostFoundReq",
+      "required": [
+        "content"
+      ]
+    },
+    "CommentLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "commentId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CommentLostFoundResp",
+      "required": [
+        "commentId",
+        "message"
+      ]
+    },
+    "CommentProductReq": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        }
+      },
+      "title": "CommentProductReq",
+      "required": [
+        "content"
+      ]
+    },
+    "CommentProductResp": {
+      "type": "object",
+      "properties": {
+        "commentId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CommentProductResp",
+      "required": [
+        "commentId",
+        "message"
+      ]
+    },
+    "CommonResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CommonResp",
+      "required": [
+        "message"
+      ]
+    },
+    "Conversation": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "ChatType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "isShow": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "seq": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "read": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "unread": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "Conversation"
+    },
+    "DeleteLostFoundReq": {
+      "type": "object",
+      "title": "DeleteLostFoundReq"
+    },
+    "DeleteLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteLostFoundResp",
+      "required": [
+        "message"
+      ]
+    },
+    "DeleteProductReq": {
+      "type": "object",
+      "title": "DeleteProductReq"
+    },
+    "DeleteProductResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteProductResp",
+      "required": [
+        "message"
+      ]
+    },
+    "FavoriteProductReq": {
+      "type": "object",
+      "properties": {
+        "favorite": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "FavoriteProductReq",
+      "required": [
+        "favorite"
+      ]
+    },
+    "FavoriteProductResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "FavoriteProductResp",
+      "required": [
+        "message"
+      ]
+    },
+    "FavoriteProductsReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "FavoriteProductsReq"
+    },
+    "FavoriteProductsResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "FavoriteProductsResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "FollowUserReq": {
+      "type": "object",
+      "title": "FollowUserReq"
+    },
+    "FollowUserResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "FollowUserResp",
+      "required": [
+        "success"
+      ]
+    },
+    "FriendListReq": {
+      "type": "object",
+      "title": "FriendListReq"
+    },
+    "FriendListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Friends"
+          }
+        }
+      },
+      "title": "FriendListResp",
+      "required": [
+        "list"
+      ]
+    },
+    "FriendPutInHandleReq": {
+      "type": "object",
+      "properties": {
+        "friend_req_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "handle_result": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 处理结果"
+        }
+      },
+      "title": "FriendPutInHandleReq"
+    },
+    "FriendPutInHandleResp": {
+      "type": "object",
+      "title": "FriendPutInHandleResp"
+    },
+    "FriendPutInListReq": {
+      "type": "object",
+      "title": "FriendPutInListReq"
+    },
+    "FriendPutInListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FriendRequests"
+          }
+        }
+      },
+      "title": "FriendPutInListResp",
+      "required": [
+        "list"
+      ]
+    },
+    "FriendPutInReq": {
+      "type": "object",
+      "properties": {
+        "req_msg": {
+          "type": "string"
+        },
+        "req_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_uid": {
+          "type": "string"
+        }
+      },
+      "title": "FriendPutInReq",
+      "required": [
+        "user_uid"
+      ]
+    },
+    "FriendPutInResp": {
+      "type": "object",
+      "title": "FriendPutInResp"
+    },
+    "FriendRequests": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "req_uid": {
+          "type": "string"
+        },
+        "req_msg": {
+          "type": "string"
+        },
+        "req_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "handle_result": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "handle_msg": {
+          "type": "string"
+        }
+      },
+      "title": "FriendRequests"
+    },
+    "Friends": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "friend_uid": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        }
+      },
+      "title": "Friends"
+    },
+    "FriendsOnlineReq": {
+      "type": "object",
+      "title": "FriendsOnlineReq"
+    },
+    "FriendsOnlineResp": {
+      "type": "object",
+      "properties": {
+        "onLineList": {
+          "$ref": "#/definitions/mapstringbool"
+        }
+      },
+      "title": "FriendsOnlineResp",
+      "required": [
+        "onLineList"
+      ]
+    },
+    "GetChatLogReadRecordsReq": {
+      "type": "object",
+      "properties": {
+        "msgId": {
+          "type": "string"
+        }
+      },
+      "title": "GetChatLogReadRecordsReq",
+      "required": [
+        "msgId"
+      ]
+    },
+    "GetChatLogReadRecordsResp": {
+      "type": "object",
+      "properties": {
+        "reads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unReads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "GetChatLogReadRecordsResp",
+      "required": [
+        "reads",
+        "unReads"
+      ]
+    },
+    "GetConversationsReq": {
+      "type": "object",
+      "title": "GetConversationsReq"
+    },
+    "GetConversationsResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "conversationList": {
+          "$ref": "#/definitions/mapstringConversation"
+        }
+      },
+      "title": "GetConversationsResp",
+      "required": [
+        "userId",
+        "conversationList"
+      ]
+    },
+    "GlobalSearchReq": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "default": "all",
+          "description": " all, product.sql, article, lostfound, user"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "GlobalSearchReq",
+      "required": [
+        "keyword"
+      ]
+    },
+    "GlobalSearchResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SearchResult"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GlobalSearchResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "GroupCreateReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "title": "GroupCreateReq"
+    },
+    "GroupCreateResp": {
+      "type": "object",
+      "title": "GroupCreateResp"
+    },
+    "GroupListRep": {
+      "type": "object",
+      "title": "GroupListRep"
+    },
+    "GroupListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Groups"
+          }
+        }
+      },
+      "title": "GroupListResp"
+    },
+    "GroupMembers": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "group_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "user_avatar_url": {
+          "type": "string"
+        },
+        "role_level": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "inviter_uid": {
+          "type": "string"
+        },
+        "operator_uid": {
+          "type": "string"
+        }
+      },
+      "title": "GroupMembers"
+    },
+    "GroupPutInHandleRep": {
+      "type": "object",
+      "properties": {
+        "group_req_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "group_id": {
+          "type": "string"
+        },
+        "handle_result": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 处理结果"
+        }
+      },
+      "title": "GroupPutInHandleRep"
+    },
+    "GroupPutInHandleResp": {
+      "type": "object",
+      "title": "GroupPutInHandleResp"
+    },
+    "GroupPutInListRep": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        }
+      },
+      "title": "GroupPutInListRep"
+    },
+    "GroupPutInListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupRequests"
+          }
+        }
+      },
+      "title": "GroupPutInListResp"
+    },
+    "GroupPutInRep": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        },
+        "req_msg": {
+          "type": "string"
+        },
+        "req_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "join_source": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GroupPutInRep"
+    },
+    "GroupPutInResp": {
+      "type": "object",
+      "title": "GroupPutInResp"
+    },
+    "GroupRequests": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "string"
+        },
+        "req_msg": {
+          "type": "string"
+        },
+        "req_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "join_source": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "inviter_user_id": {
+          "type": "string"
+        },
+        "handle_user_id": {
+          "type": "string"
+        },
+        "handle_time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "handle_result": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GroupRequests"
+    },
+    "GroupUserListReq": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        }
+      },
+      "title": "GroupUserListReq"
+    },
+    "GroupUserListResp": {
+      "type": "object",
+      "properties": {
+        "List": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupMembers"
+          }
+        }
+      },
+      "title": "GroupUserListResp"
+    },
+    "GroupUserOnlineReq": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        }
+      },
+      "title": "GroupUserOnlineReq"
+    },
+    "GroupUserOnlineResp": {
+      "type": "object",
+      "properties": {
+        "onLineList": {
+          "$ref": "#/definitions/mapstringbool"
+        }
+      },
+      "title": "GroupUserOnlineResp",
+      "required": [
+        "onLineList"
+      ]
+    },
+    "Groups": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "group_type": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "is_verify": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "notification": {
+          "type": "string"
+        },
+        "notification_uid": {
+          "type": "string"
+        }
+      },
+      "title": "Groups"
+    },
+    "HotKeyword": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "HotKeyword",
+      "required": [
+        "keyword",
+        "count"
+      ]
+    },
+    "HotSearchKeywordsResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HotKeyword"
+          }
+        }
+      },
+      "title": "HotSearchKeywordsResp",
+      "required": [
+        "list"
+      ]
+    },
+    "LikeLostFoundReq": {
+      "type": "object",
+      "title": "LikeLostFoundReq"
+    },
+    "LikeLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "LikeLostFoundResp",
+      "required": [
+        "message"
+      ]
+    },
+    "LocationDetail": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "address": {
+          "type": "string"
+        }
+      },
+      "title": "LocationDetail",
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "LoginByPasswordReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": " 用户名/邮箱"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        }
+      },
+      "title": "LoginByPasswordReq",
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "LoginByVerificationCodeReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": " 验证码"
+        }
+      },
+      "title": "LoginByVerificationCodeReq",
+      "required": [
+        "phone",
+        "verificationCode"
+      ]
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 头像URL"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "accessToken": {
+          "type": "string",
+          "description": " 访问令牌"
+        },
+        "accessExpire": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 令牌过期时间"
+        },
+        "refreshAfter": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 刷新令牌时间"
+        }
+      },
+      "title": "LoginResp",
+      "required": [
+        "userId",
+        "username",
+        "nickname",
+        "avatar",
+        "phone",
+        "accessToken",
+        "accessExpire",
+        "refreshAfter"
+      ]
+    },
+    "LostFoundComment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "content": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "userAvatar": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "LostFoundComment",
+      "required": [
+        "id",
+        "content",
+        "userId",
+        "userName",
+        "createdAt"
+      ]
+    },
+    "LostFoundCommentsReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "LostFoundCommentsReq"
+    },
+    "LostFoundCommentsResp": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LostFoundComment"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "LostFoundCommentsResp",
+      "required": [
+        "comments",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "LostFoundDetailReq": {
+      "type": "object",
+      "title": "LostFoundDetailReq"
+    },
+    "LostFoundDetailResp": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/LostFoundItem"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LostFoundComment"
+          }
+        }
+      },
+      "title": "LostFoundDetailResp",
+      "required": [
+        "item"
+      ]
+    },
+    "LostFoundItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": " lost 或 found"
+        },
+        "category": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface",
+          "description": " 详细位置信息，如经纬度等"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string",
+          "description": " 联系方式，如电话、微信等"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": " pending, found, claimed, closed"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rewardInfo": {
+          "type": "string"
+        },
+        "lostFoundTime": {
+          "type": "string",
+          "description": " 丢失或拾取时间"
+        },
+        "publisherId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "publisherName": {
+          "type": "string"
+        },
+        "publisherAvatar": {
+          "type": "string"
+        },
+        "viewCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "likeCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "commentCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "isLiked": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "title": "LostFoundItem",
+      "required": [
+        "id",
+        "title",
+        "description",
+        "type",
+        "status",
+        "publisherId",
+        "publisherName",
+        "viewCount",
+        "likeCount",
+        "commentCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LostFoundListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        },
+        "type": {
+          "type": "string",
+          "default": "all",
+          "description": " lost/found/all"
+        },
+        "status": {
+          "type": "string",
+          "default": "all",
+          "description": " pending/found/claimed/closed/all"
+        },
+        "sort": {
+          "type": "string",
+          "default": "latest",
+          "description": " latest/hot"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 查询特定用户的发布"
+        }
+      },
+      "title": "LostFoundListReq"
+    },
+    "LostFoundListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LostFoundItem"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "LostFoundListResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "LostFoundSearchResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": " lost 或 found"
+        },
+        "location": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "publisherId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "publisherName": {
+          "type": "string"
+        },
+        "publisherAvatar": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "LostFoundSearchResult",
+      "required": [
+        "id",
+        "title",
+        "type",
+        "status",
+        "publisherId",
+        "publisherName",
+        "createdAt"
+      ]
+    },
+    "MarkNotificationAsReadReq": {
+      "type": "object",
+      "title": "MarkNotificationAsReadReq"
+    },
+    "MarkNotificationAsReadResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "MarkNotificationAsReadResp",
+      "required": [
+        "success"
+      ]
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 通知ID"
+        },
+        "type": {
+          "type": "string",
+          "description": " 通知类型"
+        },
+        "content": {
+          "type": "string",
+          "description": " 通知内容"
+        },
+        "isRead": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否已读"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": " 创建时间"
+        },
+        "relatedUserId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 相关用户ID"
+        },
+        "relatedContentId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 相关内容ID"
+        },
+        "relatedContentType": {
+          "type": "string",
+          "description": " 相关内容类型"
+        }
+      },
+      "title": "Notification",
+      "required": [
+        "id",
+        "type",
+        "content",
+        "isRead",
+        "createdAt"
+      ]
+    },
+    "NotificationListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 总数"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Notification"
+          },
+          "description": " 通知列表"
+        }
+      },
+      "title": "NotificationListResp",
+      "required": [
+        "total",
+        "list"
+      ]
+    },
+    "PageReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "PageReq"
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "originalPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "string",
+          "description": " 商品成色: 全新, 9成新, 8成新, etc."
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string",
+          "description": " 联系方式: 电话, 微信, QQ等"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface",
+          "description": " 详细位置, 如坐标"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": " 状态: 在售, 已售出, 已下架"
+        },
+        "sellerId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "sellerName": {
+          "type": "string"
+        },
+        "sellerAvatar": {
+          "type": "string"
+        },
+        "viewCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "likeCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "commentCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "isFavorite": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 当前用户是否收藏"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "title": "Product",
+      "required": [
+        "id",
+        "title",
+        "description",
+        "price",
+        "categoryId",
+        "categoryName",
+        "images",
+        "status",
+        "sellerId",
+        "sellerName",
+        "viewCount",
+        "likeCount",
+        "commentCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ProductCategoriesResp": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Category"
+          }
+        }
+      },
+      "title": "ProductCategoriesResp",
+      "required": [
+        "categories"
+      ]
+    },
+    "ProductCommentsReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "ProductCommentsReq"
+    },
+    "ProductCommentsResp": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ProductCommentsResp",
+      "required": [
+        "comments",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "ProductDetailReq": {
+      "type": "object",
+      "title": "ProductDetailReq"
+    },
+    "ProductDetailResp": {
+      "type": "object",
+      "properties": {
+        "product.sql": {
+          "$ref": "#/definitions/Product"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "relatedProducts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        }
+      },
+      "title": "ProductDetailResp",
+      "required": [
+        "product.sql"
+      ]
+    },
+    "ProductListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        },
+        "category": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "string",
+          "default": "latest",
+          "description": " latest, priceAsc, priceDesc, popular"
+        },
+        "minPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "maxPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "status": {
+          "type": "string",
+          "default": "active",
+          "description": " active, sold, all"
+        }
+      },
+      "title": "ProductListReq"
+    },
+    "ProductListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ProductListResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "ProductSearchResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "originalPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "sellerId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "sellerName": {
+          "type": "string"
+        },
+        "sellerAvatar": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "ProductSearchResult",
+      "required": [
+        "id",
+        "title",
+        "price",
+        "status",
+        "sellerId",
+        "sellerName",
+        "createdAt"
+      ]
+    },
+    "PublishLostFoundReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": " lost 或 found"
+        },
+        "category": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface",
+          "description": " 详细位置信息"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rewardInfo": {
+          "type": "string"
+        },
+        "lostFoundTime": {
+          "type": "string",
+          "description": " 丢失或拾取时间"
+        }
+      },
+      "title": "PublishLostFoundReq",
+      "required": [
+        "title",
+        "description",
+        "type"
+      ]
+    },
+    "PublishLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "PublishLostFoundResp",
+      "required": [
+        "id",
+        "message"
+      ]
+    },
+    "PublishProductReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "originalPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "string"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "PublishProductReq",
+      "required": [
+        "title",
+        "description",
+        "price",
+        "categoryId",
+        "images"
+      ]
+    },
+    "PublishProductResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "PublishProductResp",
+      "required": [
+        "id",
+        "message"
+      ]
+    },
+    "PutConversationsReq": {
+      "type": "object",
+      "properties": {
+        "conversationList": {
+          "$ref": "#/definitions/mapstringConversation"
+        }
+      },
+      "title": "PutConversationsReq",
+      "required": [
+        "conversationList"
+      ]
+    },
+    "PutConversationsResp": {
+      "type": "object",
+      "title": "PutConversationsResp"
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "password": {
+          "type": "string",
+          "description": " 密码"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": " 验证码"
+        },
+        "campus": {
+          "type": "string",
+          "description": " 校区"
+        },
+        "college": {
+          "type": "string",
+          "description": " 学院/部门"
+        },
+        "major": {
+          "type": "string",
+          "description": " 专业"
+        },
+        "enrollmentYear": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 入学年份"
+        },
+        "userRole": {
+          "type": "string",
+          "description": " 用户角色"
+        },
+        "studentId": {
+          "type": "string",
+          "description": " 学号"
+        }
+      },
+      "title": "RegisterReq",
+      "required": [
+        "username",
+        "password",
+        "phone",
+        "verificationCode"
+      ]
+    },
+    "RegisterResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "accessToken": {
+          "type": "string",
+          "description": " 访问令牌"
+        },
+        "accessExpire": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 令牌过期时间"
+        },
+        "refreshAfter": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 刷新令牌时间"
+        }
+      },
+      "title": "RegisterResp",
+      "required": [
+        "userId",
+        "username",
+        "accessToken",
+        "accessExpire",
+        "refreshAfter"
+      ]
+    },
+    "ReportProductReq": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "description": " 举报原因"
+        },
+        "description": {
+          "type": "string",
+          "description": " 举报详情"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": " 举报证据图片"
+        }
+      },
+      "title": "ReportProductReq",
+      "required": [
+        "reason"
+      ]
+    },
+    "ReportProductResp": {
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "ReportProductResp",
+      "required": [
+        "reportId",
+        "message"
+      ]
+    },
+    "ResetPasswordReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": " 验证码"
+        },
+        "newPassword": {
+          "type": "string",
+          "description": " 新密码"
+        }
+      },
+      "title": "ResetPasswordReq",
+      "required": [
+        "phone",
+        "verificationCode",
+        "newPassword"
+      ]
+    },
+    "ResetPasswordResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "ResetPasswordResp",
+      "required": [
+        "success"
+      ]
+    },
+    "SearchArticlesReq": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "string",
+          "default": "latest",
+          "description": " latest, popular, hottest"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "SearchArticlesReq",
+      "required": [
+        "keyword"
+      ]
+    },
+    "SearchArticlesResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArticleSearchResult"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SearchArticlesResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "SearchHistoryItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": " 搜索类型"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "title": "SearchHistoryItem",
+      "required": [
+        "id",
+        "keyword",
+        "type",
+        "createdAt"
+      ]
+    },
+    "SearchHistoryResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SearchHistoryItem"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SearchHistoryResp",
+      "required": [
+        "list",
+        "total"
+      ]
+    },
+    "SearchLostFoundReq": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": " lost, found"
+        },
+        "sort": {
+          "type": "string",
+          "default": "latest",
+          "description": " latest, popular"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "SearchLostFoundReq",
+      "required": [
+        "keyword"
+      ]
+    },
+    "SearchLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LostFoundSearchResult"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SearchLostFoundResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "SearchProductsReq": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "string",
+          "default": "latest",
+          "description": " latest, priceAsc, priceDesc, popular"
+        },
+        "minPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "maxPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "SearchProductsReq",
+      "required": [
+        "keyword"
+      ]
+    },
+    "SearchProductsResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductSearchResult"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SearchProductsResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "SearchResult": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": " 搜索结果类型: product.sql, article, lostfound, user"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string",
+          "description": " 标题或名称"
+        },
+        "content": {
+          "type": "string",
+          "description": " 内容或描述摘要"
+        },
+        "image": {
+          "type": "string",
+          "description": " 封面图片"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "extra": {
+          "$ref": "#/definitions/mapstringinterface",
+          "description": " 额外信息"
+        }
+      },
+      "title": "SearchResult",
+      "required": [
+        "type",
+        "id",
+        "title",
+        "createdAt"
+      ]
+    },
+    "SearchUsersReq": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "SearchUsersReq",
+      "required": [
+        "keyword"
+      ]
+    },
+    "SearchUsersResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserSearchResult"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SearchUsersResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "SendVerificationCodeReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "type": {
+          "type": "string",
+          "description": " 验证码类型: login, register, reset_password"
+        }
+      },
+      "title": "SendVerificationCodeReq",
+      "required": [
+        "phone",
+        "type"
+      ]
+    },
+    "SendVerificationCodeResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "SendVerificationCodeResp",
+      "required": [
+        "success"
+      ]
+    },
+    "SetUpUserConversationReq": {
+      "type": "object",
+      "properties": {
+        "sendId": {
+          "type": "string"
+        },
+        "recvId": {
+          "type": "string"
+        },
+        "ChatType": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "SetUpUserConversationReq"
+    },
+    "UnfollowUserReq": {
+      "type": "object",
+      "title": "UnfollowUserReq"
+    },
+    "UnfollowUserResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "UnfollowUserResp",
+      "required": [
+        "success"
+      ]
+    },
+    "UnlikeLostFoundReq": {
+      "type": "object",
+      "title": "UnlikeLostFoundReq"
+    },
+    "UnlikeLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UnlikeLostFoundResp",
+      "required": [
+        "message"
+      ]
+    },
+    "UpdateLostFoundReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rewardInfo": {
+          "type": "string"
+        },
+        "lostFoundTime": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateLostFoundReq"
+    },
+    "UpdateLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateLostFoundResp",
+      "required": [
+        "message"
+      ]
+    },
+    "UpdateLostFoundStatusReq": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": " pending, found, claimed, closed"
+        }
+      },
+      "title": "UpdateLostFoundStatusReq",
+      "required": [
+        "status"
+      ]
+    },
+    "UpdateLostFoundStatusResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateLostFoundStatusResp",
+      "required": [
+        "message"
+      ]
+    },
+    "UpdateProductReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "originalPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "type": "string"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "contactWay": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationDetail": {
+          "$ref": "#/definitions/mapstringinterface"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateProductReq"
+    },
+    "UpdateProductResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateProductResp",
+      "required": [
+        "message"
+      ]
+    },
+    "UpdateUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "gender": {
+          "type": "string",
+          "description": " 性别"
+        },
+        "bio": {
+          "type": "string",
+          "description": " 个人简介"
+        },
+        "campus": {
+          "type": "string",
+          "description": " 校区"
+        },
+        "college": {
+          "type": "string",
+          "description": " 学院/部门"
+        },
+        "major": {
+          "type": "string",
+          "description": " 专业"
+        },
+        "enrollmentYear": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 入学年份"
+        },
+        "userRole": {
+          "type": "string",
+          "description": " 用户角色"
+        },
+        "studentId": {
+          "type": "string",
+          "description": " 学号"
+        }
+      },
+      "title": "UpdateUserInfoReq"
+    },
+    "UpdateUserInfoResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        }
+      },
+      "title": "UpdateUserInfoResp",
+      "required": [
+        "success"
+      ]
+    },
+    "UserInfoResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 头像URL"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "gender": {
+          "type": "string",
+          "description": " 性别"
+        },
+        "bio": {
+          "type": "string",
+          "description": " 个人简介"
+        },
+        "campus": {
+          "type": "string",
+          "description": " 校区"
+        },
+        "college": {
+          "type": "string",
+          "description": " 学院/部门"
+        },
+        "major": {
+          "type": "string",
+          "description": " 专业"
+        },
+        "enrollmentYear": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 入学年份"
+        },
+        "userRole": {
+          "type": "string",
+          "description": " 用户角色"
+        },
+        "studentId": {
+          "type": "string",
+          "description": " 学号"
+        },
+        "followingCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 关注数"
+        },
+        "followersCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 粉丝数"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的商品数"
+        },
+        "articleCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的文章数"
+        },
+        "lostFoundCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的失物招领数"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": " 创建时间"
+        }
+      },
+      "title": "UserInfoResp",
+      "required": [
+        "userId",
+        "username",
+        "nickname",
+        "avatar",
+        "phone",
+        "followingCount",
+        "followersCount",
+        "productCount",
+        "articleCount",
+        "lostFoundCount",
+        "createdAt"
+      ]
+    },
+    "UserLostFoundReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "UserLostFoundReq"
+    },
+    "UserLostFoundResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LostFoundItem"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "UserLostFoundResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "UserProductsReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "title": "UserProductsReq"
+    },
+    "UserProductsResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "UserProductsResp",
+      "required": [
+        "list",
+        "total",
+        "page",
+        "limit"
+      ]
+    },
+    "UserProfileReq": {
+      "type": "object",
+      "title": "UserProfileReq"
+    },
+    "UserProfileResp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户ID"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 头像URL"
+        },
+        "gender": {
+          "type": "string",
+          "description": " 性别"
+        },
+        "bio": {
+          "type": "string",
+          "description": " 个人简介"
+        },
+        "campus": {
+          "type": "string",
+          "description": " 校区"
+        },
+        "college": {
+          "type": "string",
+          "description": " 学院/部门"
+        },
+        "major": {
+          "type": "string",
+          "description": " 专业"
+        },
+        "enrollmentYear": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 入学年份"
+        },
+        "userRole": {
+          "type": "string",
+          "description": " 用户角色"
+        },
+        "studentId": {
+          "type": "string",
+          "description": " 学号"
+        },
+        "followingCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 关注数"
+        },
+        "followersCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 粉丝数"
+        },
+        "isFollowing": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 当前用户是否关注了该用户"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的商品数"
+        },
+        "articleCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的文章数"
+        },
+        "lostFoundCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 发布的失物招领数"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": " 创建时间"
+        }
+      },
+      "title": "UserProfileResp",
+      "required": [
+        "userId",
+        "username",
+        "nickname",
+        "avatar",
+        "followingCount",
+        "followersCount",
+        "isFollowing",
+        "productCount",
+        "articleCount",
+        "lostFoundCount",
+        "createdAt"
+      ]
+    },
+    "UserSearchResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      },
+      "title": "UserSearchResult",
+      "required": [
+        "id",
+        "username"
+      ]
+    },
+    "VerifyCodeReq": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": " 手机号"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": " 验证码"
+        },
+        "type": {
+          "type": "string",
+          "description": " 验证类型"
+        }
+      },
+      "title": "VerifyCodeReq",
+      "required": [
+        "phone",
+        "verificationCode",
+        "type"
+      ]
+    },
+    "VerifyCodeResp": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否成功"
+        },
+        "message": {
+          "type": "string",
+          "description": " 消息"
+        }
+      },
+      "title": "VerifyCodeResp",
+      "required": [
+        "success"
+      ]
+    },
+    "setUpUserConversationResp": {
+      "type": "object",
+      "title": "setUpUserConversationResp"
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

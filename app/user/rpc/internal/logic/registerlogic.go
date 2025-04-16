@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"database/sql"
+
 	"github.com/liumkssq/goapp/app/user/model"
 	"github.com/liumkssq/goapp/app/user/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/user/rpc/user"
@@ -13,11 +15,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var ErrUserAlreadyRegisterError = xerr.NewErrMsg("user has been registered")
-var ErrGenerateTokenError = xerr.NewErrMsg("生成token失败")
-var ErrUsernamePwdError = xerr.NewErrMsg("账号或密码不正确")
+var ErrUserAlreadyRegisterError = xerr.NewMsg("user has been registered")
+var ErrGenerateTokenError = xerr.NewMsg("生成token失败")
+var ErrUsernamePwdError = xerr.NewMsg("账号或密码不正确")
 
-var ErrUserNotExistError = xerr.NewErrMsg("用户不存在")
+var ErrUserNotExistError = xerr.NewMsg("用户不存在")
 
 type RegisterLogic struct {
 	ctx    context.Context
@@ -38,7 +40,7 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 	// 1. 查询用户是否已存在 (通过手机号)
 	users, err := l.svcCtx.UsersModel.FindOneByPhone(l.ctx, in.Phone)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "查询用户失败 mobile:%s,err:%v", in.Phone, err)
+		return nil, err
 	}
 	if users != nil {
 		return nil, errors.Wrapf(ErrUserAlreadyRegisterError, "该手机号已被注册 mobile:%s", in.Phone)
@@ -68,7 +70,7 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 		if len(in.Password) > 0 {
 			genPasswd, err := tool.GenPasswordHash([]byte(in.Password))
 			if err != nil {
-				return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "密码加密失败 err:%v", err)
+				return errors.Wrapf(xerr.New(xerr.DB_ERROR, "ab"), "密码加密失败 err:%v", err)
 			}
 			u.PasswordHash = string(genPasswd)
 		}
@@ -76,16 +78,35 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 		// 3.3 设置默认值
 		u.UserStatus = 1 // 正常状态
 
-		// 3.4 插入数据库
-		insertResult, err := l.svcCtx.UsersModel.Insert(ctx, session, u)
-		if err != nil {
-			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "用户注册失败 err:%v,user:%+v", err, u)
+		// 3.4 添加新的学校相关信息
+		if in.Campus != "" {
+			u.Campus = sql.NullString{String: in.Campus, Valid: true}
+		}
+		if in.College != "" {
+			u.College = sql.NullString{String: in.College, Valid: true}
+		}
+		if in.Major != "" {
+			u.Major = sql.NullString{String: in.Major, Valid: true}
+		}
+		if in.EnrollmentYear > 0 {
+			u.EnrollmentYear = sql.NullInt64{Int64: int64(in.EnrollmentYear), Valid: true}
+		}
+		if in.UserRole != "" {
+			u.UserRole = sql.NullString{String: in.UserRole, Valid: true}
+		}
+		if in.StudentId != "" {
+			u.StudentId = sql.NullString{String: in.StudentId, Valid: true}
 		}
 
-		// 3.5 获取自增ID
+		// 3.5 插入数据库
+		insertResult, err := l.svcCtx.UsersModel.Insert(ctx, session, u)
+		if err != nil {
+			return err
+		}
+		// 3.6 获取自增ID
 		userId, err = insertResult.LastInsertId()
 		if err != nil {
-			return errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "获取用户ID失败 err:%v", err)
+			return err
 		}
 
 		return nil

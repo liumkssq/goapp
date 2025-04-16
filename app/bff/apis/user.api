@@ -35,6 +35,12 @@ type (
 		Password         string `json:"password"` // 密码
 		Phone            string `json:"phone"` // 手机号
 		VerificationCode string `json:"verificationCode"` // 验证码
+		Campus           string `json:"campus,optional"` // 校区
+		College          string `json:"college,optional"` // 学院/部门
+		Major            string `json:"major,optional"` // 专业
+		EnrollmentYear   int    `json:"enrollmentYear,optional"` // 入学年份
+		UserRole         string `json:"userRole,optional"` // 用户角色
+		StudentId        string `json:"studentId,optional"` // 学号
 	}
 	// 注册响应
 	RegisterResp {
@@ -53,6 +59,12 @@ type (
 		Phone          string `json:"phone"` // 手机号
 		Gender         string `json:"gender,optional"` // 性别
 		Bio            string `json:"bio,optional"` // 个人简介
+		Campus         string `json:"campus,optional"` // 校区
+		College        string `json:"college,optional"` // 学院/部门
+		Major          string `json:"major,optional"` // 专业
+		EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+		UserRole       string `json:"userRole,optional"` // 用户角色
+		StudentId      string `json:"studentId,optional"` // 学号
 		FollowingCount int    `json:"followingCount"` // 关注数
 		FollowersCount int    `json:"followersCount"` // 粉丝数
 		ProductCount   int    `json:"productCount"` // 发布的商品数
@@ -72,6 +84,12 @@ type (
 		Avatar         string `json:"avatar"` // 头像URL
 		Gender         string `json:"gender,optional"` // 性别
 		Bio            string `json:"bio,optional"` // 个人简介
+		Campus         string `json:"campus,optional"` // 校区
+		College        string `json:"college,optional"` // 学院/部门
+		Major          string `json:"major,optional"` // 专业
+		EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+		UserRole       string `json:"userRole,optional"` // 用户角色
+		StudentId      string `json:"studentId,optional"` // 学号
 		FollowingCount int    `json:"followingCount"` // 关注数
 		FollowersCount int    `json:"followersCount"` // 粉丝数
 		IsFollowing    bool   `json:"isFollowing"` // 当前用户是否关注了该用户
@@ -82,9 +100,15 @@ type (
 	}
 	// 更新用户信息请求
 	UpdateUserInfoReq {
-		Nickname string `json:"nickname,optional"` // 昵称
-		Gender   string `json:"gender,optional"` // 性别
-		Bio      string `json:"bio,optional"` // 个人简介
+		Nickname       string `json:"nickname,optional"` // 昵称
+		Gender         string `json:"gender,optional"` // 性别
+		Bio            string `json:"bio,optional"` // 个人简介
+		Campus         string `json:"campus,optional"` // 校区
+		College        string `json:"college,optional"` // 学院/部门
+		Major          string `json:"major,optional"` // 专业
+		EnrollmentYear int    `json:"enrollmentYear,optional"` // 入学年份
+		UserRole       string `json:"userRole,optional"` // 用户角色
+		StudentId      string `json:"studentId,optional"` // 学号
 	}
 	// 更新用户信息响应
 	UpdateUserInfoResp {

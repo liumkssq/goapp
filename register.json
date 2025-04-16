@@ -1,0 +1,12 @@
+{
+  "username": "张小明",
+  "password": "Test123456",
+  "phone": "13812345678",
+  "verification_code": "1234",
+  "campus": "前湖校区",
+  "college": "信息工程学院",
+  "major": "计算机科学与技术",
+  "enrollment_year": 2023,
+  "user_role": "student",
+  "student_id": "2023001001"
+}

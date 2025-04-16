@@ -18,6 +18,8 @@ type (
 	ChangePasswordRequest          = user.ChangePasswordRequest
 	ChangePasswordResponse         = user.ChangePasswordResponse
 	Empty                          = user.Empty
+	FindUserReq                    = user.FindUserReq
+	FindUserResp                   = user.FindUserResp
 	FollowUserRequest              = user.FollowUserRequest
 	FollowUserResponse             = user.FollowUserResponse
 	GetNotificationsRequest        = user.GetNotificationsRequest
@@ -80,6 +82,8 @@ type (
 		GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*NotificationListResponse, error)
 		// 标记通知为已读
 		MarkNotificationAsRead(ctx context.Context, in *MarkNotificationAsReadRequest, opts ...grpc.CallOption) (*MarkNotificationAsReadResponse, error)
+		// 查找用户
+		FindUser(ctx context.Context, in *FindUserReq, opts ...grpc.CallOption) (*FindUserResp, error)
 	}
 
 	defaultUserService struct {
@@ -187,4 +191,10 @@ func (m *defaultUserService) GetNotifications(ctx context.Context, in *GetNotifi
 func (m *defaultUserService) MarkNotificationAsRead(ctx context.Context, in *MarkNotificationAsReadRequest, opts ...grpc.CallOption) (*MarkNotificationAsReadResponse, error) {
 	client := user.NewUserServiceClient(m.cli.Conn())
 	return client.MarkNotificationAsRead(ctx, in, opts...)
+}
+
+// 查找用户
+func (m *defaultUserService) FindUser(ctx context.Context, in *FindUserReq, opts ...grpc.CallOption) (*FindUserResp, error) {
+	client := user.NewUserServiceClient(m.cli.Conn())
+	return client.FindUser(ctx, in, opts...)
 }

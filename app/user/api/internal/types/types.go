@@ -70,6 +70,12 @@ type RegisterReq struct {
 	Password         string `json:"password"`         // 密码
 	Phone            string `json:"phone"`            // 手机号
 	VerificationCode string `json:"verificationCode"` // 验证码
+	Campus           string `json:"campus,optional"` // 校区
+	College          string `json:"college,optional"` // 学院/部门
+	Major            string `json:"major,optional"` // 专业
+	EnrollmentYear   int    `json:"enrollmentYear,optional"` // 入学年份
+	UserRole         string `json:"userRole,optional"` // 用户角色
+	StudentId        string `json:"studentId,optional"` // 学号
 }
 
 type RegisterResp struct {

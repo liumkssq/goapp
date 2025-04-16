@@ -3,6 +3,7 @@ package ProductOp
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/liumkssq/goapp/app/product/rpc/product"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
@@ -31,12 +32,13 @@ func (l *PublishProductLogic) PublishProduct(req *types.PublishProductReq) (*typ
 	// todo: add your logic here and delete this line
 	fmt.Printf("PublishProduct")
 	l.Logger.Infof("PublishProduct req: %v", req)
-	userId := ctxdata.GetUidFromCtx(l.ctx)
+	userId := ctxdata.GetUId(l.ctx)
+	userIdI, _ := strconv.Atoi(userId)
 	fmt.Printf("condition: %v", req.Condition)
 	fmt.Printf("PublishProduct userId: %v", userId)
 	codition := mapCondition(req.Condition)
 	publishProductResponse, err := l.svcCtx.ProductRpc.PublishProduct(l.ctx, &product.PublishProductRequest{
-		UserId:         userId,
+		UserId:         int64(userIdI),
 		Title:          req.Title,
 		Description:    req.Description,
 		Price:          req.Price,

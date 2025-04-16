@@ -2,13 +2,15 @@ package logic
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/user/api/internal/svc"
 	"github.com/liumkssq/goapp/app/user/api/internal/types"
 	"github.com/liumkssq/goapp/app/user/rpc/userservice"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
 	"github.com/pkg/errors"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,6 +36,12 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (*types.RegisterResp, e
 		Username:         req.Username,
 		Password:         req.Password,
 		VerificationCode: req.VerificationCode,
+		Campus:           req.Campus,
+		College:          req.College,
+		Major:            req.Major,
+		EnrollmentYear:   int32(req.EnrollmentYear),
+		UserRole:         req.UserRole,
+		StudentId:        req.StudentId,
 	})
 	if err != nil {
 		return nil, errors.Wrapf(err, "req: %+v", req)
@@ -44,11 +52,11 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (*types.RegisterResp, e
 	_ = copier.Copy(&resp, registerResp)
 	now := time.Now().Unix()
 	accessExpire := l.svcCtx.Config.Auth.AccessExpire
-	accessToken, err := ctxdata.GetJWTToken(
+	accessToken, err := ctxdata.GetJwtToken(
 		l.svcCtx.Config.Auth.AccessSecret,
 		now,
 		accessExpire,
-		registerResp.UserId,
+		strconv.FormatInt(registerResp.UserId, 10),
 	)
 	resp.AccessToken = accessToken
 	resp.AccessExpire = now + accessExpire

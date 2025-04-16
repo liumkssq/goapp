@@ -7,7 +7,6 @@ import (
 	"github.com/liumkssq/goapp/app/im/rpc/internal/config"
 	"github.com/liumkssq/goapp/app/im/rpc/internal/server"
 	"github.com/liumkssq/goapp/app/im/rpc/internal/svc"
-	"github.com/liumkssq/goapp/pkg/interceptor/rpcserver"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -32,7 +31,6 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
-	s.AddUnaryInterceptors(rpcserver.LoggerInterceptor)
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)

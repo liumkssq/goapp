@@ -2,12 +2,14 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/bff/internal/svc"
 	"github.com/liumkssq/goapp/app/bff/internal/types"
 	"github.com/liumkssq/goapp/app/user/rpc/user"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
 	"github.com/pkg/errors"
+	"strconv"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -39,12 +41,15 @@ func (l *LoginByPasswordLogic) LoginByPassword(req *types.LoginByPasswordReq) (*
 	var resp types.LoginResp
 	_ = copier.Copy(&resp, loginResponse)
 	now := time.Now().Unix()
-	accessExpire := l.svcCtx.Config.Auth.AccessExpire
-	accessToken, err := ctxdata.GetJWTToken(
-		l.svcCtx.Config.Auth.AccessSecret,
+	Ids := strconv.FormatInt(loginResponse.UserId, 10)
+	fmt.Println("Ids", Ids)
+	fmt.Printf("%+v\n", Ids)
+	accessExpire := l.svcCtx.Config.JwtAuth.AccessExpire
+	accessToken, err := ctxdata.GetJwtToken(
+		l.svcCtx.Config.JwtAuth.AccessSecret,
 		now,
 		accessExpire,
-		loginResponse.UserId,
+		Ids,
 	)
 	resp.AccessToken = accessToken
 	resp.AccessExpire = now + accessExpire

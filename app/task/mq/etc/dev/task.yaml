@@ -4,24 +4,40 @@ ListenOn: 0.0.0.0:10091
 MsgChatTransfer:
   Name: MsgChatTransfer
   Brokers:
-    - 127.0.0.1:9094
+    - 127.0.0.14:9092
   Group: kafka
   Topic: msgChatTransfer
   Offset: first
   Consumers: 1
 
-Cache:
-    Host: 127.0.0.1:26379
-    Type: node
-    Pass:
+MsgReadTransfer:
+  Name: MsgReadTransfer
+  Brokers:
+    - 127.0.0.14:9092
+  Group: kafka
+  Topic: msgReadTransfer
+  Offset: first
+  Consumers: 1
 
-Auth:
-  AccessSecret: liumkssq
-  AccessExpire: 86400
+MsgReadHandler:
+  GroupMsgReadHandler: 1
+  GroupMsgReadRecordDelayTime: 2
+  GroupMsgReadRecordDelayCount: 2
+
+Redisx:
+  Host: 127.0.0.14:26379
+  Type: node
+  Pass: easy-chat
 
 Mongo:
-  Url: "mongodb://root:root@127.0.0.1:27017"
+  Url: "mongodb://root:root@127.0.0.14:27017"
   Db: easy-chat
+
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.14:22379
+    Key: social.rpc
 
 Ws:
   Host: 127.0.0.1:10090

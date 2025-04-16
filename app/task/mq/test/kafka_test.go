@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/liumkssq/easy-chat/apps/task/mq/mq"
+	"github.com/liumkssq/easy-chat/pkg/constants"
 	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )

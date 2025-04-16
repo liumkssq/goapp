@@ -1,5 +1,6 @@
 Name: im.rpc
-ListenOn: 127.0.0.1:8999
+ListenOn: 0.0.0.0:10002
+Mode: dev
 Etcd:
   Hosts:
   - 127.0.0.1:22379

@@ -4,12 +4,9 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/user/model"
-	"github.com/liumkssq/goapp/pkg/tool"
-	"github.com/liumkssq/goapp/pkg/xerr"
-	"github.com/pkg/errors"
-
 	"github.com/liumkssq/goapp/app/user/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/user/rpc/user"
+	"github.com/liumkssq/goapp/pkg/tool"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,15 +30,15 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *user.LoginByPasswordRequest) 
 	// todo: add your logic here and delete this line
 	u, err := l.svcCtx.UsersModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil && err != model.ErrNotFound {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "username:%s, password:%s", in.Username, in.Password)
+		return nil, err
 	}
 	if u == nil {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "username:%s, password:%s", in.Username, in.Password)
+		return nil, err
 	}
 	//
 	isVaild := tool.ValidatePasswordHash(in.Password, u.PasswordHash)
 	if !isVaild {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "username:%s, password:%s", in.Username, in.Password)
+		return nil, err
 	}
 	var resp user.LoginResponse
 	_ = copier.Copy(&resp, u)

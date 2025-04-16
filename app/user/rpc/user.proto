@@ -57,6 +57,9 @@ service UserService {
   
   // 标记通知为已读
   rpc MarkNotificationAsRead(MarkNotificationAsReadRequest) returns (MarkNotificationAsReadResponse) {}
+
+    // 查找用户
+    rpc FindUser(FindUserReq) returns (FindUserResp);
 }
 
 // 空请求
@@ -97,6 +100,12 @@ message RegisterRequest {
   string password = 2; // 密码
   string phone = 3; // 手机号
   string verification_code = 4; // 验证码
+  string campus = 5; // 校区
+  string college = 6; // 学院/部门
+  string major = 7; // 专业
+  int32 enrollment_year = 8; // 入学年份
+  string user_role = 9; // 用户角色
+  string student_id = 10; // 学号
 }
 
 // 注册响应
@@ -160,6 +169,12 @@ message UserInfoResponse {
   string phone = 5; // 手机号
   string gender = 7; // 性别
   string bio = 8; // 个人简介
+  string campus = 15; // 校区
+  string college = 16; // 学院/部门
+  string major = 17; // 专业
+  int32 enrollment_year = 18; // 入学年份
+  string user_role = 19; // 用户角色
+  string student_id = 20; // 学号
   int32 following_count = 9; // 关注数
   int32 followers_count = 10; // 粉丝数
   int32 product_count = 11; // 发布的商品数
@@ -181,6 +196,12 @@ message UserProfileResponse {
   string avatar = 4; // 头像URL
   string gender = 5; // 性别
   string bio = 6; // 个人简介
+  string campus = 14; // 校区
+  string college = 15; // 学院/部门
+  string major = 16; // 专业
+  int32 enrollment_year = 17; // 入学年份
+  string user_role = 18; // 用户角色
+  string student_id = 19; // 学号
   int32 following_count = 7; // 关注数
   int32 followers_count = 8; // 粉丝数
   bool is_following = 9; // 当前用户是否关注了该用户
@@ -195,6 +216,12 @@ message UpdateUserInfoRequest {
   string nickname = 1; // 昵称
   string gender = 2; // 性别
   string bio = 3; // 个人简介
+  string campus = 4; // 校区
+  string college = 5; // 学院/部门
+  string major = 6; // 专业
+  int32 enrollment_year = 7; // 入学年份
+  string user_role = 8; // 用户角色
+  string student_id = 9; // 学号
 }
 
 // 更新用户信息响应
@@ -271,4 +298,14 @@ message MarkNotificationAsReadRequest {
 // 标记通知已读响应
 message MarkNotificationAsReadResponse {
   bool success = 1; // 是否成功
+}
+
+message FindUserReq {
+    string name = 1; // 用户名
+    string phone = 2; // 手机号
+    repeated string ids = 3; // 用户ID列表
+}
+
+message FindUserResp {
+    repeated UserInfoResponse user = 1; // 用户列表
 }
