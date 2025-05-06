@@ -14,12 +14,12 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/shopspring/decimal v1.4.0
 	github.com/sony/sonyflake v1.2.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/zeromicro/go-queue v1.2.2
 	github.com/zeromicro/go-zero v1.8.1
 	github.com/zeromicro/x v0.0.0-20240408115609-8224c482b07e
-	github.com/zhenghaoz/gorse/client v1.1.0
-	go.mongodb.org/mongo-driver v1.15.0
+	//github.com/zhenghaoz/gorse/client v1.1.0
+	go.mongodb.org/mongo-driver v1.17.3
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
 	google.golang.org/grpc v1.65.0
