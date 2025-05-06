@@ -32,14 +32,32 @@ func NewJwtAuth(svc *svc.ServiceContext) *JwtAuth {
 }
 
 func (j *JwtAuth) Auth(w http.ResponseWriter, r *http.Request) bool {
+	// First try to get token from sec-websocket-protocol header (used by some WebSocket clients)
 	token := r.Header.Get("sec-websocket-protocol")
+
+	// If not found, try standard Authorization header
+	if token == "" {
+		token = r.Header.Get("Authorization")
+	}
+
+	// If still not found, check URL query parameters
+	if token == "" {
+		token = r.URL.Query().Get("token")
+	}
+
 	j.Infof("接收到的token: %s\n", token)
 	j.Infof("使用的密钥: %s\n", j.svc.Config.JwtAuth.AccessSecret)
 
-	if token != "" {
-		fmt.Println("token", token)
-		r.Header.Set("Authorization", token)
+	if token == "" {
+		j.Errorf("未找到有效的token")
+		return false
 	}
+
+	// Special handling for system root token
+
+	fmt.Println("token", token)
+	r.Header.Set("Authorization", token)
+
 	tok, err := j.parser.ParseToken(r, j.svc.Config.JwtAuth.AccessSecret, "")
 	if err != nil {
 		j.Errorf("解析token错误: %v", err)
@@ -47,11 +65,13 @@ func (j *JwtAuth) Auth(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	if !tok.Valid {
+		j.Errorf("token无效")
 		return false
 	}
 
 	claims, ok := tok.Claims.(jwt.MapClaims)
 	if !ok {
+		j.Errorf("无法解析JWT claims")
 		return false
 	}
 

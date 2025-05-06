@@ -76,6 +76,12 @@ type (
 	UserProfileReq {
 		Id int64 `path:"id"` // 用户ID
 	}
+	findUserReq {
+		Ids []int64 `json:"ids"`
+	}
+	findUserResp {
+		Users []UserProfileResp `json:"users"`
+	}
 	// 获取用户详细资料响应
 	UserProfileResp {
 		UserId         int64  `json:"userId"` // 用户ID

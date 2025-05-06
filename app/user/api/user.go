@@ -1,3 +1,4 @@
+//go:debug
 package main
 
 import (

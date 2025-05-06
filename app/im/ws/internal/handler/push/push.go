@@ -6,6 +6,7 @@
 package push
 
 import (
+	"fmt"
 	"github.com/liumkssq/goapp/app/im/ws/internal/svc"
 	"github.com/liumkssq/goapp/app/im/ws/websocket"
 	"github.com/liumkssq/goapp/app/im/ws/ws"
@@ -20,6 +21,7 @@ func Push(svc *svc.ServiceContext) websocket.HandlerFunc {
 			srv.Send(websocket.NewErrMessage(err))
 			return
 		}
+		fmt.Printf("recvId %v\n", data.RecvId)
 		// 发送的目标
 		switch data.ChatType {
 		case constants.SingleChatType:
@@ -34,11 +36,12 @@ func single(srv *websocket.Server, data *ws.Push, recvId string) error {
 	rconn := srv.GetConn(recvId)
 	if rconn == nil {
 		// todo: 目标离线
+		fmt.Printf("recvId %v not online\n", recvId)
 		return nil
 	}
 
 	srv.Infof("push msg %v", data)
-
+	fmt.Printf("push msg %v", data)
 	return srv.Send(websocket.NewMessage(data.SendId, &ws.Chat{
 		ConversationId: data.ConversationId,
 		ChatType:       data.ChatType,

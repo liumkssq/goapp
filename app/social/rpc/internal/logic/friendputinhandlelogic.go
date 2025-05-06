@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/liumkssq/goapp/app/social/rpc/internal/svc"
 	"github.com/liumkssq/goapp/app/social/rpc/social"
@@ -53,6 +54,7 @@ func (l *FriendPutInHandleLogic) FriendPutInHandle(in *social.FriendPutInHandleR
 
 	friendReq.HandleResult.Int64 = int64(in.HandleResult)
 
+	fmt.Printf("friendReq.HandleResult %v", friendReq.HandleResult.Int64)
 	// 修改申请结果 -》 通过【建立两条好友关系记录】 -》 事务
 	err = l.svcCtx.FriendRequestsModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		if err := l.svcCtx.FriendRequestsModel.Update(l.ctx, session, friendReq); err != nil {
@@ -65,11 +67,15 @@ func (l *FriendPutInHandleLogic) FriendPutInHandle(in *social.FriendPutInHandleR
 
 		friends := []*socialmodels.Friends{
 			{
-				UserId:   friendReq.UserId,
-				FriendId: friendReq.ReqUserId,
+				UserId:     friendReq.UserId,
+				FriendId:   friendReq.ReqUserId,
+				DeleteTime: friendReq.DeleteTime,
+				DelState:   friendReq.DelState,
 			}, {
-				UserId:   friendReq.ReqUserId,
-				FriendId: friendReq.UserId,
+				UserId:     friendReq.ReqUserId,
+				FriendId:   friendReq.UserId,
+				DeleteTime: friendReq.DeleteTime,
+				DelState:   friendReq.DelState,
 			},
 		}
 

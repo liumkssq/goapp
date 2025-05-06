@@ -40,7 +40,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(req *types.LoginByPasswordReq) (*
 	_ = copier.Copy(&resp, loginResponse)
 	now := time.Now().Unix()
 	accessExpire := l.svcCtx.Config.Auth.AccessExpire
-	accessToken, err := ctxdata.GetJWTToken(
+	accessToken, err := ctxdata.GetJwtToken(
 		l.svcCtx.Config.Auth.AccessSecret,
 		now,
 		accessExpire,

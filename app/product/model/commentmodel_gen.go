@@ -33,6 +33,7 @@ type (
 		FindOne(ctx context.Context, id uint64) (*Comment, error)
 		Update(ctx context.Context, data *Comment) error
 		Delete(ctx context.Context, id uint64) error
+		Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error
 	}
 
 	defaultCommentModel struct {
@@ -113,4 +114,8 @@ func (m *defaultCommentModel) queryPrimary(ctx context.Context, conn sqlx.SqlCon
 
 func (m *defaultCommentModel) tableName() string {
 	return m.table
+}
+
+func (m *defaultCommentModel) Trans(ctx context.Context, fn func(ctx context.Context, session sqlx.Session) error) error {
+	return m.CachedConn.TransactCtx(ctx, fn)
 }

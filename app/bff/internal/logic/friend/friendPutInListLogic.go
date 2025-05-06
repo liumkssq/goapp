@@ -2,6 +2,7 @@ package friend
 
 import (
 	"context"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/social/rpc/socialclient"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
@@ -38,7 +39,9 @@ func (l *FriendPutInListLogic) FriendPutInList(req *types.FriendPutInListReq) (r
 	}
 
 	var respList []*types.FriendRequests
+	fmt.Printf("list: %v\n", list)
 	copier.Copy(&respList, list.List)
+	fmt.Printf("respList: %v\n", respList)
 
 	return &types.FriendPutInListResp{List: respList}, nil
 }

@@ -10,8 +10,9 @@ package websocket
 
 import (
 	"fmt"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"net/http"
+
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 // 服务发现机制【该方式是去中心化，自己在内部实现服务发现整套机制】
@@ -129,5 +130,16 @@ func (d *redisDiscover) send(srvClient Client, msg interface{}, uid string) erro
 }
 
 func (d *redisDiscover) createClient(srvAddr string) Client {
-	return NewClient(srvAddr, WithClientHeader(d.auth))
+	// Log current auth header for debugging
+	fmt.Printf("Creating WebSocket client to %s with auth headers: %v\n", srvAddr, d.auth)
+
+	// Ensure auth header contains valid data
+	if d.auth == nil || len(d.auth.Get("Authorization")) == 0 {
+		fmt.Println("Warning: Missing Authorization header for WebSocket client!")
+	}
+
+	// Create client with the same auth header
+	client := NewClient(srvAddr, WithClientHeader(d.auth))
+	d.clients[srvAddr] = client
+	return client
 }

@@ -21,7 +21,7 @@ import (
 var (
 	friendRequestsFieldNames          = builder.RawFieldNames(&FriendRequests{})
 	friendRequestsRows                = strings.Join(friendRequestsFieldNames, ",")
-	friendRequestsRowsExpectAutoSet   = strings.Join(stringx.Remove(friendRequestsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	friendRequestsRowsExpectAutoSet   = strings.Join(stringx.Remove(friendRequestsFieldNames, "`id`", "`create_at`", "`created_at`", "`update_at`", "`updated_at`"), ",")
 	friendRequestsRowsWithPlaceHolder = strings.Join(stringx.Remove(friendRequestsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheFriendRequestsIdPrefix = "cache:goapp:friendRequests:id:"
@@ -117,7 +117,7 @@ func (m *defaultFriendRequestsModel) FindByReqUidAndUserId(ctx context.Context, 
 }
 
 func (m *defaultFriendRequestsModel) ListNoHandler(ctx context.Context, userId uint64) ([]*FriendRequests, error) {
-	query := fmt.Sprintf("select %s from %s where `handle_result` = 1 and `user_id` = ?", friendRequestsRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `handle_result` = 1 and `req_user_id` = ?", friendRequestsRows, m.table)
 	var resp []*FriendRequests
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, userId)
 
@@ -132,9 +132,9 @@ func (m *defaultFriendRequestsModel) ListNoHandler(ctx context.Context, userId u
 func (m *defaultFriendRequestsModel) Insert(ctx context.Context, data *FriendRequests) (sql.Result, error) {
 	friendRequestsIdKey := fmt.Sprintf("%s%v", cacheFriendRequestsIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, friendRequestsRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (`user_id`, `req_user_id`, `req_msg`, `req_time`, `handle_result`, `handle_msg`, `handle_time`, `delete_time`, `del_state`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table)
 		return conn.ExecCtx(ctx, query, data.UserId, data.ReqUserId, data.ReqMsg, data.ReqTime, data.HandleResult, 
-			data.HandleMsg, data.HandleTime, data.CreateTime, data.UpdateTime, data.DeleteTime, data.DelState)
+			data.HandleMsg, data.HandleTime, data.DeleteTime, data.DelState)
 	}, friendRequestsIdKey)
 	return ret, err
 }
@@ -144,7 +144,7 @@ func (m *defaultFriendRequestsModel) Update(ctx context.Context, session sqlx.Se
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, friendRequestsRowsWithPlaceHolder)
 		return session.ExecCtx(ctx, query, data.UserId, data.ReqUserId, data.ReqMsg, data.ReqTime, data.HandleResult, 
-			data.HandleMsg, data.HandleTime, data.CreateTime, data.UpdateTime, data.DeleteTime, data.DelState, data.Id)
+			data.HandleMsg, data.HandleTime, data.DeleteTime, data.DelState, data.Id)
 	}, friendRequestsIdKey)
 	return err
 }

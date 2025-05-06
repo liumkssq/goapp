@@ -51,7 +51,7 @@ CREATE TABLE `user_notifications` (
       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
       `delete_time` timestamp NULL DEFAULT NULL COMMENT '删除时间',
-      `del_state` tinyint NOT NULL DEFAULT '0' COMMENT '删除状态: 0-正常, 1-已删除',
+      `del_state` tinyint NOT NULL DEFAULT '0' COMMENT 删除状态: 0-正常, 1-已删除',
       PRIMARY KEY (`id`),
       KEY `idx_user_id` (`user_id`),
       KEY `idx_is_read` (`is_read`),

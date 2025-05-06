@@ -9,8 +9,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/threading"
 	"time"
+
+	"github.com/zeromicro/go-zero/core/threading"
 
 	"net/http"
 	"sync"
@@ -285,18 +286,25 @@ func (s *Server) handlerWrite(conn *Conn) {
 
 func (s *Server) addConn(conn *Conn, req *http.Request) {
 	uid := s.authentication.UserId(req)
+	s.Infof("[Debug][addConn] Attempting for UID: %s (conn: %p)", uid, conn) // 添加日志
 
 	s.RWMutex.Lock()
 	defer s.RWMutex.Unlock()
 
-	// 验证用户是否之前登入过
 	if c := s.userToConn[uid]; c != nil {
-		// 关闭之前的连接
-		c.Close()
+		s.Info("[Debug][addConn] Overwriting existing entry for UID: %s. Old conn: %p, New conn: %p", uid, c, conn) // 修改日志
+		// 暂时注释掉旧连接处理，避免复杂交互
+		// delete(s.connToUser, c)
+		// c.Close()
 	}
 
 	s.connToUser[conn] = uid
 	s.userToConn[uid] = conn
+	keys := make([]string, 0, len(s.userToConn))
+	for k := range s.userToConn {
+		keys = append(keys, k)
+	}
+	s.Infof("[Debug][addConn] Successfully added/updated UID: %s (conn: %p). Current userToConn keys: %v", uid, conn, keys) // 添加日志
 }
 
 func (s *Server) GetConn(uid string) *Conn {
@@ -346,19 +354,27 @@ func (s *Server) GetUsers(conns ...*Conn) []string {
 }
 
 func (s *Server) Close(conn *Conn) {
-	s.RWMutex.Lock()
-	defer s.RWMutex.Unlock()
+	s.RWMutex.Lock() // 获取写锁
 
 	uid := s.connToUser[conn]
 	if uid == "" {
-		// 已经被关闭
+		s.Info("[Debug][Close] Attempted on already closed or unknown conn: %p", conn)
+		s.RWMutex.Unlock() // 解锁
 		return
 	}
 
+	s.Infof("[Debug][Close] Closing conn %p for UID: %s", conn, uid)
 	delete(s.connToUser, conn)
 	delete(s.userToConn, uid)
 
-	conn.Close()
+	keys := make([]string, 0, len(s.userToConn))
+	for k := range s.userToConn {
+		keys = append(keys, k)
+	}
+	s.RWMutex.Unlock() // 在调用 conn.Close() 前解锁
+
+	conn.Close() // 实际关闭连接，这个调用不应该再持有 Server 的锁
+	s.Infof("[Debug][Close] Conn %p closed for UID: %s. Remaining userToConn keys: %v", uid, keys)
 }
 
 func (s *Server) SendByUserId(msg interface{}, sendIds ...string) error {
@@ -380,8 +396,15 @@ func (s *Server) Send(msg interface{}, conns ...*Conn) error {
 	}
 
 	for _, conn := range conns {
+		if conn == nil {
+			s.Infof("[Debug] Attempted to send message to a nil connection.")
+			continue
+		}
 		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
-			return err
+			s.Errorf("[Debug] Failed to write message to UID %s (conn: %p): %v", s.connToUser[conn], conn, err)
+			s.Close(conn)
+		} else {
+			s.Infof("[Debug] Successfully sent message to UID %s (conn: %p)", s.connToUser[conn], conn)
 		}
 	}
 

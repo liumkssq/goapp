@@ -46,11 +46,17 @@ type ChatLog struct {
 	SendTime       int64  `json:"SendTime,omitempty"`
 }
 
+//	type ChatLogReq struct {
+//		ConversationId string `json:"conversationId"`
+//		StartSendTime  int64  `json:"startSendTime,omitempty"`
+//		EndSendTime    int64  `json:"endSendTime,omitempty"`
+//		Count          int64  `json:"count,omitempty"`
+//	}
 type ChatLogReq struct {
-	ConversationId string `json:"conversationId"`
-	StartSendTime  int64  `json:"startSendTime,omitempty"`
-	EndSendTime    int64  `json:"endSendTime,omitempty"`
-	Count          int64  `json:"count,omitempty"`
+	ConversationId string `form:"conversationId"`
+	StartSendTime  int64  `form:"startSendTime,optional"`
+	EndSendTime    int64  `form:"endSendTime,optional"`
+	Count          int64  `form:"count,optional"`
 }
 
 type ChatLogResp struct {
@@ -934,6 +940,14 @@ type VerifyCodeReq struct {
 type VerifyCodeResp struct {
 	Success bool   `json:"success"`          // 是否成功
 	Message string `json:"message,optional"` // 消息
+}
+
+type FindUserReq struct {
+	Ids []int64 `json:"ids"`
+}
+
+type FindUserResp struct {
+	Users []UserProfileResp `json:"users"`
 }
 
 type SetUpUserConversationResp struct {

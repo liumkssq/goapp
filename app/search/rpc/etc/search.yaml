@@ -18,3 +18,15 @@ Cache:
 JwtAuth:
   AccessSecret: liumkssq
   AccessExpire: 86400
+
+#UserRpc:
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:22379
+#    Key: user.rpc
+
+#SocialRpc:
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.14:22379
+#    Key: social.rpc

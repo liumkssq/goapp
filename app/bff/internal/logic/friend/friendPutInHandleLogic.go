@@ -33,6 +33,5 @@ func (l *FriendPutInHandleLogic) FriendPutInHandle(req *types.FriendPutInHandleR
 		UserId:       ctxdata.GetUId(l.ctx),
 		HandleResult: req.HandleResult,
 	})
-
 	return
 }

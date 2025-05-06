@@ -7,6 +7,7 @@ package msgTransfer
 
 import (
 	"context"
+	"fmt"
 	"github.com/liumkssq/goapp/app/im/ws/websocket"
 	"github.com/liumkssq/goapp/app/im/ws/ws"
 	"github.com/liumkssq/goapp/app/social/rpc/socialclient"
@@ -29,17 +30,21 @@ func NewBaseMsgTransfer(svc *svc.ServiceContext) *baseMsgTransfer {
 }
 
 func (m *baseMsgTransfer) Transfer(ctx context.Context, data *ws.Push) error {
+	fmt.Println("data : ", data)
 	var err error
 	switch data.ChatType {
 	case constants.GroupChatType:
+		fmt.Println("group data : ", data)
 		err = m.group(ctx, data)
 	case constants.SingleChatType:
+		fmt.Println("single data : ", data)
 		err = m.single(ctx, data)
 	}
 	return err
 }
 
 func (m *baseMsgTransfer) single(ctx context.Context, data *ws.Push) error {
+	fmt.Println("single data : ", data)
 	return m.svcCtx.WsClient.Send(websocket.Message{
 		FrameType: websocket.FrameData,
 		Method:    "push",

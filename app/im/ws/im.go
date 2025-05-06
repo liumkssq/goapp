@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/liumkssq/goapp/app/im/ws/internal/config"
 	"github.com/liumkssq/goapp/app/im/ws/internal/handler"
 	"github.com/liumkssq/goapp/app/im/ws/internal/svc"
 	"github.com/liumkssq/goapp/app/im/ws/websocket"
 	"github.com/liumkssq/goapp/pkg/constants"
 	"github.com/liumkssq/goapp/pkg/ctxdata"
-	"net/http"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/conf"
 )
@@ -29,11 +30,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Create headers with token in both Authorization and sec-websocket-protocol
+	authHeaders := http.Header{
+		"Authorization":          []string{token},
+		"sec-websocket-protocol": []string{token},
+	}
+
 	opts := []websocket.ServerOptions{
 		websocket.WithServerAuthentication(handler.NewJwtAuth(ctx)),
-		websocket.WithServerDiscover(websocket.NewRedisDiscover(http.Header{
-			"Authorization": []string{token},
-		}, constants.REDIS_DISCOVER_SRV, c.Redisx)),
+		websocket.WithServerAck(websocket.NoAck),
+		websocket.WithServerDiscover(websocket.NewRedisDiscover(authHeaders, constants.REDIS_DISCOVER_SRV, c.Redisx)),
 	}
 	//srv := websocket.NewServer(c.ListenOn,
 	//	websocket.WithServerAuthentication(handler.NewJwtAuth(ctx)),

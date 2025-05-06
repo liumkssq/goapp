@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/social/rpc/internal/svc"
@@ -36,14 +37,16 @@ func (l *FriendPutInListLogic) FriendPutInList(in *social.FriendPutInListReq) (*
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "parse userId err %v req %v", err, in.UserId)
 	}
-
+	fmt.Printf("FriendPutInListReq userId %v\n", userId)
+	// 查询好友请求列表
 	friendReqList, err := l.svcCtx.FriendRequestsModel.ListNoHandler(l.ctx, userId)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "find list friend req err %v req %v", err, in.UserId)
 	}
-
+	fmt.Printf("FriendPutInListReq friendReqList %+v\n", friendReqList)
 	var resp []*social.FriendRequests
 	copier.Copy(&resp, &friendReqList)
+	fmt.Printf("FriendPutInListReq resp %+v\n", resp)
 
 	return &social.FriendPutInListResp{
 		List: resp,

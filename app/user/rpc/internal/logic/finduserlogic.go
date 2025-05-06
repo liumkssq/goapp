@@ -55,6 +55,7 @@ func (l *FindUserLogic) FindUser(in *user.FindUserReq) (*user.FindUserResp, erro
 			UserId:   int64(userEntity.Id),
 			Username: userEntity.Username,
 			Nickname: userEntity.Nickname.String,
+			Avatar:   userEntity.AvatarUrl.String,
 			Phone:    userEntity.Phone,
 		})
 	}

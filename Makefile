@@ -25,11 +25,10 @@ list-services:
 	@echo "可用的服务列表:"
 	@powershell -Command "Get-ChildItem -Path app -Recurse -Filter '*.go' | Where-Object { Select-String -Path $_.FullName -Pattern 'func main' -Quiet } | ForEach-Object { $_.Directory.FullName.Replace('$(shell pwd)', '.') }"
 
-# 运行所有服务 (适用于Windows PowerShell)
+
 run-all:
-	@powershell -Command "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Write-Host '启动所有服务...'"
-	@powershell -Command "$ErrorActionPreference = 'SilentlyContinue'; $services = @('app/user/rpc', 'app/social/rpc', 'app/im/rpc', 'app/product/rpc', 'app/article/rpc', 'app/search/rpc', 'app/lostfound/rpc', 'app/ai/rpc', 'app/map/rpc', 'app/upload/rpc', 'app/task/rpc', 'app/gateway'); foreach ($$dir in $$services) { if (Test-Path "$$dir/*.go") { Start-Process -NoNewWindow powershell -ArgumentList '-Command', \"cd $$dir; go run *.go\" } }"
-	@echo "所有服务已启动"
+	@powershell -ExecutionPolicy Bypass -File scripts/run_all.ps1
+
 
 # 生成gRPC代码
 generate:

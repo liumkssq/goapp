@@ -14,10 +14,12 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/shopspring/decimal v1.4.0
 	github.com/sony/sonyflake v1.2.0
+	github.com/stretchr/testify v1.9.0
 	github.com/zeromicro/go-queue v1.2.2
 	github.com/zeromicro/go-zero v1.8.1
 	github.com/zeromicro/x v0.0.0-20240408115609-8224c482b07e
-	go.mongodb.org/mongo-driver v1.17.3
+	github.com/zhenghaoz/gorse/client v1.1.0
+	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
 	google.golang.org/grpc v1.65.0
@@ -26,6 +28,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.2.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

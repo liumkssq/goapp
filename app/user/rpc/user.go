@@ -28,6 +28,10 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 	// 创建服务上下文
 	ctx := svc.NewServiceContext(c)
+	err := ctx.SetRootToken()
+	if err != nil {
+		panic(err)
+	}
 
 	// 创建RPC服务器
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

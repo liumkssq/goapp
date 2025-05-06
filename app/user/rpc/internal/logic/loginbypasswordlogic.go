@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/liumkssq/goapp/app/user/model"
 	"github.com/liumkssq/goapp/app/user/rpc/internal/svc"
@@ -28,6 +29,7 @@ func NewLoginByPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 // 账号密码登录
 func (l *LoginByPasswordLogic) LoginByPassword(in *user.LoginByPasswordRequest) (*user.LoginResponse, error) {
 	// todo: add your logic here and delete this line
+	fmt.Printf("in: %+v\n", in)
 	u, err := l.svcCtx.UsersModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil && err != model.ErrNotFound {
 		return nil, err
@@ -40,6 +42,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *user.LoginByPasswordRequest) 
 	if !isVaild {
 		return nil, err
 	}
+	// 生成token
 	var resp user.LoginResponse
 	_ = copier.Copy(&resp, u)
 	resp.UserId = int64(u.Id)

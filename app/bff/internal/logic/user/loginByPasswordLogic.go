@@ -31,6 +31,7 @@ func NewLoginByPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 }
 
 func (l *LoginByPasswordLogic) LoginByPassword(req *types.LoginByPasswordReq) (*types.LoginResp, error) {
+	fmt.Printf("req %+v\n ", req)
 	loginResponse, err := l.svcCtx.UserRpc.LoginByPassword(l.ctx, &user.LoginByPasswordRequest{
 		Username: req.Username,
 		Password: req.Password,
@@ -41,6 +42,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(req *types.LoginByPasswordReq) (*
 	var resp types.LoginResp
 	_ = copier.Copy(&resp, loginResponse)
 	now := time.Now().Unix()
+	fmt.Println("userID", loginResponse.UserId)
 	Ids := strconv.FormatInt(loginResponse.UserId, 10)
 	fmt.Println("Ids", Ids)
 	fmt.Printf("%+v\n", Ids)

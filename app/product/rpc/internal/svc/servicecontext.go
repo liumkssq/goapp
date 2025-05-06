@@ -11,7 +11,9 @@ type ServiceContext struct {
 	Config       config.Config
 	ProductModel model.ProductModel
 	UserModel    model2.UserModel
+	ReportModel  model.ReportModel
 	// 这里可以添加其他的模型
+	CommentModel model.CommentModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -20,5 +22,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:       c,
 		ProductModel: model.NewProductModel(sqlConn, c.Cache),
 		UserModel:    model2.NewUserModel(sqlConn, c.Cache),
+		ReportModel:  model.NewReportModel(sqlConn, c.Cache),
+		CommentModel: model.NewCommentModel(sqlConn, c.Cache),
 	}
 }

@@ -38,6 +38,7 @@ func (l *GetConversationsLogic) GetConversations(
 		return nil, err
 	}
 	var res types.GetConversationsResp
+	res.UserId = uid
 	copier.Copy(&res, data)
 	return &res, nil
 }

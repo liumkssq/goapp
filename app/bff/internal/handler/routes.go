@@ -328,6 +328,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// finduser
+				Method:  http.MethodPost,
+				Path:    "/finduser",
+				Handler: user.FindUserHandler(serverCtx),
+			},
+			{
 				// 自动登录（仅用于开发环境测试）
 				Method:  http.MethodPost,
 				Path:    "/login/auto",

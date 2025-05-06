@@ -6,6 +6,7 @@ import (
 	"github.com/liumkssq/goapp/app/im/rpc/im"
 	"github.com/liumkssq/goapp/app/im/rpc/internal/svc"
 	"github.com/liumkssq/goapp/pkg/xerr"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -53,7 +54,10 @@ func (l *GetChatLogLogic) GetChatLog(in *im.GetChatLogReq) (*im.GetChatLogResp, 
 			}},
 		}, nil
 	}
-
+	fmt.Printf("sendstart time %d, sendendtime %d\n", in.StartSendTime, in.EndSendTime)
+	if in.EndSendTime == 0 {
+		in.EndSendTime = time.Now().UnixMilli()
+	}
 	data, err := l.svcCtx.ChatLogModel.ListBySendTime(l.ctx, in.ConversationId, in.StartSendTime, in.EndSendTime, in.Count)
 	fmt.Printf("GetChatLogReq chatlog list %+v\n", data)
 	if err != nil {

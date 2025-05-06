@@ -13,6 +13,8 @@ type ServiceContext struct {
 	ProductModel   model.ProductModel
 	LostFoundModel Lmodel.LostFoundItemModel
 	UserModel      Umodel.UserModel
+	// 其他模型
+	//UserRpc userservice.UserService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -22,5 +24,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ProductModel:   model.NewProductModel(sqlConn, c.Cache),
 		LostFoundModel: Lmodel.NewLostFoundItemModel(sqlConn, c.Cache),
 		UserModel:      Umodel.NewUserModel(sqlConn, c.Cache),
+		//UserRpc:        userservice.NewUserService(zrpc.MustNewClient(c.UserRpc)),
 	}
 }

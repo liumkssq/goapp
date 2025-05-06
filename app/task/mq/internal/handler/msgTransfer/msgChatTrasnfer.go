@@ -38,6 +38,18 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 		return err
 	}
 
+	fmt.Println("msgId : ", msgId.Hex())
+	fmt.Printf("puh data : %+v\n", &ws.Push{
+		ConversationId: data.ConversationId,
+		ChatType:       data.ChatType,
+		SendId:         data.SendId,
+		RecvId:         data.RecvId,
+		RecvIds:        data.RecvIds,
+		SendTime:       data.SendTime,
+		MType:          data.MType,
+		MsgId:          msgId.Hex(),
+		Content:        data.Content,
+	})
 	return m.Transfer(ctx, &ws.Push{
 		ConversationId: data.ConversationId,
 		ChatType:       data.ChatType,
